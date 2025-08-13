@@ -1,0 +1,63 @@
+{
+  "name": "ligue-lead-challenge",
+  "version": "1.0.0",
+  "description": "Node.js REST API for project and task management",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc && tsc-alias",
+    "dev": "tsx watch -r tsconfig-paths/register src/index.ts",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "biome check src",
+    "lint:fix": "biome check src --write",
+    "migration:run": "npm run build && npx sequelize-cli db:migrate",
+    "migration:create": "npx sequelize-cli migration:generate --name",
+    "seed:run": "npm run build && npx sequelize-cli db:seed:all"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "typescript",
+    "tdd",
+    "dependency-injection",
+    "mysql",
+    "sequelize"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/node": "24.2.1",
+    "@types/supertest": "6.0.3",
+    "@typescript-eslint/eslint-plugin": "8.39.1",
+    "@typescript-eslint/parser": "8.39.1",
+    "eslint": "9.33.0",
+    "jest": "30.0.5",
+    "supertest": "7.1.4",
+    "ts-jest": "^29.1.2",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.7.1",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "cors": "^2.8.5",
+    "dotenv": "17.2.1",
+    "express": "5.1.0",
+    "helmet": "8.1.0",
+    "mysql2": "^3.9.1",
+    "redis": "5.8.1",
+    "reflect-metadata": "^0.2.1",
+    "sequelize": "^6.37.1",
+    "sequelize-cli": "^6.6.2",
+    "sequelize-typescript": "^2.1.6",
+    "tsyringe": "^4.8.0"
+  }
+}
