@@ -2,27 +2,32 @@ import cors from "cors";
 import express from "express";
 import helmet from "helmet";
 import { projectRoutes } from "@/project/infra/routes/projectRoutes";
+import {
+	getErrorInfo,
+	isBusinessRuleError,
+	isConflictError,
+	isExternalServiceError,
+	isNotFoundError,
+	isUnauthorizedError,
+	isValidationError,
+} from "@/shared/Errors";
 import { taskRoutes } from "@/task/infra/routes/taskRoutes";
 
 export const createApp = (): express.Application => {
 	const app = express();
 
-	// Middleware
 	app.use(helmet());
 	app.use(cors());
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 
-	// Health check endpoint
 	app.get("/health", (_, res) => {
 		res.json({ status: "OK", timestamp: new Date().toISOString() });
 	});
 
-	// API routes
 	app.use("/api/projects", projectRoutes);
 	app.use("/api/projects", taskRoutes);
 
-	// Global error handler
 	app.use(
 		(
 			err: Error,
@@ -30,14 +35,107 @@ export const createApp = (): express.Application => {
 			res: express.Response,
 			__: express.NextFunction,
 		) => {
-			console.error("Unhandled error:", err);
-			res.status(500).json({ error: "Internal server error" });
+			console.error("[GlobalErrorHandler] Error:", getErrorInfo(err));
+
+			if (isValidationError(err)) {
+				res.status(err.httpCode).json({
+					success: false,
+					error: {
+						type: err.type.name,
+						message: err.message,
+						field: err.field,
+						value: err.value,
+					},
+				});
+				return;
+			}
+
+			if (isNotFoundError(err)) {
+				res.status(err.httpCode).json({
+					success: false,
+					error: {
+						type: err.type.name,
+						message: err.message,
+						resourceType: err.resourceType,
+						resourceId: err.resourceId,
+					},
+				});
+				return;
+			}
+
+			if (isUnauthorizedError(err)) {
+				res.status(err.httpCode).json({
+					success: false,
+					error: {
+						type: err.type.name,
+						message: err.message,
+						action: err.action,
+						resource: err.resource,
+					},
+				});
+				return;
+			}
+
+			if (isBusinessRuleError(err)) {
+				res.status(err.httpCode).json({
+					success: false,
+					error: {
+						type: err.type.name,
+						message: err.message,
+						rule: err.rule,
+						context: err.context,
+					},
+				});
+				return;
+			}
+
+			if (isExternalServiceError(err)) {
+				res.status(err.httpCode).json({
+					success: false,
+					error: {
+						type: err.type.name,
+						message: err.message,
+						serviceName: err.serviceName,
+						operation: err.operation,
+					},
+				});
+				return;
+			}
+
+			if (isConflictError(err)) {
+				res.status(err.httpCode).json({
+					success: false,
+					error: {
+						type: err.type.name,
+						message: err.message,
+						resourceType: err.resourceType,
+						conflictingField: err.conflictingField,
+					},
+				});
+				return;
+			}
+
+			res.status(500).json({
+				success: false,
+				error: {
+					type: "UNEXPECTED_ERROR",
+					message: "An unexpected error occurred",
+					...(process.env.NODE_ENV === "development" && {
+						details: err instanceof Error ? err.message : String(err),
+					}),
+				},
+			});
 		},
 	);
 
-	// 404 handler
-	app.use((_, res) => {
-		res.status(404).json({ error: "Route not found" });
+	app.use((_: express.Request, res: express.Response) => {
+		res.status(404).json({
+			success: false,
+			error: {
+				type: "NOT_FOUND",
+				message: "The requested resource was not found",
+			},
+		});
 	});
 
 	return app;
