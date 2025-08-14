@@ -12,7 +12,7 @@ export const createSequelizeConnection = (): Sequelize => {
 			username: config.database.user,
 			password: config.database.password,
 			database: config.database.name,
-			models: [__dirname + "/models/*.model.ts"],
+			models: [`${__dirname}/models/*.model.ts`],
 			logging: config.nodeEnv === "development" ? console.log : false,
 		});
 	}

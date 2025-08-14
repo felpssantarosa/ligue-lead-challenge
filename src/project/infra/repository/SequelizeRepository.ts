@@ -1,6 +1,10 @@
+import { Op } from "sequelize";
 import { Project } from "@/project/domain/Project";
 import type { ProjectModel } from "@/project/infra/database/models/Project.model";
-import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
+import type {
+	GetAllProjectsParams,
+	ProjectRepository,
+} from "@/project/infra/repository/ProjectRepository";
 
 export class SequelizeRepository implements ProjectRepository {
 	private sequelizeModel: typeof ProjectModel;
@@ -20,8 +24,18 @@ export class SequelizeRepository implements ProjectRepository {
 		return project ? Project.fromJSON(project.toJSON()) : null;
 	}
 
-	async findAll(): Promise<Project[]> {
-		const projects = await this.sequelizeModel.findAll();
+	async findAll(params: GetAllProjectsParams): Promise<Project[]> {
+		const { page = 1, limit = 10, tags, search } = params;
+		const offset = (page - 1) * limit;
+
+		const projects = await this.sequelizeModel.findAll({
+			limit,
+			offset,
+			where: {
+				...(tags && tags.length > 0 ? { tags: { [Op.overlap]: tags } } : {}),
+				...(search ? { title: { [Op.iLike]: `%${search}%` } } : {}),
+			},
+		});
 		return projects.map((project) => Project.fromJSON(project.toJSON()));
 	}
 
