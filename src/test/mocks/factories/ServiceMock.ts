@@ -14,7 +14,6 @@ const getAllProjectsService = new GetAllProjectsService(mockProjectRepository);
 const updateProjectService = new UpdateProjectService(mockProjectRepository);
 const deleteProjectService = new DeleteProjectService(mockProjectRepository);
 
-// Mock repository methods for more granular testing
 const mockRepository = {
 	save: jest.fn(),
 	findById: jest.fn(),
@@ -24,7 +23,6 @@ const mockRepository = {
 	clear: jest.fn(),
 } as jest.Mocked<ProjectRepository>;
 
-// Service instances with mocked repository
 const mockCreateProjectService = new CreateProjectService(mockRepository);
 const mockGetProjectService = new GetProjectService(mockRepository);
 const mockGetAllProjectsService = new GetAllProjectsService(mockRepository);
@@ -32,14 +30,12 @@ const mockUpdateProjectService = new UpdateProjectService(mockRepository);
 const mockDeleteProjectService = new DeleteProjectService(mockRepository);
 
 export {
-	// Real repository instances for integration-style tests
 	createProjectService,
 	getProjectService,
 	getAllProjectsService,
 	updateProjectService,
 	deleteProjectService,
 	mockProjectRepository,
-	// Mocked repository instances for unit tests
 	mockCreateProjectService,
 	mockGetProjectService,
 	mockGetAllProjectsService,

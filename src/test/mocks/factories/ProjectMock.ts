@@ -10,11 +10,11 @@ import type { DeleteProjectService } from "@/project/service/DeleteProjectServic
 import type { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
 import type { GetProjectService } from "@/project/service/GetProjectService";
 import type { UpdateProjectService } from "@/project/service/UpdateProjectService";
-import type { Validation } from "@/shared/validation/validateData";
+import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 
 const mockValidation = {
-	validate: jest.fn(),
-} as Validation & { validate: jest.Mock };
+	execute: jest.fn(),
+} as ValidationHandler & { execute: jest.Mock };
 
 const mockCreateService = {
 	execute: jest.fn(),
