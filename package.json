@@ -58,6 +58,7 @@
     "sequelize": "^6.37.1",
     "sequelize-cli": "^6.6.2",
     "sequelize-typescript": "^2.1.6",
-    "tsyringe": "^4.8.0"
+    "tsyringe": "^4.8.0",
+    "zod": "^4.0.17"
   }
 }

@@ -65,3 +65,5 @@ export class ProjectModel extends Model<ProjectModelAttributes> {
 	@HasMany(() => TaskModel)
 	tasks!: TaskModel[];
 }
+
+export default ProjectModel;

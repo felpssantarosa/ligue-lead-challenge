@@ -12,8 +12,6 @@ async function bootstrap(): Promise<void> {
 		await sequelize.authenticate();
 		console.log("Database connection established successfully.");
 
-		sequelize.addModels([`${__dirname}/**/*.model.ts`]);
-
 		if (config.nodeEnv === "development") {
 			await sequelize.sync({ force: false });
 			console.log("Database synchronized.");
