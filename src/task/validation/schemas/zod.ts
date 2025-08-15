@@ -1,10 +1,13 @@
 import { z } from "zod";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 
-/**
- * Validation schema for creating a task
- */
-export const createTaskSchema = z.object({
+export type TaskValidationId =
+	| "create-task"
+	| "update-task"
+	| "task-id"
+	| "create-task-with-project";
+
+const createTaskSchema = z.object({
 	title: z
 		.string()
 		.min(1, "Title is required")
@@ -24,10 +27,7 @@ export const createTaskSchema = z.object({
 		}),
 });
 
-/**
- * Validation schema for updating a task
- */
-export const updateTaskSchema = z.object({
+const updateTaskSchema = z.object({
 	title: z
 		.string()
 		.min(1, "Title cannot be empty")
@@ -46,29 +46,26 @@ export const updateTaskSchema = z.object({
 		}),
 });
 
-/**
- * Validation schema for task ID parameter
- */
-export const taskIdSchema = z.object({
-	id: z.string().uuid("Invalid task ID format").min(1, "Task ID is required"),
+const taskIdSchema = z.object({
+	id: z.uuid("Invalid task ID format").min(1, "Task ID is required"),
 });
 
-/**
- * Validation schema for task creation with project ID
- */
-export const createTaskWithProjectSchema = z.object({
+const createTaskWithProjectSchema = z.object({
 	projectId: z
-		.string()
 		.uuid("Invalid project ID format")
 		.min(1, "Project ID is required"),
 });
 
-/**
- * Type exports for TypeScript
- */
 export type CreateTaskInput = z.infer<typeof createTaskSchema>;
 export type UpdateTaskInput = z.infer<typeof updateTaskSchema>;
 export type TaskIdInput = z.infer<typeof taskIdSchema>;
 export type CreateTaskWithProjectInput = z.infer<
 	typeof createTaskWithProjectSchema
 >;
+
+export const taskSchemas: Record<TaskValidationId, z.ZodSchema> = {
+	"create-task": createTaskSchema,
+	"update-task": updateTaskSchema,
+	"task-id": taskIdSchema,
+	"create-task-with-project": createTaskWithProjectSchema,
+};

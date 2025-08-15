@@ -153,7 +153,7 @@ describe("UpdateProjectController", () => {
 			mockValidation.execute
 				.mockReturnValueOnce({ id: projectId })
 				.mockReturnValueOnce({});
-			
+
 			updateService.execute.mockResolvedValue(updatedProject);
 
 			await updateController.handle(
@@ -204,7 +204,7 @@ describe("UpdateProjectController", () => {
 				title: updateData.title,
 				tags: updateData.tags,
 			});
-			
+
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
 		});
 	});

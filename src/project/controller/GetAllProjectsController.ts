@@ -4,12 +4,15 @@ import type {
 	GetAllProjectsParams,
 	GetAllProjectsService,
 } from "@/project/service/GetAllProjectsService";
-import {
-	type PaginationInput,
-	paginationSchema,
-} from "@/project/validation/ZodSchemas";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { BaseController } from "../../shared/BaseController";
+
+type PaginationInput = {
+	page: number;
+	limit: number;
+	tags: string[];
+	search?: string | undefined;
+};
 
 @injectable()
 export class GetAllProjectsController extends BaseController {
@@ -23,14 +26,12 @@ export class GetAllProjectsController extends BaseController {
 	}
 
 	/**
-	 * Get all projects with optional pagination and filtering
-	 *
 	 * GET /api/projects?page=1&limit=10&search=term&tags=tag1,tag2
 	 */
 	async handle(req: Request, res: Response): Promise<void> {
 		try {
 			const validatedQuery = this.validation.execute<PaginationInput>(
-				paginationSchema,
+				"pagination",
 				req.query,
 				"GetAllProjectsController.handle",
 			);

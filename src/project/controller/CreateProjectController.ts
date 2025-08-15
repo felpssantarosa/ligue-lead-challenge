@@ -1,12 +1,14 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import type { CreateProjectService } from "@/project/service/CreateProjectService";
-import {
-	type CreateProjectInput,
-	createProjectSchema,
-} from "@/project/validation/ZodSchemas";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
+
+type CreateProjectData = {
+	title: string;
+	description: string;
+	tags: string[];
+};
 
 @injectable()
 export class CreateProjectController extends BaseController {
@@ -20,14 +22,12 @@ export class CreateProjectController extends BaseController {
 	}
 
 	/**
-	 * Create a new project
-	 *
 	 * POST /api/projects
 	 */
 	async handle(req: Request, res: Response): Promise<void> {
 		try {
-			const validatedData = this.validation.execute<CreateProjectInput>(
-				createProjectSchema,
+			const validatedData = this.validation.execute<CreateProjectData>(
+				"create-project",
 				req.body,
 				"CreateProjectController.handle",
 			);

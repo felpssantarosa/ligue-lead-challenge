@@ -1,6 +1,9 @@
 import { inject, injectable } from "tsyringe";
 import { ApplicationError, ValidationError } from "@/shared/Errors";
-import type { ValidationProvider } from "@/shared/validation/ValidationProvider";
+import type {
+	ValidationId,
+	ValidationProvider,
+} from "@/shared/validation/ValidationProvider";
 
 @injectable()
 export class ValidationHandler {
@@ -9,16 +12,8 @@ export class ValidationHandler {
 		private validationProvider: ValidationProvider,
 	) {}
 
-	/**
-	 * Validates data using the configured validation provider
-	 * @param schema - The validation schema (type depends on provider implementation)
-	 * @param data - The data to validate
-	 * @param context - Context for error messages
-	 * @returns The validated data
-	 * @throws ValidationError if validation fails
-	 */
-	execute<T>(schema: unknown, data: unknown, context: string): T {
-		const result = this.validationProvider.validate<T>(schema, data, context);
+	execute<T>(schemaId: ValidationId, data: unknown, context: string): T {
+		const result = this.validationProvider.validate<T>(schemaId, data, context);
 
 		if (result.success) return result.data as T;
 

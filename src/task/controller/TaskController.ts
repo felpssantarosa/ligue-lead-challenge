@@ -1,14 +1,19 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { BaseController } from "@/shared/BaseController";
+import type { TaskStatus } from "@/shared/domain/TaskStatus";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { CreateTaskService } from "@/task/service/CreateTaskService";
-import {
-	createTaskSchema,
-	createTaskWithProjectSchema,
-	type CreateTaskInput,
-	type CreateTaskWithProjectInput,
-} from "@/task/validation/schemas";
+
+type CreateTaskWithProjectInput = {
+	projectId: string;
+};
+
+type CreateTaskInput = {
+	title: string;
+	description: string;
+	status: TaskStatus;
+};
 
 @injectable()
 export class TaskController extends BaseController {
@@ -25,13 +30,13 @@ export class TaskController extends BaseController {
 		try {
 			const validatedParams =
 				this.validation.execute<CreateTaskWithProjectInput>(
-					createTaskWithProjectSchema,
+					"create-task-with-project",
 					req.params,
 					"TaskController.create",
 				);
 
 			const validatedBody = this.validation.execute<CreateTaskInput>(
-				createTaskSchema,
+				"create-task",
 				req.body,
 				"TaskController.create",
 			);

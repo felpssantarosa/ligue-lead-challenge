@@ -1,14 +1,18 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import type { UpdateProjectService } from "@/project/service/UpdateProjectService";
-import {
-	type ProjectIdInput,
-	projectIdSchema,
-	type UpdateProjectInput,
-	updateProjectSchema,
-} from "@/project/validation/ZodSchemas";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { BaseController } from "../../shared/BaseController";
+
+type ProjectIdInput = {
+	id: string;
+};
+
+type UpdateProjectInput = {
+	title?: string | undefined;
+	description?: string | undefined;
+	tags?: string[] | undefined;
+};
 
 @injectable()
 export class UpdateProjectController extends BaseController {
@@ -22,19 +26,18 @@ export class UpdateProjectController extends BaseController {
 	}
 
 	/**
-	 * Update a project
 	 * PUT /api/projects/:id
 	 */
 	async handle(req: Request, res: Response): Promise<void> {
 		try {
 			const validatedParams = this.validation.execute<ProjectIdInput>(
-				projectIdSchema,
+				"project-id",
 				req.params,
 				"UpdateProjectController.handle",
 			);
 
 			const validatedBody = this.validation.execute<UpdateProjectInput>(
-				updateProjectSchema,
+				"update-project",
 				req.body,
 				"UpdateProjectController.handle",
 			);

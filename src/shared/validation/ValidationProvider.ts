@@ -1,3 +1,6 @@
+import type { ProjectValidationId } from "@/project/validation/schemas/zod";
+import type { TaskValidationId } from "@/task/validation/schemas/zod";
+
 export interface ValidationResult<T> {
 	success: boolean;
 	data?: T;
@@ -8,9 +11,11 @@ export interface ValidationResult<T> {
 	};
 }
 
+export type ValidationId = ProjectValidationId | TaskValidationId;
+
 export interface ValidationProvider {
 	validate<T>(
-		schema: unknown,
+		schemaId: ValidationId,
 		data: unknown,
 		context: string,
 	): ValidationResult<T>;

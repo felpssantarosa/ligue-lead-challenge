@@ -1,13 +1,13 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import type { GetProjectService } from "@/project/service/GetProjectService";
-import {
-	type ProjectIdInput,
-	projectIdSchema,
-} from "@/project/validation/ZodSchemas";
 import { NotFoundError } from "@/shared/Errors";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { BaseController } from "../../shared/BaseController";
+
+type ProjectIdInput = {
+	id: string;
+};
 
 @injectable()
 export class GetProjectController extends BaseController {
@@ -21,14 +21,12 @@ export class GetProjectController extends BaseController {
 	}
 
 	/**
-	 * Get a project by ID
-	 *
 	 * GET /api/projects/:id
 	 */
 	async handle(req: Request, res: Response): Promise<void> {
 		try {
 			const validatedParams = this.validation.execute<ProjectIdInput>(
-				projectIdSchema,
+				"project-id",
 				req.params,
 				"GetProjectController.handle",
 			);

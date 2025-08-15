@@ -1,5 +1,9 @@
 import { injectable } from "tsyringe";
 import type { z } from "zod";
+import {
+	type ProjectValidationId,
+	projectSchemas,
+} from "@/project/validation/schemas/zod";
 import type {
 	ValidationProvider,
 	ValidationResult,
@@ -8,12 +12,12 @@ import type {
 @injectable()
 export class ZodValidationProvider implements ValidationProvider {
 	validate<T>(
-		schema: unknown,
+		schemaId: ProjectValidationId,
 		data: unknown,
 		context: string,
 	): ValidationResult<T> {
 		try {
-			const zodSchema = schema as z.ZodSchema<T>;
+			const zodSchema = projectSchemas[schemaId] as z.ZodSchema<T>;
 			const result = zodSchema.safeParse(data);
 
 			if (result.success) {

@@ -1,6 +1,13 @@
 import { z } from "zod";
 
-export const createProjectSchema = z.object({
+export type ProjectValidationId =
+	| "create-project"
+	| "update-project"
+	| "project-id"
+	| "pagination"
+	| "delete-query";
+
+const createProjectSchema = z.object({
 	title: z
 		.string()
 		.min(1, "Title is required")
@@ -18,7 +25,7 @@ export const createProjectSchema = z.object({
 		.default([]),
 });
 
-export const updateProjectSchema = z.object({
+const updateProjectSchema = z.object({
 	title: z
 		.string()
 		.min(1, "Title cannot be empty")
@@ -35,11 +42,11 @@ export const updateProjectSchema = z.object({
 		.optional(),
 });
 
-export const projectIdSchema = z.object({
+const projectIdSchema = z.object({
 	id: z.uuid(),
 });
 
-export const paginationSchema = z.object({
+const paginationSchema = z.object({
 	page: z
 		.string()
 		.optional()
@@ -57,7 +64,7 @@ export const paginationSchema = z.object({
 		.transform((val) => (val ? val.split(",").map((tag) => tag.trim()) : [])),
 });
 
-export const deleteQuerySchema = z.object({
+const deleteQuerySchema = z.object({
 	force: z
 		.string()
 		.optional()
@@ -70,3 +77,11 @@ export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
 export type ProjectIdInput = z.infer<typeof projectIdSchema>;
 export type PaginationInput = z.infer<typeof paginationSchema>;
 export type DeleteQueryInput = z.infer<typeof deleteQuerySchema>;
+
+export const projectSchemas: Record<ProjectValidationId, z.ZodSchema> = {
+	"create-project": createProjectSchema,
+	"update-project": updateProjectSchema,
+	"project-id": projectIdSchema,
+	pagination: paginationSchema,
+	"delete-query": deleteQuerySchema,
+};
