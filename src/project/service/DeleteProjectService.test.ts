@@ -1,5 +1,5 @@
 import { Project } from "@/project/domain/Project";
-import type { DeleteProjectRequest } from "@/project/service/DeleteProjectService";
+import type { DeleteProjectServiceParams } from "@/project/service/DeleteProjectService";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	deleteProjectService,
@@ -25,7 +25,7 @@ describe("DeleteProjectService", () => {
 		});
 		await mockProjectRepository.save(project);
 
-		const deleteRequest: DeleteProjectRequest = {
+		const deleteRequest: DeleteProjectServiceParams = {
 			id: project.id,
 		};
 
@@ -41,7 +41,7 @@ describe("DeleteProjectService", () => {
 	});
 
 	it("should throw ApplicationError when project does not exist", async () => {
-		const deleteRequest: DeleteProjectRequest = {
+		const deleteRequest: DeleteProjectServiceParams = {
 			id: "non-existent-id",
 		};
 
@@ -51,7 +51,7 @@ describe("DeleteProjectService", () => {
 	});
 
 	it("should throw ApplicationError when id is empty", async () => {
-		const deleteRequest: DeleteProjectRequest = {
+		const deleteRequest: DeleteProjectServiceParams = {
 			id: "",
 		};
 
@@ -68,7 +68,7 @@ describe("DeleteProjectService", () => {
 		});
 		await mockProjectRepository.save(project);
 
-		const deleteRequest: DeleteProjectRequest = {
+		const deleteRequest: DeleteProjectServiceParams = {
 			id: project.id,
 			force: true,
 		};
@@ -82,7 +82,7 @@ describe("DeleteProjectService", () => {
 	});
 
 	it("should handle repository errors and wrap in ApplicationError", async () => {
-		const deleteRequest: DeleteProjectRequest = {
+		const deleteRequest: DeleteProjectServiceParams = {
 			id: "test-id",
 		};
 
@@ -104,7 +104,7 @@ describe("DeleteProjectService", () => {
 
 		await mockProjectRepository.save(project);
 
-		const deleteRequest: DeleteProjectRequest = {
+		const deleteRequest: DeleteProjectServiceParams = {
 			id: project.id,
 		};
 

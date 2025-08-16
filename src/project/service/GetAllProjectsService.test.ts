@@ -1,5 +1,5 @@
 import { Project } from "@/project/domain/Project";
-import type { GetAllProjectsParams } from "@/project/service/GetAllProjectsService";
+import type { GetAllProjectsServiceParams } from "@/project/service/GetAllProjectsService";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	getAllProjectsService,
@@ -32,7 +32,7 @@ describe("GetAllProjectsService", () => {
 		await mockProjectRepository.save(project1);
 		await mockProjectRepository.save(project2);
 
-		const result = await getAllProjectsService.execute();
+		const result = await getAllProjectsService.execute({});
 
 		expect(result).toBeDefined();
 		expect(result.projects).toHaveLength(2);
@@ -42,7 +42,7 @@ describe("GetAllProjectsService", () => {
 	});
 
 	it("should return empty array when no projects exist", async () => {
-		const result = await getAllProjectsService.execute();
+		const result = await getAllProjectsService.execute({});
 
 		expect(result).toBeDefined();
 		expect(result.projects).toHaveLength(0);
@@ -63,7 +63,7 @@ describe("GetAllProjectsService", () => {
 			await mockProjectRepository.save(project);
 		}
 
-		const params: GetAllProjectsParams = {
+		const params: GetAllProjectsServiceParams = {
 			page: 1,
 			limit: limitExpected,
 		};
@@ -89,7 +89,7 @@ describe("GetAllProjectsService", () => {
 		await mockProjectRepository.save(project1);
 		await mockProjectRepository.save(project2);
 
-		const params: GetAllProjectsParams = {
+		const params: GetAllProjectsServiceParams = {
 			search: "TypeScript",
 		};
 
@@ -123,7 +123,7 @@ describe("GetAllProjectsService", () => {
 		await mockProjectRepository.save(project2);
 		await mockProjectRepository.save(project3);
 
-		const params: GetAllProjectsParams = {
+		const params: GetAllProjectsServiceParams = {
 			tags: ["web"],
 		};
 
@@ -145,7 +145,7 @@ describe("GetAllProjectsService", () => {
 
 		await mockProjectRepository.save(project);
 
-		const params: GetAllProjectsParams = {
+		const params: GetAllProjectsServiceParams = {
 			page: -1,
 			limit: 0,
 		};
@@ -160,7 +160,7 @@ describe("GetAllProjectsService", () => {
 			new Error("Database connection failed"),
 		);
 
-		const params: GetAllProjectsParams = {
+		const params: GetAllProjectsServiceParams = {
 			page: 1,
 			limit: 10,
 		};

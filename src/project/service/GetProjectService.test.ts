@@ -24,7 +24,7 @@ describe("GetProjectService", () => {
 		});
 		await mockProjectRepository.save(project);
 
-		const result = await getProjectService.execute(project.id);
+		const result = await getProjectService.execute({ id: project.id });
 
 		expect(result).toBeDefined();
 		expect(result?.id).toBe(project.id);
@@ -36,15 +36,15 @@ describe("GetProjectService", () => {
 	it("should throw NotFoundError when project does not exist", async () => {
 		const nonExistentId = "non-existent-id";
 
-		await expect(getProjectService.execute(nonExistentId)).rejects.toThrow(
-			NotFoundError,
-		);
+		await expect(
+			getProjectService.execute({ id: nonExistentId }),
+		).rejects.toThrow(NotFoundError);
 	});
 
 	it("should throw NotFoundError when id is empty", async () => {
 		const emptyId = "";
 
-		await expect(getProjectService.execute(emptyId)).rejects.toThrow(
+		await expect(getProjectService.execute({ id: emptyId })).rejects.toThrow(
 			NotFoundError,
 		);
 	});
@@ -55,7 +55,7 @@ describe("GetProjectService", () => {
 			new Error("Database connection error"),
 		);
 
-		await expect(mockGetProjectService.execute(testId)).rejects.toThrow(
+		await expect(mockGetProjectService.execute({ id: testId })).rejects.toThrow(
 			"Database connection error",
 		);
 	});

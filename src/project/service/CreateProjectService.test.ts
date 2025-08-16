@@ -1,4 +1,4 @@
-import type { CreateProjectRequest } from "@/project/service/CreateProjectService";
+import type { CreateProjectServiceParams } from "@/project/service/CreateProjectService";
 import {
 	createProjectService,
 	mockCreateProjectService,
@@ -16,7 +16,7 @@ describe("CreateProjectService", () => {
 	});
 
 	it("should create a project successfully", async () => {
-		const request: CreateProjectRequest = {
+		const request: CreateProjectServiceParams = {
 			title: "Test Project",
 			description: "A test project description",
 			tags: ["test", "typescript"],
@@ -34,7 +34,7 @@ describe("CreateProjectService", () => {
 	});
 
 	it("should throw error when title is empty", async () => {
-		const request: CreateProjectRequest = {
+		const request: CreateProjectServiceParams = {
 			title: "",
 			description: "A test project description",
 			tags: ["test"],
@@ -46,7 +46,7 @@ describe("CreateProjectService", () => {
 	});
 
 	it("should create project with empty tags if not provided", async () => {
-		const request: CreateProjectRequest = {
+		const request: CreateProjectServiceParams = {
 			title: "Test Project",
 			description: "A test project description",
 			tags: [],
@@ -58,7 +58,7 @@ describe("CreateProjectService", () => {
 	});
 
 	it("should save project to repository", async () => {
-		const request: CreateProjectRequest = {
+		const request: CreateProjectServiceParams = {
 			title: "Test Project",
 			description: "A test project description",
 			tags: ["test"],
@@ -72,7 +72,7 @@ describe("CreateProjectService", () => {
 	});
 
 	it("should throw error when title is only whitespace", async () => {
-		const request: CreateProjectRequest = {
+		const request: CreateProjectServiceParams = {
 			title: "   ",
 			description: "A test project description",
 			tags: ["test"],
@@ -87,7 +87,7 @@ describe("CreateProjectService", () => {
 		const request = {
 			title: "Test Project",
 			description: "A test project description",
-		} as CreateProjectRequest;
+		} as CreateProjectServiceParams;
 
 		const result = await createProjectService.execute(request);
 
@@ -95,7 +95,7 @@ describe("CreateProjectService", () => {
 	});
 
 	it("should handle repository save errors", async () => {
-		const request: CreateProjectRequest = {
+		const request: CreateProjectServiceParams = {
 			title: "Test Project",
 			description: "A test project description",
 			tags: ["test"],

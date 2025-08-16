@@ -1,5 +1,5 @@
 import { Project } from "@/project/domain/Project";
-import type { UpdateProjectRequest } from "@/project/service/UpdateProjectService";
+import type { UpdateProjectServiceParams } from "@/project/service/UpdateProjectService";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	mockProjectRepository,
@@ -27,7 +27,7 @@ describe("UpdateProjectService", () => {
 		});
 		await mockProjectRepository.save(project);
 
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: project.id,
 			title: "Updated Project",
 			description: "Updated description",
@@ -45,7 +45,7 @@ describe("UpdateProjectService", () => {
 	});
 
 	it("should throw ApplicationError when project does not exist", async () => {
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: "non-existent-id",
 			title: "Updated Project",
 			description: "Updated description",
@@ -65,7 +65,7 @@ describe("UpdateProjectService", () => {
 		});
 		await mockProjectRepository.save(project);
 
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: project.id,
 			title: "",
 			description: "Updated description",
@@ -85,7 +85,7 @@ describe("UpdateProjectService", () => {
 		});
 		await mockProjectRepository.save(project);
 
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: project.id,
 			title: "Updated Title Only",
 		};
@@ -98,7 +98,7 @@ describe("UpdateProjectService", () => {
 	});
 
 	it("should throw ApplicationError when id is empty", async () => {
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: "",
 			title: "Updated Project",
 		};
@@ -116,7 +116,7 @@ describe("UpdateProjectService", () => {
 		});
 		await mockProjectRepository.save(project);
 
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: project.id,
 			description: undefined,
 		};
@@ -139,7 +139,7 @@ describe("UpdateProjectService", () => {
 
 		jest.advanceTimersByTime(1);
 
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: project.id,
 			title: "New Title",
 			description: "New Description",
@@ -157,7 +157,7 @@ describe("UpdateProjectService", () => {
 	});
 
 	it("should handle repository errors and wrap in ApplicationError", async () => {
-		const updateRequest: UpdateProjectRequest = {
+		const updateRequest: UpdateProjectServiceParams = {
 			id: "test-id",
 			title: "Updated Project",
 		};
