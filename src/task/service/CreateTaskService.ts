@@ -3,16 +3,16 @@ import type { ProjectRepository } from "@/project/infra/repository/ProjectReposi
 import type { EntityId } from "@/shared/domain/Entity";
 import type { TaskStatus } from "@/shared/domain/TaskStatus";
 import { Task } from "@/task/domain/Task";
-import type { TaskRepository } from "@/task/domain/TaskRepository";
+import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
 
-export interface CreateTaskRequest {
+export interface CreateTaskServiceParams {
 	title: string;
 	description: string;
 	status: TaskStatus;
 	projectId: EntityId;
 }
 
-export interface CreateTaskResponse {
+export interface CreateTaskServiceResponse {
 	id: string;
 	title: string;
 	description: string;
@@ -30,7 +30,9 @@ export class CreateTaskService {
 		private readonly projectRepository: ProjectRepository,
 	) {}
 
-	async execute(request: CreateTaskRequest): Promise<CreateTaskResponse> {
+	async execute(
+		request: CreateTaskServiceParams,
+	): Promise<CreateTaskServiceResponse> {
 		if (!request.title.trim()) {
 			throw new Error("Task title cannot be empty");
 		}
