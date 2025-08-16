@@ -2,7 +2,7 @@ import type { Application } from "express";
 import request from "supertest";
 import { registerDependencies } from "@/shared/infra/container";
 import { createApp } from "@/shared/infra/http/app";
-import { generateUuid } from "../factories/UUIDFactory";
+import { generateUUID } from "../factories/UUIDFactory";
 import "reflect-metadata";
 
 describe("Projects API Integration", () => {
@@ -61,7 +61,7 @@ describe("Projects API Integration", () => {
 
 	describe("GET /api/projects/:id", () => {
 		it("should return 404 for non-existent project", async () => {
-			const nonExistentId = generateUuid();
+			const nonExistentId = generateUUID();
 
 			const response = await request(app)
 				.get(`/api/projects/${nonExistentId}`)

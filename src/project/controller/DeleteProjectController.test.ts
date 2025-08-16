@@ -1,11 +1,12 @@
 import type { Request, Response } from "express";
-import { generateUuid } from "@/test/factories/UUIDFactory";
-import { mockRequest, mockResponse } from "@/test/mocks/factories/HttpMock";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 import {
 	mockDeleteProjectController,
-	mockDeleteService,
+	mockDeleteProjectService,
+	mockRequest,
+	mockResponse,
 	mockValidation,
-} from "@/test/mocks/factories/ProjectMock";
+} from "@/test/mocks";
 import {
 	cleanupTestValidation,
 	setupTestValidation,
@@ -13,12 +14,12 @@ import {
 
 describe("DeleteProjectController", () => {
 	let deleteController: typeof mockDeleteProjectController;
-	let deleteService: typeof mockDeleteService;
+	let deleteService: typeof mockDeleteProjectService;
 
 	beforeEach(() => {
 		setupTestValidation();
 		deleteController = mockDeleteProjectController;
-		deleteService = mockDeleteService;
+		deleteService = mockDeleteProjectService;
 
 		mockValidation.execute.mockReset();
 	});
@@ -29,7 +30,7 @@ describe("DeleteProjectController", () => {
 
 	describe("delete", () => {
 		it("should delete a project successfully", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			const deleteResult = {
 				id: projectId,
 				message: "Project deleted successfully",
@@ -62,7 +63,7 @@ describe("DeleteProjectController", () => {
 		});
 
 		it("should handle force delete", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			mockRequest.params = { id: projectId };
 			mockRequest.query = { force: "true" };
 

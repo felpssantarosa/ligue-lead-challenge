@@ -1,6 +1,6 @@
 import { NotFoundError } from "@/shared/Errors";
 import { GetTaskService } from "@/task/service/GetTaskService";
-import { generateUuid } from "@/test/factories/UUIDFactory";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 import {
 	createTask,
 	mockTaskRepository,
@@ -16,7 +16,7 @@ describe("GetTaskService", () => {
 
 	describe("execute", () => {
 		it("should return task when found", async () => {
-			const taskId = generateUuid();
+			const taskId = generateUUID();
 			const task = createTask({ id: taskId });
 			mockTaskRepository.findById.mockResolvedValue(task);
 
@@ -35,7 +35,7 @@ describe("GetTaskService", () => {
 		});
 
 		it("should throw NotFoundError when task not found", async () => {
-			const taskId = generateUuid();
+			const taskId = generateUUID();
 			mockTaskRepository.findById.mockResolvedValue(null);
 
 			await expect(getTaskService.execute({ id: taskId })).rejects.toThrow(

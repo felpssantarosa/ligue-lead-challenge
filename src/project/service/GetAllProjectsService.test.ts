@@ -2,11 +2,9 @@ import { Project } from "@/project/domain/Project";
 import type { GetAllProjectsServiceParams } from "@/project/service/GetAllProjectsService";
 import { ApplicationError } from "@/shared/Errors";
 import {
-	getAllProjectsService,
-	mockGetAllProjectsService,
+	mockGetAllProjectsServiceImplementation as getAllProjectsService,
 	mockProjectRepository,
-	mockRepository,
-} from "@/test/mocks/factories/ServiceMock";
+} from "@/test/mocks";
 
 describe("GetAllProjectsService", () => {
 	beforeEach(() => {
@@ -150,24 +148,25 @@ describe("GetAllProjectsService", () => {
 			limit: 0,
 		};
 
-		await expect(mockGetAllProjectsService.execute(params)).rejects.toThrow(
+		await expect(getAllProjectsService.execute(params)).rejects.toThrow(
 			ApplicationError,
 		);
 	});
 
 	it("should handle repository errors and throw ApplicationError", async () => {
-		mockRepository.findAll.mockRejectedValue(
-			new Error("Database connection failed"),
-		);
+		const findAllSpy = jest.spyOn(mockProjectRepository, "findAll");
+		findAllSpy.mockRejectedValue(new Error("Database connection failed"));
 
 		const params: GetAllProjectsServiceParams = {
 			page: 1,
 			limit: 10,
 		};
 
-		await expect(mockGetAllProjectsService.execute(params)).rejects.toThrow(
+		await expect(getAllProjectsService.execute(params)).rejects.toThrow(
 			ApplicationError,
 		);
+
+		findAllSpy.mockRestore();
 	});
 
 	it("should handle default parameters when not provided", async () => {

@@ -3,10 +3,8 @@ import type { UpdateProjectServiceParams } from "@/project/service/UpdateProject
 import { ApplicationError } from "@/shared/Errors";
 import {
 	mockProjectRepository,
-	mockRepository,
-	mockUpdateProjectService,
-	updateProjectService,
-} from "@/test/mocks/factories/ServiceMock";
+	mockUpdateProjectServiceImplementation as updateProjectService,
+} from "@/test/mocks";
 
 describe("UpdateProjectService", () => {
 	beforeEach(() => {
@@ -162,12 +160,13 @@ describe("UpdateProjectService", () => {
 			title: "Updated Project",
 		};
 
-		mockRepository.findById.mockRejectedValue(
-			new Error("Database connection failed"),
+		const findByIdSpy = jest.spyOn(mockProjectRepository, "findById");
+		findByIdSpy.mockRejectedValue(new Error("Database connection failed"));
+
+		await expect(updateProjectService.execute(updateRequest)).rejects.toThrow(
+			ApplicationError,
 		);
 
-		await expect(
-			mockUpdateProjectService.execute(updateRequest),
-		).rejects.toThrow(ApplicationError);
+		findByIdSpy.mockRestore();
 	});
 });

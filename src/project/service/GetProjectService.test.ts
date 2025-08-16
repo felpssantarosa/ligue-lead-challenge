@@ -1,11 +1,9 @@
 import { Project } from "@/project/domain/Project";
 import { NotFoundError } from "@/shared/Errors";
 import {
-	getProjectService,
-	mockGetProjectService,
+	mockGetProjectServiceImplementation as getProjectService,
 	mockProjectRepository,
-	mockRepository,
-} from "@/test/mocks/factories/ServiceMock";
+} from "@/test/mocks";
 
 describe("GetProjectService", () => {
 	beforeEach(() => {
@@ -51,12 +49,14 @@ describe("GetProjectService", () => {
 
 	it("should handle repository errors", async () => {
 		const testId = "test-id";
-		mockRepository.findById.mockRejectedValue(
-			new Error("Database connection error"),
-		);
 
-		await expect(mockGetProjectService.execute({ id: testId })).rejects.toThrow(
+		const findByIdSpy = jest.spyOn(mockProjectRepository, "findById");
+		findByIdSpy.mockRejectedValue(new Error("Database connection error"));
+
+		await expect(getProjectService.execute({ id: testId })).rejects.toThrow(
 			"Database connection error",
 		);
+
+		findByIdSpy.mockRestore();
 	});
 });

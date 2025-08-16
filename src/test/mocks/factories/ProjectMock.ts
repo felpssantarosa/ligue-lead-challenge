@@ -5,57 +5,100 @@ import {
 	GetProjectController,
 	UpdateProjectController,
 } from "@/project/controller";
-import type { CreateProjectService } from "@/project/service/CreateProjectService";
-import type { DeleteProjectService } from "@/project/service/DeleteProjectService";
-import type { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
-import type { GetProjectService } from "@/project/service/GetProjectService";
-import type { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import { Project } from "@/project/domain/Project";
+import { CreateProjectService } from "@/project/service/CreateProjectService";
+import { DeleteProjectService } from "@/project/service/DeleteProjectService";
+import { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
+import { GetProjectService } from "@/project/service/GetProjectService";
+import { UpdateProjectService } from "@/project/service/UpdateProjectService";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
+import { generateUUID } from "@/test/factories";
+import { MockProjectRepository } from "@/test/mocks/repositories";
 
 const mockValidation = {
 	execute: jest.fn(),
 } as ValidationHandler & { execute: jest.Mock };
 
-const mockCreateService = {
+const mockProjectRepository = new MockProjectRepository();
+
+const mockCreateProjectServiceImplementation = new CreateProjectService(
+	mockProjectRepository,
+);
+const mockGetProjectServiceImplementation = new GetProjectService(
+	mockProjectRepository,
+);
+const mockGetAllProjectsServiceImplementation = new GetAllProjectsService(
+	mockProjectRepository,
+);
+const mockUpdateProjectServiceImplementation = new UpdateProjectService(
+	mockProjectRepository,
+);
+const mockDeleteProjectServiceImplementation = new DeleteProjectService(
+	mockProjectRepository,
+);
+
+const mockCreateProjectService = {
 	execute: jest.fn(),
 } as CreateProjectService & { execute: jest.Mock };
 
-const mockGetService = {
+const mockGetProjectService = {
 	execute: jest.fn(),
 } as GetProjectService & { execute: jest.Mock };
 
-const mockGetAllService = {
+const mockGetAllProjectsService = {
 	execute: jest.fn(),
 } as GetAllProjectsService & { execute: jest.Mock };
 
-const mockUpdateService = {
+const mockUpdateProjectService = {
 	execute: jest.fn(),
 } as UpdateProjectService & { execute: jest.Mock };
 
-const mockDeleteService = {
+const mockDeleteProjectService = {
 	execute: jest.fn(),
 } as DeleteProjectService & { execute: jest.Mock };
 
 const mockCreateProjectController = new CreateProjectController(
-	mockCreateService,
+	mockCreateProjectService,
 	mockValidation,
 );
 const mockUpdateProjectController = new UpdateProjectController(
-	mockUpdateService,
+	mockUpdateProjectService,
 	mockValidation,
 );
 const mockDeleteProjectController = new DeleteProjectController(
-	mockDeleteService,
+	mockDeleteProjectService,
 	mockValidation,
 );
 const mockGetProjectController = new GetProjectController(
-	mockGetService,
+	mockGetProjectService,
 	mockValidation,
 );
 const mockGetAllProjectsController = new GetAllProjectsController(
-	mockGetAllService,
+	mockGetAllProjectsService,
 	mockValidation,
 );
+
+export const createProject = (
+	overrides: Partial<{
+		id: string;
+		title: string;
+		description: string;
+		tags: string[];
+	}> = {},
+) => {
+	const defaults = {
+		id: generateUUID(),
+		title: "Test Project",
+		description: "Test project description",
+		tags: ["test"],
+		createdAt: new Date(),
+		updatedAt: new Date(),
+	};
+
+	const projectData = { ...defaults, ...overrides };
+
+	return Project.fromJSON(projectData);
+};
 
 export {
 	mockCreateProjectController,
@@ -63,10 +106,16 @@ export {
 	mockDeleteProjectController,
 	mockGetProjectController,
 	mockGetAllProjectsController,
-	mockCreateService,
-	mockGetService,
-	mockGetAllService,
-	mockUpdateService,
-	mockDeleteService,
+	mockCreateProjectService,
+	mockGetProjectService,
+	mockGetAllProjectsService,
+	mockUpdateProjectService,
+	mockDeleteProjectService,
+	mockCreateProjectServiceImplementation,
+	mockGetProjectServiceImplementation,
+	mockGetAllProjectsServiceImplementation,
+	mockUpdateProjectServiceImplementation,
+	mockDeleteProjectServiceImplementation,
 	mockValidation,
+	mockProjectRepository,
 };

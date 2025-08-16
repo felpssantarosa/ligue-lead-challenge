@@ -2,13 +2,14 @@ import type { Request, Response } from "express";
 import type { UpdateProjectController } from "@/project/controller/UpdateProjectController";
 import type { UpdateProjectService } from "@/project/service/UpdateProjectService";
 import { ValidationError } from "@/shared/Errors/ValidationError";
-import { generateUuid } from "@/test/factories/UUIDFactory";
-import { mockRequest, mockResponse } from "@/test/mocks/factories/HttpMock";
+import { generateUUID } from "@/test/factories";
 import {
+	mockRequest,
+	mockResponse,
 	mockUpdateProjectController,
-	mockUpdateService,
+	mockUpdateProjectService,
 	mockValidation,
-} from "@/test/mocks/factories/ProjectMock";
+} from "@/test/mocks";
 import {
 	cleanupTestValidation,
 	setupTestValidation,
@@ -21,7 +22,7 @@ describe("UpdateProjectController", () => {
 	beforeEach(() => {
 		setupTestValidation();
 		updateController = mockUpdateProjectController;
-		updateService = mockUpdateService;
+		updateService = mockUpdateProjectService;
 
 		mockValidation.execute.mockReset();
 	});
@@ -32,7 +33,7 @@ describe("UpdateProjectController", () => {
 
 	describe("handle", () => {
 		it("should update a project successfully", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			const updateData = {
 				title: "Updated Project",
 				description: "Updated Description",
@@ -71,7 +72,7 @@ describe("UpdateProjectController", () => {
 		});
 
 		it("should handle partial updates", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			const updateData = {
 				title: "Updated Title Only",
 			};
@@ -137,7 +138,7 @@ describe("UpdateProjectController", () => {
 		});
 
 		it("should handle empty update data", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			const updatedProject = {
 				id: projectId,
 				title: "Existing Title",
@@ -168,7 +169,7 @@ describe("UpdateProjectController", () => {
 		});
 
 		it("should handle undefined values by excluding them", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			const updateData = {
 				title: "Updated Title",
 				description: undefined,

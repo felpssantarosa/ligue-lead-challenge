@@ -2,11 +2,9 @@ import { Project } from "@/project/domain/Project";
 import type { DeleteProjectServiceParams } from "@/project/service/DeleteProjectService";
 import { ApplicationError } from "@/shared/Errors";
 import {
-	deleteProjectService,
-	mockDeleteProjectService,
+	mockDeleteProjectServiceImplementation as deleteProjectService,
 	mockProjectRepository,
-	mockRepository,
-} from "@/test/mocks/factories/ServiceMock";
+} from "@/test/mocks";
 
 describe("DeleteProjectService", () => {
 	beforeEach(() => {
@@ -86,13 +84,14 @@ describe("DeleteProjectService", () => {
 			id: "test-id",
 		};
 
-		mockRepository.findById.mockRejectedValue(
-			new Error("Database connection failed"),
+		const findByIdSpy = jest.spyOn(mockProjectRepository, "findById");
+		findByIdSpy.mockRejectedValue(new Error("Database connection failed"));
+
+		await expect(deleteProjectService.execute(deleteRequest)).rejects.toThrow(
+			ApplicationError,
 		);
 
-		await expect(
-			mockDeleteProjectService.execute(deleteRequest),
-		).rejects.toThrow(ApplicationError);
+		findByIdSpy.mockRestore();
 	});
 
 	it("should handle default force parameter", async () => {

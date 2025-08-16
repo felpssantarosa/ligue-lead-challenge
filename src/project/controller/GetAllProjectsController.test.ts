@@ -2,12 +2,13 @@ import type { Request, Response } from "express";
 import type { GetAllProjectsController } from "@/project/controller/GetAllProjectsController";
 import type { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
 import { ValidationError } from "@/shared/Errors/ValidationError";
-import { mockRequest, mockResponse } from "@/test/mocks/factories/HttpMock";
 import {
 	mockGetAllProjectsController,
-	mockGetAllService,
+	mockGetAllProjectsService,
+	mockRequest,
+	mockResponse,
 	mockValidation,
-} from "@/test/mocks/factories/ProjectMock";
+} from "@/test/mocks";
 import {
 	cleanupTestValidation,
 	setupTestValidation,
@@ -20,7 +21,7 @@ describe("GetAllProjectsController", () => {
 	beforeEach(() => {
 		setupTestValidation();
 		getAllController = mockGetAllProjectsController;
-		getAllService = mockGetAllService;
+		getAllService = mockGetAllProjectsService;
 
 		mockValidation.execute.mockReset();
 	});

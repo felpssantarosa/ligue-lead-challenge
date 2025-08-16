@@ -9,9 +9,9 @@ import type { GetAllTasksService } from "@/task/service/GetAllTasksService";
 import type { GetTaskService } from "@/task/service/GetTaskService";
 import type { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import type { UpdateTaskService } from "@/task/service/UpdateTaskService";
-import { generateUuid } from "@/test/factories/UUIDFactory";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 
-const mockValidation = {
+const mockTaskValidation = {
 	execute: jest.fn(),
 } as ValidationHandler & { execute: jest.Mock };
 
@@ -67,11 +67,11 @@ export function createTask(
 	}> = {},
 ): Task {
 	const defaults = {
-		id: generateUuid(),
+		id: generateUUID(),
 		title: "Test Task",
 		description: "Test task description",
 		status: TaskStatus.TODO,
-		projectId: generateUuid(),
+		projectId: generateUUID(),
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
@@ -90,7 +90,7 @@ export function createTask(
 }
 
 export {
-	mockValidation,
+	mockTaskValidation,
 	mockCreateTaskService,
 	mockGetTaskService,
 	mockUpdateTaskService,

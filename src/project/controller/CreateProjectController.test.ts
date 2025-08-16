@@ -2,13 +2,14 @@ import type { Request, Response } from "express";
 import type { CreateProjectController } from "@/project/controller/CreateProjectController";
 import type { CreateProjectService } from "@/project/service/CreateProjectService";
 import { ValidationError } from "@/shared/Errors/ValidationError";
-import { generateUuid } from "@/test/factories/UUIDFactory";
-import { mockRequest, mockResponse } from "@/test/mocks/factories/HttpMock";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 import {
 	mockCreateProjectController,
-	mockCreateService,
+	mockCreateProjectService,
+	mockRequest,
+	mockResponse,
 	mockValidation,
-} from "@/test/mocks/factories/ProjectMock";
+} from "@/test/mocks";
 import {
 	cleanupTestValidation,
 	setupTestValidation,
@@ -21,7 +22,7 @@ describe("CreateProjectController", () => {
 	beforeEach(() => {
 		setupTestValidation();
 		createController = mockCreateProjectController;
-		createService = mockCreateService;
+		createService = mockCreateProjectService;
 
 		mockValidation.execute.mockReset();
 	});
@@ -38,7 +39,7 @@ describe("CreateProjectController", () => {
 				tags: ["tag1", "tag2"],
 			};
 			const createdProject = {
-				id: generateUuid(),
+				id: generateUUID(),
 				...projectData,
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -103,7 +104,7 @@ describe("CreateProjectController", () => {
 				tags: [],
 			};
 			const createdProject = {
-				id: generateUuid(),
+				id: generateUUID(),
 				...expectedServiceCall,
 				createdAt: new Date(),
 				updatedAt: new Date(),

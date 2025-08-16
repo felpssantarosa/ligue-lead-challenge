@@ -1,10 +1,8 @@
 import type { CreateProjectServiceParams } from "@/project/service/CreateProjectService";
 import {
-	createProjectService,
-	mockCreateProjectService,
+	mockCreateProjectServiceImplementation as createProjectService,
 	mockProjectRepository,
-	mockRepository,
-} from "@/test/mocks/factories/ServiceMock";
+} from "@/test/mocks";
 
 describe("CreateProjectService", () => {
 	beforeEach(() => {
@@ -101,10 +99,13 @@ describe("CreateProjectService", () => {
 			tags: ["test"],
 		};
 
-		mockRepository.save.mockRejectedValue(new Error("Database error"));
+		const saveSpy = jest.spyOn(mockProjectRepository, "save");
+		saveSpy.mockRejectedValue(new Error("Database error"));
 
-		await expect(mockCreateProjectService.execute(request)).rejects.toThrow(
+		await expect(createProjectService.execute(request)).rejects.toThrow(
 			"Database error",
 		);
+
+		saveSpy.mockRestore();
 	});
 });

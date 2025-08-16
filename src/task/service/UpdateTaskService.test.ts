@@ -1,7 +1,7 @@
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError } from "@/shared/Errors";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
-import { generateUuid } from "@/test/factories/UUIDFactory";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 import {
 	createTask,
 	mockTaskRepository,
@@ -17,7 +17,7 @@ describe("UpdateTaskService", () => {
 
 	describe("execute", () => {
 		it("should update task when found", async () => {
-			const taskId = generateUuid();
+			const taskId = generateUUID();
 			const originalTask = createTask({
 				id: taskId,
 				title: "Original Title",
@@ -56,7 +56,7 @@ describe("UpdateTaskService", () => {
 		});
 
 		it("should throw NotFoundError when task not found", async () => {
-			const taskId = generateUuid();
+			const taskId = generateUUID();
 			mockTaskRepository.findById.mockResolvedValue(null);
 
 			await expect(
@@ -71,7 +71,7 @@ describe("UpdateTaskService", () => {
 		});
 
 		it("should update only provided fields", async () => {
-			const taskId = generateUuid();
+			const taskId = generateUUID();
 			const originalTask = createTask({
 				id: taskId,
 				title: "Original Title",

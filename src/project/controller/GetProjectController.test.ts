@@ -2,13 +2,14 @@ import type { Request, Response } from "express";
 import type { GetProjectController } from "@/project/controller/GetProjectController";
 import type { GetProjectService } from "@/project/service/GetProjectService";
 import { ValidationError } from "@/shared/Errors/ValidationError";
-import { generateUuid } from "@/test/factories/UUIDFactory";
-import { mockRequest, mockResponse } from "@/test/mocks/factories/HttpMock";
+import { generateUUID } from "@/test/factories";
 import {
 	mockGetProjectController,
-	mockGetService,
+	mockGetProjectService,
+	mockRequest,
+	mockResponse,
 	mockValidation,
-} from "@/test/mocks/factories/ProjectMock";
+} from "@/test/mocks";
 import {
 	cleanupTestValidation,
 	setupTestValidation,
@@ -21,7 +22,7 @@ describe("GetProjectController", () => {
 	beforeEach(() => {
 		setupTestValidation();
 		getController = mockGetProjectController;
-		getService = mockGetService;
+		getService = mockGetProjectService;
 
 		mockValidation.execute.mockReset();
 	});
@@ -32,7 +33,7 @@ describe("GetProjectController", () => {
 
 	describe("handle", () => {
 		it("should get a project by id successfully", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			const project = {
 				id: projectId,
 				title: "Test Project",
@@ -61,7 +62,7 @@ describe("GetProjectController", () => {
 		});
 
 		it("should handle not found error", async () => {
-			const projectId = generateUuid();
+			const projectId = generateUUID();
 			mockRequest.params = { id: projectId };
 
 			mockValidation.execute.mockReturnValue({ id: projectId });

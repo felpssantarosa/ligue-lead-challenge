@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import type { ProjectService } from "@/project/service";
+import type { GetProjectService } from "@/project/service/GetProjectService";
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
 import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
@@ -25,13 +25,14 @@ export type GetTasksByProjectServiceResponse = {
 export class GetTasksByProjectService {
 	constructor(
 		@inject("TaskRepository") private readonly taskRepository: TaskRepository,
-		@inject("ProjectService") private readonly projectService: ProjectService,
+		@inject("GetProjectService")
+		private readonly projectService: GetProjectService,
 	) {}
 
 	async execute(
 		params: GetTasksByProjectServiceParams,
 	): Promise<GetTasksByProjectServiceResponse> {
-		const project = await this.projectService.get({ id: params.projectId });
+		const project = await this.projectService.execute({ id: params.projectId });
 
 		if (!project) {
 			throw new NotFoundError({
