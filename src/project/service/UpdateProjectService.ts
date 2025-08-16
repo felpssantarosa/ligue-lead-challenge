@@ -24,7 +24,9 @@ export class UpdateProjectService {
 		private readonly projectRepository: ProjectRepository,
 	) {}
 
-	async execute(request: UpdateProjectServiceParams): Promise<UpdateProjectServiceResponse> {
+	async execute(
+		request: UpdateProjectServiceParams,
+	): Promise<UpdateProjectServiceResponse> {
 		try {
 			const existingProject = await this.projectRepository.findById(request.id);
 

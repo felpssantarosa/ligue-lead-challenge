@@ -31,7 +31,9 @@ export class GetProjectController extends BaseController {
 				"GetProjectController.handle",
 			);
 
-			const project = await this.getProjectService.execute(validatedParams.id);
+			const project = await this.getProjectService.execute({
+				id: validatedParams.id,
+			});
 
 			if (!project) {
 				throw NotFoundError.project(

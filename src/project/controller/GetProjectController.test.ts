@@ -52,7 +52,7 @@ describe("GetProjectController", () => {
 				mockResponse as Response,
 			);
 
-			expect(getService.execute).toHaveBeenCalledWith(projectId);
+			expect(getService.execute).toHaveBeenCalledWith({ id: projectId });
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: true,

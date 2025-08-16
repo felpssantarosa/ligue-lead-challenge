@@ -51,9 +51,7 @@ export class TaskService {
 		return this.getAllTasksService.execute(params);
 	}
 
-	public get(
-		params: GetTaskServiceParams,
-	): Promise<GetTaskServiceResponse> {
+	public get(params: GetTaskServiceParams): Promise<GetTaskServiceResponse> {
 		return this.getTaskService.execute(params);
 	}
 

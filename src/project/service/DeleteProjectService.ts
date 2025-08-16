@@ -22,7 +22,9 @@ export class DeleteProjectService {
 		// TODO: Inject TaskRepository when available to check for dependencies
 	) {}
 
-	async execute(request: DeleteProjectServiceParams): Promise<DeleteProjectServiceResponse> {
+	async execute(
+		request: DeleteProjectServiceParams,
+	): Promise<DeleteProjectServiceResponse> {
 		try {
 			const existingProject = await this.projectRepository.findById(request.id);
 

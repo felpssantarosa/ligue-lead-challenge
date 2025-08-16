@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import type {
-	GetAllProjectsParams,
 	GetAllProjectsService,
+	GetAllProjectsServiceParams,
 } from "@/project/service/GetAllProjectsService";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { BaseController } from "../../shared/BaseController";
@@ -39,7 +39,7 @@ export class GetAllProjectsController extends BaseController {
 			if (validatedQuery.page < 1) validatedQuery.page = 1;
 			if (validatedQuery.limit < 1) validatedQuery.limit = 10;
 
-			const params: GetAllProjectsParams = {
+			const params: GetAllProjectsServiceParams = {
 				page: validatedQuery.page,
 				limit: validatedQuery.limit,
 				search: validatedQuery.search,
