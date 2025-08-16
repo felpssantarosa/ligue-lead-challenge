@@ -2,13 +2,13 @@ import { inject, injectable } from "tsyringe";
 import { Project } from "@/project/domain/Project";
 import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
 
-export interface CreateProjectRequest {
+export interface CreateProjectServiceParams {
 	title: string;
 	description: string;
 	tags: string[];
 }
 
-export interface CreateProjectResponse {
+export interface CreateProjectServiceResponse {
 	id: string;
 	title: string;
 	description: string;
@@ -24,7 +24,9 @@ export class CreateProjectService {
 		private readonly projectRepository: ProjectRepository,
 	) {}
 
-	async execute(request: CreateProjectRequest): Promise<CreateProjectResponse> {
+	async execute(
+		request: CreateProjectServiceParams,
+	): Promise<CreateProjectServiceResponse> {
 		if (!request.title.trim()) {
 			throw new Error("Project title cannot be empty");
 		}

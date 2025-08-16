@@ -2,7 +2,14 @@ import { inject, injectable } from "tsyringe";
 import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
 import { ApplicationError } from "@/shared/Errors";
 
-export interface GetAllProjectsResponse {
+export interface GetAllProjectsServiceParams {
+	page?: number;
+	limit?: number;
+	search?: string;
+	tags?: string[];
+}
+
+export interface GetAllProjectsServiceResponse {
 	projects: Array<{
 		id: string;
 		title: string;
@@ -14,13 +21,6 @@ export interface GetAllProjectsResponse {
 	total: number;
 }
 
-export interface GetAllProjectsParams {
-	page?: number;
-	limit?: number;
-	search?: string;
-	tags?: string[];
-}
-
 @injectable()
 export class GetAllProjectsService {
 	constructor(
@@ -29,8 +29,8 @@ export class GetAllProjectsService {
 	) {}
 
 	async execute(
-		params: GetAllProjectsParams = {},
-	): Promise<GetAllProjectsResponse> {
+		params: GetAllProjectsServiceParams,
+	): Promise<GetAllProjectsServiceResponse> {
 		try {
 			const { page = 1, limit = 10, tags, search } = params;
 

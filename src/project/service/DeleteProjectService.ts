@@ -3,12 +3,12 @@ import type { ProjectRepository } from "@/project/infra/repository/ProjectReposi
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
 
-export interface DeleteProjectRequest {
+export interface DeleteProjectServiceParams {
 	id: EntityId;
 	force?: boolean;
 }
 
-export interface DeleteProjectResponse {
+export interface DeleteProjectServiceResponse {
 	id: string;
 	message: string;
 	deletedAt: Date;
@@ -22,7 +22,7 @@ export class DeleteProjectService {
 		// TODO: Inject TaskRepository when available to check for dependencies
 	) {}
 
-	async execute(request: DeleteProjectRequest): Promise<DeleteProjectResponse> {
+	async execute(request: DeleteProjectServiceParams): Promise<DeleteProjectServiceResponse> {
 		try {
 			const existingProject = await this.projectRepository.findById(request.id);
 

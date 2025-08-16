@@ -4,11 +4,11 @@ import type { ProjectRepository } from "@/project/infra/repository/ProjectReposi
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
 
-export interface UpdateProjectRequest extends UpdateProjectParams {
+export interface UpdateProjectServiceParams extends UpdateProjectParams {
 	id: EntityId;
 }
 
-export interface UpdateProjectResponse {
+export interface UpdateProjectServiceResponse {
 	id: string;
 	title: string;
 	description: string;
@@ -24,7 +24,7 @@ export class UpdateProjectService {
 		private readonly projectRepository: ProjectRepository,
 	) {}
 
-	async execute(request: UpdateProjectRequest): Promise<UpdateProjectResponse> {
+	async execute(request: UpdateProjectServiceParams): Promise<UpdateProjectServiceResponse> {
 		try {
 			const existingProject = await this.projectRepository.findById(request.id);
 

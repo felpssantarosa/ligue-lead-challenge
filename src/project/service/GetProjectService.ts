@@ -3,7 +3,11 @@ import type { ProjectRepository } from "@/project/infra/repository/ProjectReposi
 import type { EntityId } from "@/shared/domain/Entity";
 import { NotFoundError } from "@/shared/Errors";
 
-export interface GetProjectResponse {
+export type GetProjectServiceParams = {
+	id: EntityId;
+};
+
+export type GetProjectServiceResponse = {
 	id: string;
 	title: string;
 	description: string;
@@ -18,7 +22,7 @@ export interface GetProjectResponse {
 	}>;
 	createdAt: Date;
 	updatedAt: Date;
-}
+} | null;
 
 @injectable()
 export class GetProjectService {
@@ -27,11 +31,13 @@ export class GetProjectService {
 		private readonly projectRepository: ProjectRepository,
 	) {}
 
-	async execute(id: EntityId): Promise<GetProjectResponse | null> {
-		const project = await this.projectRepository.findById(id);
+	async execute(
+		params: GetProjectServiceParams,
+	): Promise<GetProjectServiceResponse> {
+		const project = await this.projectRepository.findById(params.id);
 
 		if (!project) {
-			throw NotFoundError.project(id, "GetProjectService.execute");
+			throw NotFoundError.project(params.id, "GetProjectService.execute");
 		}
 
 		return {
