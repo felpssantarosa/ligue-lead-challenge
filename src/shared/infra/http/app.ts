@@ -11,7 +11,10 @@ import {
 	isUnauthorizedError,
 	isValidationError,
 } from "@/shared/Errors";
-import { taskRoutes } from "@/task/infra/routes/taskRoutes";
+import {
+	taskRoutes,
+	taskRoutesBoundByProject,
+} from "@/task/infra/routes/taskRoutes";
 
 export const createApp = (): express.Application => {
 	const app = express();
@@ -25,8 +28,12 @@ export const createApp = (): express.Application => {
 		res.json({ status: "OK", timestamp: new Date().toISOString() });
 	});
 
+	// Project
 	app.use("/api/projects", projectRoutes);
-	app.use("/api/projects", taskRoutes);
+
+	// Task
+	app.use("/api/projects", taskRoutesBoundByProject);
+	app.use("/api/tasks", taskRoutes);
 
 	app.use(
 		(
