@@ -1,22 +1,26 @@
 import { Router } from "express";
 import { container } from "tsyringe";
-import { TaskController } from "@/task/controller/TaskController";
+import { DeleteTaskController, UpdateTaskController } from "@/task/controller";
 
 const taskRoutes = Router();
+const taskRoutesBoundByProject = Router();
 
-taskRoutes.post("/:projectId/tasks", (req, res) => {
-	const taskController = container.resolve(TaskController);
-	return taskController.create(req, res);
-});
-
+// Update task: PUT /api/tasks/:id
 taskRoutes.put("/:id", (req, res) => {
-	const taskController = container.resolve(TaskController);
-	return taskController.update(req, res);
+	const updateTaskController = container.resolve(UpdateTaskController);
+	return updateTaskController.handle(req, res);
 });
 
+// Delete task: DELETE /api/tasks/:id
 taskRoutes.delete("/:id", (req, res) => {
-	const taskController = container.resolve(TaskController);
-	return taskController.delete(req, res);
+	const deleteTaskController = container.resolve(DeleteTaskController);
+	return deleteTaskController.handle(req, res);
 });
 
-export { taskRoutes };
+// Create task under project: POST /api/projects/:projectId/tasks
+taskRoutesBoundByProject.post("/:projectId/tasks", (req, res) => {
+	// const taskController = container.resolve(TaskController);
+	// return taskController.create(req, res);
+});
+
+export { taskRoutes, taskRoutesBoundByProject };
