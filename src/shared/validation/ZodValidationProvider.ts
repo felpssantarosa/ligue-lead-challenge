@@ -4,7 +4,12 @@ import {
 	type ProjectValidationId,
 	projectSchemas,
 } from "@/project/validation/schemas/zod";
+import {
+	type TaskValidationId,
+	taskSchemas,
+} from "@/task/validation/schemas/zod";
 import type {
+	ValidationId,
 	ValidationProvider,
 	ValidationResult,
 } from "./ValidationProvider";
@@ -12,12 +17,27 @@ import type {
 @injectable()
 export class ZodValidationProvider implements ValidationProvider {
 	validate<T>(
-		schemaId: ProjectValidationId,
+		schemaId: ValidationId,
 		data: unknown,
 		context: string,
 	): ValidationResult<T> {
 		try {
-			const zodSchema = projectSchemas[schemaId] as z.ZodSchema<T>;
+			let zodSchema: z.ZodSchema<T> | null = null;
+
+			if (schemaId in projectSchemas) {
+				zodSchema = projectSchemas[
+					schemaId as ProjectValidationId
+				] as z.ZodSchema<T>;
+			}
+
+			if (schemaId in taskSchemas) {
+				zodSchema = taskSchemas[schemaId as TaskValidationId] as z.ZodSchema<T>;
+			}
+
+			if (!zodSchema) {
+				throw new Error(`Unknown schema ID: ${schemaId}`);
+			}
+
 			const result = zodSchema.safeParse(data);
 
 			if (result.success) {
