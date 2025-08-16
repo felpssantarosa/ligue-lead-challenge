@@ -1,6 +1,6 @@
 import { Project } from "@/project/domain/Project";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
-import type { CreateTaskRequest } from "@/task/service/CreateTaskService";
+import type { CreateTaskServiceParams } from "@/task/service/CreateTaskService";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
 import { MockProjectRepository } from "@/test/mocks/repositories/MockProjectRepository";
 import { MockTaskRepository } from "@/test/mocks/repositories/MockTaskRepository";
@@ -33,7 +33,7 @@ describe("CreateTaskService", () => {
 	});
 
 	it("should create a task successfully", async () => {
-		const request: CreateTaskRequest = {
+		const request: CreateTaskServiceParams = {
 			title: "Test Task",
 			description: "A test task description",
 			status: TaskStatus.TODO,
@@ -53,7 +53,7 @@ describe("CreateTaskService", () => {
 	});
 
 	it("should throw error when title is empty", async () => {
-		const request: CreateTaskRequest = {
+		const request: CreateTaskServiceParams = {
 			title: "",
 			description: "A test task description",
 			status: TaskStatus.TODO,
@@ -66,7 +66,7 @@ describe("CreateTaskService", () => {
 	});
 
 	it("should throw error when project does not exist", async () => {
-		const request: CreateTaskRequest = {
+		const request: CreateTaskServiceParams = {
 			title: "Test Task",
 			description: "A test task description",
 			status: TaskStatus.TODO,
@@ -79,7 +79,7 @@ describe("CreateTaskService", () => {
 	});
 
 	it("should save task to repository", async () => {
-		const request: CreateTaskRequest = {
+		const request: CreateTaskServiceParams = {
 			title: "Test Task",
 			description: "A test task description",
 			status: TaskStatus.TODO,
@@ -94,7 +94,7 @@ describe("CreateTaskService", () => {
 	});
 
 	it("should create task with default status TODO if not provided", async () => {
-		const request: CreateTaskRequest = {
+		const request: CreateTaskServiceParams = {
 			title: "Test Task",
 			description: "A test task description",
 			status: TaskStatus.TODO,
