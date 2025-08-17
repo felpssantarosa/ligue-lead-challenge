@@ -3,9 +3,9 @@ import request from "supertest";
 import { createApp } from "@/shared/infra/http/app";
 import { generateUUID } from "../factories/UUIDFactory";
 import "reflect-metadata";
-import { 
-	setupIntegrationContainer, 
-	cleanupIntegrationContainer 
+import {
+	cleanupIntegrationContainer,
+	setupIntegrationContainer,
 } from "./setup/container";
 import { cleanTestDatabase, closeTestDatabase } from "./setup/database";
 
