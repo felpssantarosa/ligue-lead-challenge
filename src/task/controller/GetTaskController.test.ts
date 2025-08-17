@@ -8,10 +8,12 @@ import {
 	createTask,
 	mockGetTaskController,
 	mockGetTaskService,
+	mockTaskValidation,
 	mockRequest,
 	mockResponse,
 } from "@/test/mocks";
 import { setupTestValidation } from "@/test/setup/validation";
+import { generateUUID } from "@/test/factories";
 
 describe("GetTaskController", () => {
 	let getTaskController: GetTaskController;
@@ -28,7 +30,7 @@ describe("GetTaskController", () => {
 
 	describe("handle", () => {
 		it("should get task successfully when task exists", async () => {
-			const taskId = "task-id-123";
+			const taskId = generateUUID();
 			const task = createTask({
 				id: taskId,
 				title: "Test Task",
@@ -36,6 +38,7 @@ describe("GetTaskController", () => {
 			});
 
 			mockRequest.params = { id: taskId };
+			mockTaskValidation.execute.mockReturnValue({ id: taskId });
 			mockGetTaskService.execute.mockResolvedValue(task);
 
 			await getTaskController.handle(
@@ -43,6 +46,11 @@ describe("GetTaskController", () => {
 				mockResponse as Response,
 			);
 
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
+				"get-task",
+				{ id: taskId },
+				"GetTaskController.handle",
+			);
 			expect(mockGetTaskService.execute).toHaveBeenCalledWith({ id: taskId });
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
 			expect(mockResponse.json).toHaveBeenCalledWith({
@@ -52,30 +60,46 @@ describe("GetTaskController", () => {
 		});
 
 		it("should handle missing id parameter", async () => {
-			const task = createTask({ id: "task-id" });
+			const validationError = new ValidationError({
+				message: "Task ID is required",
+				field: "id",
+				value: undefined,
+			});
+
 			mockRequest.params = {};
-			mockGetTaskService.execute.mockResolvedValue(task);
+			mockTaskValidation.execute.mockImplementation(() => {
+				throw validationError;
+			});
 
 			await getTaskController.handle(
 				mockRequest as Request,
 				mockResponse as Response,
 			);
 
-			expect(mockGetTaskService.execute).toHaveBeenCalledWith({
-				id: undefined,
-			});
-			expect(mockResponse.status).toHaveBeenCalledWith(200);
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
+				"get-task",
+				{},
+				"GetTaskController.handle",
+			);
+			expect(mockGetTaskService.execute).not.toHaveBeenCalled();
+			expect(mockResponse.status).toHaveBeenCalledWith(400);
 			expect(mockResponse.json).toHaveBeenCalledWith({
-				success: true,
-				data: task,
+				success: false,
+				error: {
+					type: "VALIDATION_ERROR",
+					message: "[ValidationError] Validation Error: Task ID is required",
+					field: "id",
+					value: undefined,
+				},
 			});
 		});
 
 		it("should handle task not found error", async () => {
-			const taskId = "non-existent-task-id";
+			const taskId = generateUUID();
 			const notFoundError = NotFoundError.task(taskId);
 
 			mockRequest.params = { id: taskId };
+			mockTaskValidation.execute.mockReturnValue({ id: taskId });
 			mockGetTaskService.execute.mockRejectedValue(notFoundError);
 
 			await getTaskController.handle(
@@ -83,6 +107,11 @@ describe("GetTaskController", () => {
 				mockResponse as Response,
 			);
 
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
+				"get-task",
+				{ id: taskId },
+				"GetTaskController.handle",
+			);
 			expect(mockGetTaskService.execute).toHaveBeenCalledWith({ id: taskId });
 			expect(mockResponse.status).toHaveBeenCalledWith(404);
 			expect(mockResponse.json).toHaveBeenCalledWith({
@@ -105,16 +134,21 @@ describe("GetTaskController", () => {
 			});
 
 			mockRequest.params = { id: invalidId };
-			mockGetTaskService.execute.mockRejectedValue(validationError);
+			mockTaskValidation.execute.mockImplementation(() => {
+				throw validationError;
+			});
 
 			await getTaskController.handle(
 				mockRequest as Request,
 				mockResponse as Response,
 			);
 
-			expect(mockGetTaskService.execute).toHaveBeenCalledWith({
-				id: invalidId,
-			});
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
+				"get-task",
+				{ id: invalidId },
+				"GetTaskController.handle",
+			);
+			expect(mockGetTaskService.execute).not.toHaveBeenCalled();
 			expect(mockResponse.status).toHaveBeenCalledWith(400);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: false,
@@ -128,10 +162,11 @@ describe("GetTaskController", () => {
 		});
 
 		it("should handle service errors gracefully", async () => {
-			const taskId = "task-id-123";
+			const taskId = generateUUID();
 			const serviceError = new Error("Database connection failed");
 
 			mockRequest.params = { id: taskId };
+			mockTaskValidation.execute.mockReturnValue({ id: taskId });
 			mockGetTaskService.execute.mockRejectedValue(serviceError);
 
 			await getTaskController.handle(
@@ -139,6 +174,11 @@ describe("GetTaskController", () => {
 				mockResponse as Response,
 			);
 
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
+				"get-task",
+				{ id: taskId },
+				"GetTaskController.handle",
+			);
 			expect(mockGetTaskService.execute).toHaveBeenCalledWith({ id: taskId });
 			expect(mockResponse.status).toHaveBeenCalledWith(500);
 			expect(mockResponse.json).toHaveBeenCalledWith({
@@ -152,25 +192,42 @@ describe("GetTaskController", () => {
 
 		it("should handle empty task id parameter", async () => {
 			const emptyId = "";
-			const task = createTask({ id: emptyId });
+			const validationError = new ValidationError({
+				message: "Invalid task ID format",
+				field: "id",
+				value: emptyId,
+			});
+
 			mockRequest.params = { id: emptyId };
-			mockGetTaskService.execute.mockResolvedValue(task);
+			mockTaskValidation.execute.mockImplementation(() => {
+				throw validationError;
+			});
 
 			await getTaskController.handle(
 				mockRequest as Request,
 				mockResponse as Response,
 			);
 
-			expect(mockGetTaskService.execute).toHaveBeenCalledWith({ id: emptyId });
-			expect(mockResponse.status).toHaveBeenCalledWith(200);
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
+				"get-task",
+				{ id: emptyId },
+				"GetTaskController.handle",
+			);
+			expect(mockGetTaskService.execute).not.toHaveBeenCalled();
+			expect(mockResponse.status).toHaveBeenCalledWith(400);
 			expect(mockResponse.json).toHaveBeenCalledWith({
-				success: true,
-				data: task,
+				success: false,
+				error: {
+					type: "VALIDATION_ERROR",
+					message: "[ValidationError] Validation Error: Invalid task ID format",
+					field: "id",
+					value: emptyId,
+				},
 			});
 		});
 
 		it("should handle task service returning complex task object", async () => {
-			const taskId = "complex-task-id";
+			const taskId = generateUUID();
 			const complexTask = Task.fromJSON({
 				id: taskId,
 				title: "Complex Task with Special Characters !@#$%",
@@ -182,6 +239,7 @@ describe("GetTaskController", () => {
 			});
 
 			mockRequest.params = { id: taskId };
+			mockTaskValidation.execute.mockReturnValue({ id: taskId });
 			mockGetTaskService.execute.mockResolvedValue(complexTask);
 
 			await getTaskController.handle(
@@ -189,6 +247,11 @@ describe("GetTaskController", () => {
 				mockResponse as Response,
 			);
 
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
+				"get-task",
+				{ id: taskId },
+				"GetTaskController.handle",
+			);
 			expect(mockGetTaskService.execute).toHaveBeenCalledWith({ id: taskId });
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
 			expect(mockResponse.json).toHaveBeenCalledWith({
