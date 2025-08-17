@@ -22,6 +22,7 @@ import {
 	GetTaskController,
 } from "@/task/controller";
 import { UpdateTaskController } from "@/task/controller/UpdateTaskController";
+import { TaskModel } from "@/task/infra";
 import { SequelizeTaskRepository } from "@/task/infra/repository/SequelizeTaskRepository";
 import { TaskService } from "@/task/service";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
@@ -31,7 +32,6 @@ import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
 import { createTestDatabase, setupTestDatabase } from "./database";
-import { TaskModel } from "@/task/infra";
 
 export const setupE2EContainer = async (): Promise<void> => {
 	await setupTestDatabase();
