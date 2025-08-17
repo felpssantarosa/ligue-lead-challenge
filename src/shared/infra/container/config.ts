@@ -16,6 +16,8 @@ import { DeleteProjectService } from "@/project/service/DeleteProjectService";
 import { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
 import { GetProjectService } from "@/project/service/GetProjectService";
 import { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import type { CacheProvider } from "@/shared/cache";
+import { RedisCacheProvider } from "@/shared/cache";
 import { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { ValidationProvider } from "@/shared/validation/ValidationProvider";
 import { ZodValidationProvider } from "@/shared/validation/ZodValidationProvider";
@@ -42,6 +44,14 @@ export const registerDependencies = (sequelize: Sequelize): void => {
 
 	// Clear existing instances to avoid conflicts
 	container.clearInstances();
+
+	// Cache - only register if not already registered (for testing)
+	if (!container.isRegistered("CacheProvider")) {
+		container.registerSingleton<CacheProvider>(
+			"CacheProvider",
+			RedisCacheProvider,
+		);
+	}
 
 	// Validation
 	container.registerSingleton<ValidationProvider>(

@@ -13,6 +13,7 @@ import { DeleteProjectService } from "@/project/service/DeleteProjectService";
 import { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
 import { GetProjectService } from "@/project/service/GetProjectService";
 import { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import type { CacheProvider } from "@/shared/cache";
 import { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { ValidationProvider } from "@/shared/validation/ValidationProvider";
 import { ZodValidationProvider } from "@/shared/validation/ZodValidationProvider";
@@ -31,6 +32,7 @@ import { GetAllTasksService } from "@/task/service/GetAllTasksService";
 import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
+import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
 import { createTestDatabase, setupTestDatabase } from "./database";
 
 export const setupE2EContainer = async (): Promise<void> => {
@@ -40,6 +42,12 @@ export const setupE2EContainer = async (): Promise<void> => {
 
 	const ProjectModel = sequelize.models
 		.ProjectModel as typeof import("@/project/infra/database/models/SequelizeProjectModel").default;
+
+	// Cache
+	container.registerSingleton<CacheProvider>(
+		"CacheProvider",
+		MockCacheProvider,
+	);
 
 	container.registerSingleton<ValidationProvider>(
 		"ValidationProvider",

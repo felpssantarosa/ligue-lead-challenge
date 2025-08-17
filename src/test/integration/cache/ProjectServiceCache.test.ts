@@ -1,0 +1,145 @@
+import "reflect-metadata";
+import { container } from "tsyringe";
+import { CreateProjectService } from "@/project/service/CreateProjectService";
+import { DeleteProjectService } from "@/project/service/DeleteProjectService";
+import { GetProjectService } from "@/project/service/GetProjectService";
+import { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
+import {
+	cleanupIntegrationContainer,
+	setupIntegrationContainer,
+} from "@/test/integration/setup/container";
+
+describe("Project Service Cache Integration", () => {
+	let getProjectService: GetProjectService;
+	let createProjectService: CreateProjectService;
+	let updateProjectService: UpdateProjectService;
+	let deleteProjectService: DeleteProjectService;
+	let cacheProvider: CacheProvider;
+
+	beforeEach(async () => {
+		await setupIntegrationContainer();
+
+		getProjectService = container.resolve(GetProjectService);
+		createProjectService = container.resolve(CreateProjectService);
+		updateProjectService = container.resolve(UpdateProjectService);
+		deleteProjectService = container.resolve(DeleteProjectService);
+		cacheProvider = container.resolve<CacheProvider>("CacheProvider");
+	});
+
+	afterEach(() => {
+		cleanupIntegrationContainer();
+	});
+
+	describe("GetProjectService caching", () => {
+		it("should cache project data and serve from cache on subsequent requests", async () => {
+			const createParams = {
+				title: "Cache Test Project",
+				description: "Testing cache functionality",
+				tags: ["test", "cache"],
+			};
+
+			const createdProject = await createProjectService.execute(createParams);
+			const projectId = createdProject.id;
+
+			// Clear cache to ensure fresh start
+			await cacheProvider.clear();
+
+			// First request - should hit database and cache the result
+			const firstResult = await getProjectService.execute({ id: projectId });
+
+			// Verify the cache key exists
+			const cacheKey = CacheKeys.project(projectId);
+			const cachedData = await cacheProvider.get(cacheKey);
+			expect(cachedData).toBeDefined();
+
+			// Second request - should serve from cache
+			const secondResult = await getProjectService.execute({ id: projectId });
+
+			expect(firstResult).toEqual(secondResult);
+			expect(firstResult).toBeDefined();
+			if (firstResult) {
+				expect(firstResult.id).toBe(projectId);
+			}
+		});
+
+		it("should invalidate cache when project is updated", async () => {
+			const createParams = {
+				title: "Update Cache Test",
+				description: "Testing cache invalidation on update",
+				tags: ["test"],
+			};
+
+			const createdProject = await createProjectService.execute(createParams);
+			const projectId = createdProject.id;
+
+			// Get a project to cache
+			await getProjectService.execute({ id: projectId });
+
+			// Verify if cache exists
+			const cacheKey = CacheKeys.project(projectId);
+			let cachedData = await cacheProvider.get(cacheKey);
+			expect(cachedData).toBeDefined();
+
+			// Update the project
+			await updateProjectService.execute({
+				id: projectId,
+				title: "Updated Title",
+			});
+
+			// Verify if cache was invalidated
+			cachedData = await cacheProvider.get(cacheKey);
+			expect(cachedData).toBeNull();
+		});
+
+		it("should invalidate cache when project is deleted", async () => {
+			const createParams = {
+				title: "Delete Cache Test",
+				description: "Testing cache invalidation on delete",
+				tags: ["test"],
+			};
+
+			const createdProject = await createProjectService.execute(createParams);
+			const projectId = createdProject.id;
+
+			// Get a project to cache
+			await getProjectService.execute({ id: projectId });
+
+			// Verify if cache exists
+			const cacheKey = CacheKeys.project(projectId);
+			let cachedData = await cacheProvider.get(cacheKey);
+			expect(cachedData).toBeDefined();
+
+			// Delete the project
+			await deleteProjectService.execute({ id: projectId });
+
+			// Verify if cache was invalidated
+			cachedData = await cacheProvider.get(cacheKey);
+			expect(cachedData).toBeNull();
+		});
+	});
+
+	describe("Cache TTL", () => {
+		it("should respect cache TTL of 10 minutes", async () => {
+			const createParams = {
+				title: "TTL Test Project",
+				description: "Testing TTL functionality",
+				tags: ["ttl"],
+			};
+
+			const createdProject = await createProjectService.execute(createParams);
+			const projectId = createdProject.id;
+
+			// Get a project to cache
+			await getProjectService.execute({ id: projectId });
+
+			// Check TTL
+			const cacheKey = CacheKeys.project(projectId);
+			const ttl = await cacheProvider.getTtl(cacheKey);
+
+			expect(ttl).toBeGreaterThan(590);
+			expect(ttl).toBeLessThanOrEqual(600);
+		});
+	});
+});
