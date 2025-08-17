@@ -29,13 +29,9 @@ export class DeleteTaskService {
 
 		if (!project) throw NotFoundError.project(task.projectId);
 
-		const updatedTaskIds = project.taskIds.filter(
-			(taskId) => taskId !== params.id,
-		);
+		project.updateTaskIds(project.taskIds.filter((id) => id !== task.id));
 
-		project.updateTaskIds(updatedTaskIds);
-
-		await this.projectRepository.save(project);
+		await this.projectRepository.update(project);
 		await this.taskRepository.delete(params.id);
 	}
 }
