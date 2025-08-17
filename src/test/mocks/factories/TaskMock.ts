@@ -3,6 +3,7 @@ import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import {
 	CreateTaskController,
 	DeleteTaskController,
+	GetTaskController,
 	UpdateTaskController,
 } from "@/task/controller";
 import type { TaskProps } from "@/task/domain";
@@ -62,6 +63,10 @@ const mockDeleteTaskService = {
 	execute: jest.fn(),
 } as DeleteTaskService & { execute: jest.Mock };
 
+const mockGetTaskController = new GetTaskController(
+	mockGetTaskService,
+	mockTaskValidation,
+);
 const mockGetAllTasksService = {
 	execute: jest.fn(),
 } as GetAllTasksService & { execute: jest.Mock };
@@ -133,6 +138,7 @@ export {
 	mockUpdateTaskController,
 	mockDeleteTaskController,
 	mockCreateTaskController,
+	mockGetTaskController,
 	mockTaskService,
 	mockProjectService,
 	mockProjectRepository,

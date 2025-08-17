@@ -5,7 +5,12 @@ export type TaskValidationId =
 	| "create-task"
 	| "update-task"
 	| "task-id"
-	| "create-task-with-project";
+	| "create-task-with-project"
+	| "get-task";
+
+const getTaskSchema = z.object({
+	id: z.uuid("Invalid task ID format").min(1, "Task ID is required"),
+});
 
 const createTaskSchema = z.object({
 	title: z
@@ -62,10 +67,12 @@ export type TaskIdInput = z.infer<typeof taskIdSchema>;
 export type CreateTaskWithProjectInput = z.infer<
 	typeof createTaskWithProjectSchema
 >;
+export type GetTaskInput = z.infer<typeof getTaskSchema>;
 
 export const taskSchemas: Record<TaskValidationId, z.ZodSchema> = {
 	"create-task": createTaskSchema,
 	"update-task": updateTaskSchema,
 	"task-id": taskIdSchema,
 	"create-task-with-project": createTaskWithProjectSchema,
+	"get-task": getTaskSchema,
 };
