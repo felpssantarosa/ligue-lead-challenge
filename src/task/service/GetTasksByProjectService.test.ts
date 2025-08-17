@@ -1,30 +1,39 @@
 import type { Project } from "@/project/domain";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
+import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import {
 	createProject,
+	createProjectServiceMock,
 	createTask,
-	mockGetTasksByProjectServiceImplementation as getTasksByProjectService,
-	mockProjectServiceForTasks,
-	mockTaskRepository,
-	mockProjectRepository as projectRepository,
+	createTaskRepositoryMock,
 } from "@/test/mocks";
 
 describe("GetTasksByProjectService", () => {
 	let existingProject: Project;
-	const getProjectServiceSpy = jest.spyOn(mockProjectServiceForTasks, "get");
-	const findByProjectSpy = jest.spyOn(mockTaskRepository, "findByProjectId");
+	let projectService: ReturnType<typeof createProjectServiceMock>;
+	let taskRepository: ReturnType<typeof createTaskRepositoryMock>;
+	let getTasksByProjectService: GetTasksByProjectService;
 
 	beforeEach(async () => {
-		mockTaskRepository.clear();
-		jest.clearAllMocks();
+		// Create fresh mocks for each test
+		projectService = createProjectServiceMock();
+		taskRepository = createTaskRepositoryMock();
+
+		// Create the service with the mocks
+		getTasksByProjectService = new GetTasksByProjectService(
+			taskRepository,
+			projectService,
+		);
 
 		existingProject = createProject({
 			title: "Test Project",
 			description: "A test project",
 			tags: ["test"],
 		});
+	});
 
-		await projectRepository.save(existingProject);
+	afterEach(() => {
+		jest.clearAllMocks();
 	});
 
 	describe("execute", () => {
@@ -36,11 +45,11 @@ describe("GetTasksByProjectService", () => {
 			const task2 = createTask({ projectId, title: "Task 2" });
 			const tasks = [task1, task2];
 
-			getProjectServiceSpy.mockResolvedValue({
+			projectService.get.mockResolvedValue({
 				...project.toJSON(),
 				tasks: tasks,
 			});
-			findByProjectSpy.mockResolvedValue(tasks);
+			taskRepository.findByProjectId.mockResolvedValue(tasks);
 
 			const result = await getTasksByProjectService.execute({ projectId });
 
@@ -68,22 +77,22 @@ describe("GetTasksByProjectService", () => {
 				projectId,
 			});
 
-			expect(getProjectServiceSpy).toHaveBeenCalledWith({
+			expect(projectService.get).toHaveBeenCalledWith({
 				id: projectId,
 			});
-			expect(findByProjectSpy).toHaveBeenCalledWith(projectId);
+			expect(taskRepository.findByProjectId).toHaveBeenCalledWith(projectId);
 		});
 
 		it("should return empty array when project has no tasks", async () => {
 			const projectId = "project-id-123";
 			const project = createProject({ id: projectId });
 
-			getProjectServiceSpy.mockResolvedValue({
+			projectService.get.mockResolvedValue({
 				...project.toJSON(),
 				tasks: [],
 			});
 
-			findByProjectSpy.mockResolvedValue([]);
+			taskRepository.findByProjectId.mockResolvedValue([]);
 
 			const result = await getTasksByProjectService.execute({ projectId });
 
@@ -96,16 +105,16 @@ describe("GetTasksByProjectService", () => {
 		it("should throw NotFoundError when project does not exist", async () => {
 			const projectId = "non-existent-project-id";
 
-			getProjectServiceSpy.mockResolvedValue(null);
+			projectService.get.mockResolvedValue(null);
 
 			await expect(
 				getTasksByProjectService.execute({ projectId }),
 			).rejects.toThrow(NotFoundError);
 
-			expect(getProjectServiceSpy).toHaveBeenCalledWith({
+			expect(projectService.get).toHaveBeenCalledWith({
 				id: projectId,
 			});
-			expect(findByProjectSpy).not.toHaveBeenCalled();
+			expect(taskRepository.findByProjectId).not.toHaveBeenCalled();
 		});
 
 		it("should throw ApplicationError when project ID mismatch occurs", async () => {
@@ -113,7 +122,7 @@ describe("GetTasksByProjectService", () => {
 			const returnedProjectId = "different-project-id";
 			const project = createProject({ id: returnedProjectId });
 
-			getProjectServiceSpy.mockResolvedValue({
+			projectService.get.mockResolvedValue({
 				...project.toJSON(),
 				tasks: [],
 			});
@@ -122,21 +131,21 @@ describe("GetTasksByProjectService", () => {
 				getTasksByProjectService.execute({ projectId: requestedProjectId }),
 			).rejects.toThrow(ApplicationError);
 
-			expect(getProjectServiceSpy).toHaveBeenCalledWith({
+			expect(projectService.get).toHaveBeenCalledWith({
 				id: requestedProjectId,
 			});
-			expect(findByProjectSpy).not.toHaveBeenCalled();
+			expect(taskRepository.findByProjectId).not.toHaveBeenCalled();
 		});
 
 		it("should handle repository errors", async () => {
 			const projectId = "project-id-123";
 			const project = createProject({ id: projectId });
 
-			getProjectServiceSpy.mockResolvedValue({
+			projectService.get.mockResolvedValue({
 				...project.toJSON(),
 				tasks: [],
 			});
-			findByProjectSpy.mockRejectedValue(
+			taskRepository.findByProjectId.mockRejectedValue(
 				new Error("Database connection failed"),
 			);
 
@@ -144,27 +153,25 @@ describe("GetTasksByProjectService", () => {
 				getTasksByProjectService.execute({ projectId }),
 			).rejects.toThrow("Database connection failed");
 
-			expect(getProjectServiceSpy).toHaveBeenCalledWith({
+			expect(projectService.get).toHaveBeenCalledWith({
 				id: projectId,
 			});
-			expect(findByProjectSpy).toHaveBeenCalledWith(projectId);
+			expect(taskRepository.findByProjectId).toHaveBeenCalledWith(projectId);
 		});
 
 		it("should handle project service errors", async () => {
 			const projectId = "project-id-123";
 
-			getProjectServiceSpy.mockRejectedValue(
-				new Error("Project service error"),
-			);
+			projectService.get.mockRejectedValue(new Error("Project service error"));
 
 			await expect(
 				getTasksByProjectService.execute({ projectId }),
 			).rejects.toThrow("Project service error");
 
-			expect(getProjectServiceSpy).toHaveBeenCalledWith({
+			expect(projectService.get).toHaveBeenCalledWith({
 				id: projectId,
 			});
-			expect(findByProjectSpy).not.toHaveBeenCalled();
+			expect(taskRepository.findByProjectId).not.toHaveBeenCalled();
 		});
 	});
 });
