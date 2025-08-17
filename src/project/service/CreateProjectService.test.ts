@@ -9,10 +9,6 @@ describe("CreateProjectService", () => {
 		mockProjectRepository.clear();
 	});
 
-	afterEach(() => {
-		mockProjectRepository.clear();
-	});
-
 	it("should create a project successfully", async () => {
 		const request: CreateProjectServiceParams = {
 			title: "Test Project",

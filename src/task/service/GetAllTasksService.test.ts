@@ -1,25 +1,15 @@
-import { container } from "tsyringe";
-import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
-import { createTask } from "@/test/mocks/factories/TaskMock";
-import { GetAllTasksService } from "./GetAllTasksService";
+import {
+	createTask,
+	mockTaskRepository,
+	mockGetAllTasksServiceImplementation as getAllTasksService,
+} from "@/test/mocks";
 
 describe("GetAllTasksService", () => {
-	let getAllTasksService: GetAllTasksService;
-	let mockTaskRepository: jest.Mocked<TaskRepository>;
+	const findAllSpy = jest.spyOn(mockTaskRepository, "findAll");
 
 	beforeEach(() => {
-		mockTaskRepository = {
-			findById: jest.fn(),
-			save: jest.fn(),
-			delete: jest.fn(),
-			findAll: jest.fn(),
-			findByProjectId: jest.fn(),
-			update: jest.fn(),
-		};
-
-		container.clearInstances();
-		container.registerInstance("TaskRepository", mockTaskRepository);
-		getAllTasksService = container.resolve(GetAllTasksService);
+		mockTaskRepository.clear();
+		jest.clearAllMocks();
 	});
 
 	describe("execute", () => {
@@ -28,7 +18,7 @@ describe("GetAllTasksService", () => {
 			const task2 = createTask({ title: "Task 2" });
 			const tasks = [task1, task2];
 
-			mockTaskRepository.findAll.mockResolvedValue(tasks);
+			findAllSpy.mockResolvedValue(tasks);
 
 			const result = await getAllTasksService.execute();
 
@@ -38,7 +28,7 @@ describe("GetAllTasksService", () => {
 				page: 1,
 				limit: 10,
 			});
-			expect(mockTaskRepository.findAll).toHaveBeenCalledWith({
+			expect(findAllSpy).toHaveBeenCalledWith({
 				limit: 10,
 				page: 1,
 				search: undefined,
@@ -46,7 +36,7 @@ describe("GetAllTasksService", () => {
 		});
 
 		it("should return empty array when no tasks exist", async () => {
-			mockTaskRepository.findAll.mockResolvedValue([]);
+			findAllSpy.mockResolvedValue([]);
 
 			const result = await getAllTasksService.execute();
 
@@ -62,7 +52,7 @@ describe("GetAllTasksService", () => {
 			const task1 = createTask({ title: "Task 1" });
 			const tasks = [task1];
 
-			mockTaskRepository.findAll.mockResolvedValue(tasks);
+			findAllSpy.mockResolvedValue(tasks);
 
 			const result = await getAllTasksService.execute({
 				page: 2,
@@ -75,7 +65,7 @@ describe("GetAllTasksService", () => {
 				page: 2,
 				limit: 5,
 			});
-			expect(mockTaskRepository.findAll).toHaveBeenCalledWith({
+			expect(findAllSpy).toHaveBeenCalledWith({
 				limit: 5,
 				page: 2,
 				search: undefined,
@@ -86,7 +76,7 @@ describe("GetAllTasksService", () => {
 			const task1 = createTask({ title: "Search Task" });
 			const tasks = [task1];
 
-			mockTaskRepository.findAll.mockResolvedValue(tasks);
+			findAllSpy.mockResolvedValue(tasks);
 
 			const result = await getAllTasksService.execute({
 				search: "Search",
@@ -98,7 +88,7 @@ describe("GetAllTasksService", () => {
 				page: 1,
 				limit: 10,
 			});
-			expect(mockTaskRepository.findAll).toHaveBeenCalledWith({
+			expect(findAllSpy).toHaveBeenCalledWith({
 				limit: 10,
 				page: 1,
 				search: "Search",
@@ -106,9 +96,7 @@ describe("GetAllTasksService", () => {
 		});
 
 		it("should handle repository errors", async () => {
-			mockTaskRepository.findAll.mockRejectedValue(
-				new Error("Database connection failed"),
-			);
+			findAllSpy.mockRejectedValue(new Error("Database connection failed"));
 
 			await expect(getAllTasksService.execute()).rejects.toThrow(
 				"Database connection failed",
@@ -117,13 +105,14 @@ describe("GetAllTasksService", () => {
 
 		it("should use default parameters when none provided", async () => {
 			const tasks = [createTask()];
-			mockTaskRepository.findAll.mockResolvedValue(tasks);
+
+			findAllSpy.mockResolvedValue(tasks);
 
 			const result = await getAllTasksService.execute({});
 
 			expect(result.page).toBe(1);
 			expect(result.limit).toBe(10);
-			expect(mockTaskRepository.findAll).toHaveBeenCalledWith({
+			expect(findAllSpy).toHaveBeenCalledWith({
 				limit: 10,
 				page: 1,
 				search: undefined,

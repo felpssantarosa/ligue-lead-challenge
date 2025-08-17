@@ -6,6 +6,7 @@ import {
 	UpdateProjectController,
 } from "@/project/controller";
 import { Project } from "@/project/domain/Project";
+import { ProjectService } from "@/project/service";
 import { CreateProjectService } from "@/project/service/CreateProjectService";
 import { DeleteProjectService } from "@/project/service/DeleteProjectService";
 import { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
@@ -78,6 +79,14 @@ const mockGetAllProjectsController = new GetAllProjectsController(
 	mockValidation,
 );
 
+const mockProjectService = new ProjectService(
+	mockCreateProjectServiceImplementation,
+	mockGetAllProjectsServiceImplementation,
+	mockGetProjectServiceImplementation,
+	mockUpdateProjectServiceImplementation,
+	mockDeleteProjectServiceImplementation,
+);
+
 export const createProject = (
 	overrides: Partial<{
 		id: string;
@@ -118,4 +127,5 @@ export {
 	mockDeleteProjectServiceImplementation,
 	mockValidation,
 	mockProjectRepository,
+	mockProjectService,
 };

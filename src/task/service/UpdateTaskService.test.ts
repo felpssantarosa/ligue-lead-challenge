@@ -9,6 +9,8 @@ import {
 
 describe("UpdateTaskService", () => {
 	let updateTaskService: UpdateTaskService;
+	const findByIdSpy = jest.spyOn(mockTaskRepository, "findById");
+	const updateSpy = jest.spyOn(mockTaskRepository, "update");
 
 	beforeEach(() => {
 		updateTaskService = new UpdateTaskService(mockTaskRepository);
@@ -32,8 +34,8 @@ describe("UpdateTaskService", () => {
 				status: TaskStatus.IN_PROGRESS,
 			});
 
-			mockTaskRepository.findById.mockResolvedValue(originalTask);
-			mockTaskRepository.update.mockResolvedValue(updatedTask);
+			findByIdSpy.mockResolvedValue(originalTask);
+			updateSpy.mockResolvedValue(updatedTask);
 
 			const result = await updateTaskService.execute({
 				id: taskId,
@@ -42,8 +44,8 @@ describe("UpdateTaskService", () => {
 				status: TaskStatus.IN_PROGRESS,
 			});
 
-			expect(mockTaskRepository.findById).toHaveBeenCalledWith(taskId);
-			expect(mockTaskRepository.update).toHaveBeenCalledWith(originalTask);
+			expect(findByIdSpy).toHaveBeenCalledWith(taskId);
+			expect(updateSpy).toHaveBeenCalledWith(originalTask);
 			expect(result).toEqual({
 				id: updatedTask.id,
 				title: updatedTask.title,
@@ -57,7 +59,7 @@ describe("UpdateTaskService", () => {
 
 		it("should throw NotFoundError when task not found", async () => {
 			const taskId = generateUUID();
-			mockTaskRepository.findById.mockResolvedValue(null);
+			findByIdSpy.mockResolvedValue(null);
 
 			await expect(
 				updateTaskService.execute({
@@ -66,8 +68,8 @@ describe("UpdateTaskService", () => {
 				}),
 			).rejects.toThrow(NotFoundError);
 
-			expect(mockTaskRepository.findById).toHaveBeenCalledWith(taskId);
-			expect(mockTaskRepository.update).not.toHaveBeenCalled();
+			expect(findByIdSpy).toHaveBeenCalledWith(taskId);
+			expect(updateSpy).not.toHaveBeenCalled();
 		});
 
 		it("should update only provided fields", async () => {
@@ -79,16 +81,16 @@ describe("UpdateTaskService", () => {
 				status: TaskStatus.TODO,
 			});
 
-			mockTaskRepository.findById.mockResolvedValue(originalTask);
-			mockTaskRepository.update.mockResolvedValue(originalTask);
+			findByIdSpy.mockResolvedValue(originalTask);
+			updateSpy.mockResolvedValue(originalTask);
 
 			await updateTaskService.execute({
 				id: taskId,
 				title: "Updated Title Only",
 			});
 
-			expect(mockTaskRepository.findById).toHaveBeenCalledWith(taskId);
-			expect(mockTaskRepository.update).toHaveBeenCalledWith(originalTask);
+			expect(findByIdSpy).toHaveBeenCalledWith(taskId);
+			expect(updateSpy).toHaveBeenCalledWith(originalTask);
 		});
 	});
 });

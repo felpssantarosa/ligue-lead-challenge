@@ -1,29 +1,23 @@
-import { Project } from "@/project/domain/Project";
+import type { Project } from "@/project/domain/Project";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import type { CreateTaskServiceParams } from "@/task/service/CreateTaskService";
-import { CreateTaskService } from "@/task/service/CreateTaskService";
-import { MockProjectRepository } from "@/test/mocks/repositories/MockProjectRepository";
-import { MockTaskRepository } from "@/test/mocks/repositories/MockTaskRepository";
+import {
+	createProject,
+	mockCreateTaskServiceImplementation as createTaskService,
+	mockProjectRepository as projectRepository,
+	mockTaskRepository as taskRepository,
+} from "@/test/mocks";
 
 describe("CreateTaskService", () => {
-	let createTaskService: CreateTaskService;
-	let taskRepository: MockTaskRepository;
-	let projectRepository: MockProjectRepository;
 	let existingProject: Project;
 
 	beforeEach(async () => {
-		taskRepository = new MockTaskRepository();
-		projectRepository = new MockProjectRepository();
-		createTaskService = new CreateTaskService(
-			taskRepository,
-			projectRepository,
-		);
-
-		existingProject = Project.create({
+		existingProject = createProject({
 			title: "Test Project",
 			description: "A test project",
 			tags: ["test"],
 		});
+
 		await projectRepository.save(existingProject);
 	});
 

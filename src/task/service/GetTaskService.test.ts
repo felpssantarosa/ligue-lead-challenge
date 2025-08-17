@@ -8,6 +8,7 @@ import {
 
 describe("GetTaskService", () => {
 	let getTaskService: GetTaskService;
+	const findByIdSpy = jest.spyOn(mockTaskRepository, "findById");
 
 	beforeEach(() => {
 		getTaskService = new GetTaskService(mockTaskRepository);
@@ -18,11 +19,12 @@ describe("GetTaskService", () => {
 		it("should return task when found", async () => {
 			const taskId = generateUUID();
 			const task = createTask({ id: taskId });
-			mockTaskRepository.findById.mockResolvedValue(task);
+
+			findByIdSpy.mockResolvedValue(task);
 
 			const result = await getTaskService.execute({ id: taskId });
 
-			expect(mockTaskRepository.findById).toHaveBeenCalledWith(taskId);
+			expect(findByIdSpy).toHaveBeenCalledWith(taskId);
 			expect(result).toEqual({
 				id: task.id,
 				title: task.title,
@@ -36,12 +38,12 @@ describe("GetTaskService", () => {
 
 		it("should throw NotFoundError when task not found", async () => {
 			const taskId = generateUUID();
-			mockTaskRepository.findById.mockResolvedValue(null);
+			findByIdSpy.mockResolvedValue(null);
 
 			await expect(getTaskService.execute({ id: taskId })).rejects.toThrow(
 				NotFoundError,
 			);
-			expect(mockTaskRepository.findById).toHaveBeenCalledWith(taskId);
+			expect(findByIdSpy).toHaveBeenCalledWith(taskId);
 		});
 	});
 });

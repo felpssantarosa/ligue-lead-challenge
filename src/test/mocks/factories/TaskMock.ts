@@ -2,18 +2,42 @@ import type { EntityId } from "@/shared/domain/Entity";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { Task } from "@/task/domain/Task";
-import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
-import type { CreateTaskService } from "@/task/service/CreateTaskService";
-import type { DeleteTaskService } from "@/task/service/DeleteTaskService";
-import type { GetAllTasksService } from "@/task/service/GetAllTasksService";
-import type { GetTaskService } from "@/task/service/GetTaskService";
-import type { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
-import type { UpdateTaskService } from "@/task/service/UpdateTaskService";
+import { CreateTaskService } from "@/task/service/CreateTaskService";
+import { DeleteTaskService } from "@/task/service/DeleteTaskService";
+import { GetAllTasksService } from "@/task/service/GetAllTasksService";
+import { GetTaskService } from "@/task/service/GetTaskService";
+import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
+import { UpdateTaskService } from "@/task/service/UpdateTaskService";
 import { generateUUID } from "@/test/factories/UUIDFactory";
+import { mockProjectRepository, mockProjectService } from "@/test/mocks/factories/ProjectMock";
+import {
+	MockTaskRepository,
+} from "@/test/mocks/repositories";
 
 const mockTaskValidation = {
 	execute: jest.fn(),
 } as ValidationHandler & { execute: jest.Mock };
+
+const mockTaskRepository = new MockTaskRepository();
+
+const mockCreateTaskServiceImplementation = new CreateTaskService(
+	mockTaskRepository,
+	mockProjectRepository,
+);
+const mockGetTasksByProjectServiceImplementation = new GetTasksByProjectService(
+	mockTaskRepository,
+	mockProjectService,
+);
+const mockGetTaskServiceImplementation = new GetTaskService(mockTaskRepository);
+const mockGetAllTasksServiceImplementation = new GetAllTasksService(
+	mockTaskRepository,
+);
+const mockUpdateTaskServiceImplementation = new UpdateTaskService(
+	mockTaskRepository,
+);
+const mockDeleteTaskServiceImplementation = new DeleteTaskService(
+	mockTaskRepository,
+);
 
 const mockCreateTaskService = {
 	execute: jest.fn(),
@@ -39,22 +63,6 @@ const mockGetTasksByProjectService = {
 	execute: jest.fn(),
 } as GetTasksByProjectService & { execute: jest.Mock };
 
-const mockTaskRepository = {
-	save: jest.fn(),
-	findById: jest.fn(),
-	findByProjectId: jest.fn(),
-	update: jest.fn(),
-	delete: jest.fn(),
-	findAll: jest.fn(),
-} as TaskRepository & {
-	save: jest.Mock;
-	findById: jest.Mock;
-	findByProjectId: jest.Mock;
-	update: jest.Mock;
-	delete: jest.Mock;
-	findAll: jest.Mock;
-};
-
 export function createTask(
 	overrides: Partial<{
 		id: EntityId;
@@ -71,7 +79,7 @@ export function createTask(
 		title: "Test Task",
 		description: "Test task description",
 		status: TaskStatus.TODO,
-		projectId: generateUUID(),
+		ProjectId: generateUUID(),
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
@@ -83,7 +91,7 @@ export function createTask(
 		title: taskData.title,
 		description: taskData.description,
 		status: taskData.status,
-		projectId: taskData.projectId,
+		projectId: taskData.ProjectId,
 		createdAt: taskData.createdAt,
 		updatedAt: taskData.updatedAt,
 	});
@@ -98,4 +106,10 @@ export {
 	mockGetAllTasksService,
 	mockGetTasksByProjectService,
 	mockTaskRepository,
+	mockCreateTaskServiceImplementation,
+	mockGetTaskServiceImplementation,
+	mockGetAllTasksServiceImplementation,
+	mockUpdateTaskServiceImplementation,
+	mockDeleteTaskServiceImplementation,
+	mockGetTasksByProjectServiceImplementation,
 };
