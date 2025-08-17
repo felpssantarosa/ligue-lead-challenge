@@ -3,11 +3,18 @@ import { container } from "tsyringe";
 import {
 	CreateTaskController,
 	DeleteTaskController,
+	GetTaskController,
 	UpdateTaskController,
 } from "@/task/controller";
 
 const taskRoutes = Router();
 const taskRoutesBoundByProject = Router();
+
+// Get task: GET /api/tasks/:id
+taskRoutes.get("/:id", (req, res) => {
+	const getTaskController = container.resolve(GetTaskController);
+	return getTaskController.handle(req, res);
+});
 
 // Update task: PUT /api/tasks/:id
 taskRoutes.put("/:id", (req, res) => {
