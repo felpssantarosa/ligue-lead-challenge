@@ -18,5 +18,6 @@ export interface TaskRepository {
 	findByProjectId(projectId: EntityId): Promise<Task[]>;
 	update(task: Task): Promise<Task>;
 	delete(id: EntityId): Promise<void>;
+	deleteByProjectId(projectId: EntityId): Promise<void>;
 	findAll(params: GetAllTasksParams): Promise<Task[]>;
 }

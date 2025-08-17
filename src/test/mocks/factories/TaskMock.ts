@@ -8,7 +8,7 @@ import {
 } from "@/task/controller";
 import type { TaskProps } from "@/task/domain";
 import { Task } from "@/task/domain/Task";
-import { TaskService } from "@/task/service";
+import { DeleteByProjectIdService, TaskService } from "@/task/service";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
 import { DeleteTaskService } from "@/task/service/DeleteTaskService";
 import { GetAllTasksService } from "@/task/service/GetAllTasksService";
@@ -16,6 +16,7 @@ import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
 import { generateUUID } from "@/test/factories/UUIDFactory";
+import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
 import {
 	mockProjectRepository,
 	mockProjectService,
@@ -26,25 +27,38 @@ const mockTaskValidation = {
 	execute: jest.fn(),
 } as ValidationHandler & { execute: jest.Mock };
 
+const mockTaskCacheProvider = new MockCacheProvider();
 const mockTaskRepository = new MockTaskRepository();
 const mockCreateTaskServiceImplementation = new CreateTaskService(
 	mockTaskRepository,
 	mockProjectRepository,
+	mockTaskCacheProvider,
 );
 const mockGetTasksByProjectServiceImplementation = new GetTasksByProjectService(
 	mockTaskRepository,
 	mockProjectService,
+	mockTaskCacheProvider,
 );
-const mockGetTaskServiceImplementation = new GetTaskService(mockTaskRepository);
+const mockGetTaskServiceImplementation = new GetTaskService(
+	mockTaskRepository,
+	mockTaskCacheProvider,
+);
 const mockGetAllTasksServiceImplementation = new GetAllTasksService(
 	mockTaskRepository,
+	mockTaskCacheProvider,
 );
 const mockUpdateTaskServiceImplementation = new UpdateTaskService(
 	mockTaskRepository,
+	mockTaskCacheProvider,
 );
 const mockDeleteTaskServiceImplementation = new DeleteTaskService(
 	mockTaskRepository,
 	mockProjectRepository,
+	mockTaskCacheProvider,
+);
+const mockDeleteTaskByProjectIdServiceImplementation = new DeleteByProjectIdService(
+	mockTaskRepository,
+	mockTaskCacheProvider,
 );
 
 const mockCreateTaskService = {
@@ -118,6 +132,7 @@ const mockTaskService = new TaskService(
 	mockGetTaskServiceImplementation,
 	mockUpdateTaskServiceImplementation,
 	mockDeleteTaskServiceImplementation,
+	mockDeleteTaskByProjectIdServiceImplementation
 );
 
 export {
@@ -134,6 +149,7 @@ export {
 	mockGetAllTasksServiceImplementation,
 	mockUpdateTaskServiceImplementation,
 	mockDeleteTaskServiceImplementation,
+	mockDeleteTaskByProjectIdServiceImplementation,
 	mockGetTasksByProjectServiceImplementation,
 	mockUpdateTaskController,
 	mockDeleteTaskController,
@@ -142,4 +158,5 @@ export {
 	mockTaskService,
 	mockProjectService,
 	mockProjectRepository,
+	mockTaskCacheProvider,
 };

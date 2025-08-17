@@ -30,6 +30,16 @@ export class MockTaskRepository implements TaskRepository {
 		this.tasks.delete(id);
 	}
 
+	async deleteByProjectId(projectId: EntityId): Promise<void> {
+		const tasksToDelete = Array.from(this.tasks.values()).filter(
+			(task) => task.projectId === projectId,
+		);
+
+		for (const task of tasksToDelete) {
+			this.tasks.delete(task.id);
+		}
+	}
+
 	async findByProjectId(projectId: EntityId): Promise<Task[]> {
 		return Array.from(this.tasks.values()).filter(
 			(task) => task.projectId === projectId,
@@ -60,3 +70,15 @@ export class MockTaskRepository implements TaskRepository {
 		this.tasks.clear();
 	}
 }
+
+export const createTaskRepositoryMock = (): jest.Mocked<TaskRepository> =>
+	({
+		save: jest.fn(),
+		findById: jest.fn(),
+		findAll: jest.fn(),
+		findByProjectId: jest.fn(),
+		update: jest.fn(),
+		delete: jest.fn(),
+		deleteByProjectId: jest.fn(),
+		clear: jest.fn(),
+	}) as jest.Mocked<TaskRepository>;

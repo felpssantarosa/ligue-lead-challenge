@@ -77,6 +77,12 @@ export class SequelizeTaskRepository implements TaskRepository {
 		});
 	}
 
+	async deleteByProjectId(projectId: EntityId): Promise<void> {
+		await this.sequelizeModel.destroy({
+			where: { projectId },
+		});
+	}
+
 	async findAll(params: GetAllTasksParams): Promise<Array<Task>> {
 		const { page = 1, limit = 10, search } = params;
 

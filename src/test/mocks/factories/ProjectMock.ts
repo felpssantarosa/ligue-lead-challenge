@@ -15,6 +15,7 @@ import { GetProjectService } from "@/project/service/GetProjectService";
 import { UpdateProjectService } from "@/project/service/UpdateProjectService";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { generateUUID } from "@/test/factories";
+import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
 import { mockTaskService } from "@/test/mocks/factories/TaskMock";
 import { MockProjectRepository } from "@/test/mocks/repositories";
 
@@ -23,22 +24,29 @@ const mockValidation = {
 } as ValidationHandler & { execute: jest.Mock };
 
 const mockProjectRepository = new MockProjectRepository();
+const mockProjectCacheProvider = new MockCacheProvider();
 
 const mockCreateProjectServiceImplementation = new CreateProjectService(
 	mockProjectRepository,
+	mockProjectCacheProvider,
 );
 const mockGetProjectServiceImplementation = new GetProjectService(
 	mockProjectRepository,
 	mockTaskService,
+	mockProjectCacheProvider,
 );
 const mockGetAllProjectsServiceImplementation = new GetAllProjectsService(
 	mockProjectRepository,
+	mockProjectCacheProvider,
 );
 const mockUpdateProjectServiceImplementation = new UpdateProjectService(
 	mockProjectRepository,
+	mockProjectCacheProvider,
 );
 const mockDeleteProjectServiceImplementation = new DeleteProjectService(
 	mockProjectRepository,
+	mockProjectCacheProvider,
+	mockTaskService,
 );
 
 const mockCreateProjectService = {
@@ -125,4 +133,5 @@ export {
 	mockValidation,
 	mockProjectRepository,
 	mockProjectService,
+	mockProjectCacheProvider,
 };

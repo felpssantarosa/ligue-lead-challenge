@@ -12,7 +12,7 @@ export const createProjectRepositoryMock = () =>
 		clear: jest.fn(),
 	}) as jest.Mocked<ProjectRepository>;
 
-export const createTaskRepositoryMock = () =>
+export const createMockTaskRepository = (): jest.Mocked<TaskRepository> =>
 	({
 		findById: jest.fn(),
 		save: jest.fn(),
@@ -20,6 +20,7 @@ export const createTaskRepositoryMock = () =>
 		findByProjectId: jest.fn(),
 		update: jest.fn(),
 		delete: jest.fn(),
+		deleteByProjectId: jest.fn(),
 		clear: jest.fn(),
 	}) as jest.Mocked<TaskRepository>;
 
