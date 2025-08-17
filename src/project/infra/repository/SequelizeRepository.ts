@@ -1,4 +1,5 @@
 import { Op } from "sequelize";
+import { injectable } from "tsyringe";
 import { Project } from "@/project/domain";
 import type { ProjectProps } from "@/project/domain/ProjectDTO";
 import type {
@@ -8,6 +9,7 @@ import type {
 } from "@/project/infra";
 import { ApplicationError } from "@/shared/Errors";
 
+@injectable()
 export class SequelizeProjectRepository implements ProjectRepository {
 	private sequelizeModel: typeof ProjectModel;
 

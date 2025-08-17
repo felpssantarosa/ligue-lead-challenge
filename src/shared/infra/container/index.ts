@@ -19,6 +19,8 @@ import { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { ValidationProvider } from "@/shared/validation/ValidationProvider";
 import { ZodValidationProvider } from "@/shared/validation/ZodValidationProvider";
 import { DeleteTaskController } from "@/task/controller";
+import { CreateTaskController } from "@/task/controller/CreateTaskController";
+import { GetTaskController } from "@/task/controller/GetTaskController";
 import { UpdateTaskController } from "@/task/controller/UpdateTaskController";
 import { SequelizeTaskRepository } from "@/task/infra";
 import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
@@ -29,8 +31,14 @@ import { GetAllTasksService } from "@/task/service/GetAllTasksService";
 import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
+import { createSequelizeConnection } from "@/shared/infra/database/sequelize";
 
 export const registerDependencies = (): void => {
+	// Initialize database connection and get connected models
+	const sequelize = createSequelizeConnection();
+	const ProjectModel = sequelize.models.ProjectModel as typeof import("@/project/infra/database/models/SequelizeProjectModel").default;
+	const TaskModel = sequelize.models.TaskModel as typeof import("@/task/infra/database/models/SequelizeTaskModel").default;
+
 	container.registerSingleton<ValidationProvider>(
 		"ValidationProvider",
 		ZodValidationProvider,
@@ -38,13 +46,13 @@ export const registerDependencies = (): void => {
 
 	container.registerSingleton("Validation", ValidationHandler);
 
-	container.registerSingleton<ProjectRepository>(
+	container.registerInstance<ProjectRepository>(
 		"ProjectRepository",
-		SequelizeProjectRepository,
+		new SequelizeProjectRepository(ProjectModel),
 	);
-	container.registerSingleton<TaskRepository>(
+	container.registerInstance<TaskRepository>(
 		"TaskRepository",
-		SequelizeTaskRepository,
+		new SequelizeTaskRepository(TaskModel),
 	);
 
 	container.registerSingleton("CreateProjectService", CreateProjectService);
@@ -74,6 +82,8 @@ export const registerDependencies = (): void => {
 	container.registerSingleton(DeleteProjectController);
 
 	// Task Controllers
+	container.registerSingleton(CreateTaskController);
+	container.registerSingleton(GetTaskController);
 	container.registerSingleton(UpdateTaskController);
 	container.registerSingleton(DeleteTaskController);
 };
