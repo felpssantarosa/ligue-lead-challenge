@@ -31,6 +31,7 @@ const expectValidProject = (project: Project, params: CreateProjectParams) => {
 	expect(project.title).toBe(params.title);
 	expect(project.description).toBe(params.description);
 	expect(project.tags).toEqual(params.tags);
+	expect(project.taskIds).toEqual([]);
 	expect(project.createdAt).toBeInstanceOf(Date);
 	expect(project.updatedAt).toBeInstanceOf(Date);
 };
@@ -104,6 +105,22 @@ describe("Project", () => {
 			const emptyProject = Project.create({ ...validParams(), tags: [] });
 			expect(emptyProject.tags).toEqual([]);
 		});
+
+		it("should return immutable taskIds copy", () => {
+			const project = Project.fromJSON({
+				...validProps(),
+				taskIds: ["task1", "task2"],
+			});
+			const taskIds = project.taskIds;
+			taskIds.push("modified");
+			expect(project.taskIds).toEqual(["task1", "task2"]);
+			expect(project.taskIds).not.toBe(taskIds);
+		});
+
+		it("should handle empty taskIds", () => {
+			const project = Project.create(validParams());
+			expect(project.taskIds).toEqual([]);
+		});
 	});
 
 	describe("Update Operations", () => {
@@ -133,11 +150,13 @@ describe("Project", () => {
 				title: "Updated Title",
 				description: "Updated Description",
 				tags: ["new", "tags"],
+				taskIds: ["task1", "task2"],
 			});
 
 			expect(project.title).toBe("Updated Title");
 			expect(project.description).toBe("Updated Description");
 			expect(project.tags).toEqual(["new", "tags"]);
+			expect(project.taskIds).toEqual(["task1", "task2"]);
 		});
 
 		it("should ignore null and undefined values", () => {
@@ -227,6 +246,21 @@ describe("Project", () => {
 				expect(project.tags).toEqual([]);
 			});
 		});
+
+		describe("updateTaskIds", () => {
+			it("should update and create copy", () => {
+				const newTaskIds = ["task1", "task2"];
+				project.updateTaskIds(newTaskIds);
+				newTaskIds.push("modified");
+
+				expect(project.taskIds).toEqual(["task1", "task2"]);
+			});
+
+			it("should handle empty array", () => {
+				project.updateTaskIds([]);
+				expect(project.taskIds).toEqual([]);
+			});
+		});
 	});
 
 	describe("Tag Management", () => {
@@ -287,6 +321,7 @@ describe("Project", () => {
 				title: project.title,
 				description: project.description,
 				tags: project.tags,
+				taskIds: project.taskIds,
 				createdAt: project.createdAt,
 				updatedAt: project.updatedAt,
 			});

@@ -1,8 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import type { EntityId } from "@/shared/domain/Entity";
 import { NotFoundError } from "@/shared/Errors";
-import type { TaskRepository } from "@/task/infra";
 import { Task } from "@/task/domain";
+import type { TaskRepository } from "@/task/infra";
 
 export type GetTaskServiceParams = { id: EntityId };
 

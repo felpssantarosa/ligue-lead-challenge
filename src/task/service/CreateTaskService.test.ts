@@ -4,14 +4,17 @@ import type { CreateTaskServiceParams } from "@/task/service";
 import {
 	createProject,
 	mockCreateTaskServiceImplementation as createTaskService,
-	mockProjectRepository as projectRepository,
+	mockProjectRepositoryForTasks as projectRepository,
 	mockTaskRepository as taskRepository,
 } from "@/test/mocks";
 
 describe("CreateTaskService", () => {
 	let existingProject: Project;
+	const findByIdSpy = jest.spyOn(projectRepository, "findById");
 
 	beforeEach(async () => {
+		jest.clearAllMocks();
+
 		existingProject = createProject({
 			title: "Test Project",
 			description: "A test project",
@@ -19,6 +22,7 @@ describe("CreateTaskService", () => {
 		});
 
 		await projectRepository.save(existingProject);
+		findByIdSpy.mockResolvedValue(existingProject);
 	});
 
 	afterEach(() => {
@@ -66,6 +70,8 @@ describe("CreateTaskService", () => {
 			status: TaskStatus.TODO,
 			projectId: "non-existent-project-id",
 		};
+
+		findByIdSpy.mockResolvedValueOnce(null);
 
 		await expect(createTaskService.execute(request)).rejects.toThrow(
 			"Project not found",

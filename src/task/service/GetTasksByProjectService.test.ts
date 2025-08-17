@@ -4,14 +4,14 @@ import {
 	createProject,
 	createTask,
 	mockGetTasksByProjectServiceImplementation as getTasksByProjectService,
-	mockProjectService,
+	mockProjectServiceForTasks,
 	mockTaskRepository,
 	mockProjectRepository as projectRepository,
 } from "@/test/mocks";
 
 describe("GetTasksByProjectService", () => {
 	let existingProject: Project;
-	const getProjectServiceSpy = jest.spyOn(mockProjectService, "get");
+	const getProjectServiceSpy = jest.spyOn(mockProjectServiceForTasks, "get");
 	const findByProjectSpy = jest.spyOn(mockTaskRepository, "findByProjectId");
 
 	beforeEach(async () => {
@@ -36,7 +36,10 @@ describe("GetTasksByProjectService", () => {
 			const task2 = createTask({ projectId, title: "Task 2" });
 			const tasks = [task1, task2];
 
-			getProjectServiceSpy.mockResolvedValue({ ...project.toJSON(), tasks });
+			getProjectServiceSpy.mockResolvedValue({
+				...project.toJSON(),
+				tasks: tasks,
+			});
 			findByProjectSpy.mockResolvedValue(tasks);
 
 			const result = await getTasksByProjectService.execute({ projectId });

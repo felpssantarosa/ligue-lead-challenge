@@ -27,12 +27,14 @@ export class Project extends Entity {
 		createdAt,
 		updatedAt,
 		id,
+		taskIds,
 	}: ProjectProps) {
 		super({ id, createdAt, updatedAt });
 
 		this._title = title;
 		this._description = description;
 		this._tags = tags;
+		this._taskIds = taskIds;
 	}
 
 	public static create(params: CreateProjectParams): Project {

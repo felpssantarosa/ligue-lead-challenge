@@ -1,4 +1,4 @@
-import { inject } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import type {
 	CreateTaskService,
 	CreateTaskServiceParams,
@@ -25,6 +25,7 @@ import type {
 	UpdateTaskServiceResponse,
 } from "@/task/service/UpdateTaskService";
 
+@injectable()
 export class TaskService {
 	constructor(
 		@inject("CreateTaskService")

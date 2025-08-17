@@ -1,4 +1,4 @@
-import { inject } from "tsyringe";
+import { inject, injectable } from "tsyringe";
 import type {
 	CreateProjectService,
 	CreateProjectServiceParams,
@@ -25,6 +25,7 @@ import type {
 	UpdateProjectServiceResponse,
 } from "@/project/service/UpdateProjectService";
 
+@injectable()
 export class ProjectService {
 	constructor(
 		@inject("CreateProjectService")

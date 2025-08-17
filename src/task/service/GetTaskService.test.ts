@@ -22,15 +22,7 @@ describe("GetTaskService", () => {
 			const result = await getTaskService.execute({ id: taskId });
 
 			expect(findByIdSpy).toHaveBeenCalledWith(taskId);
-			expect(result).toEqual({
-				id: task.id,
-				title: task.title,
-				description: task.description,
-				status: task.status,
-				projectId: task.projectId,
-				createdAt: task.createdAt,
-				updatedAt: task.updatedAt,
-			});
+			expect(result).toEqual(task);
 		});
 
 		it("should throw NotFoundError when task not found", async () => {

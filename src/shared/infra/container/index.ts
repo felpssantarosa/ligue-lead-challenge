@@ -8,6 +8,7 @@ import {
 	UpdateProjectController,
 } from "@/project/controller";
 import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
+import { ProjectService } from "@/project/service";
 import { CreateProjectService } from "@/project/service/CreateProjectService";
 import { DeleteProjectService } from "@/project/service/DeleteProjectService";
 import { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
@@ -20,6 +21,7 @@ import { DeleteTaskController } from "@/task/controller";
 import { UpdateTaskController } from "@/task/controller/UpdateTaskController";
 import { SequelizeTaskRepository } from "@/task/infra/repository/SequelizeTaskRepository";
 import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
+import { TaskService } from "@/task/service";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
 import { DeleteTaskService } from "@/task/service/DeleteTaskService";
 import { GetAllTasksService } from "@/task/service/GetAllTasksService";
@@ -50,6 +52,7 @@ export const registerDependencies = (): void => {
 	container.registerSingleton("GetAllProjectsService", GetAllProjectsService);
 	container.registerSingleton("UpdateProjectService", UpdateProjectService);
 	container.registerSingleton("DeleteProjectService", DeleteProjectService);
+	container.registerSingleton("ProjectService", ProjectService);
 
 	// Task Services
 	container.registerSingleton("CreateTaskService", CreateTaskService);
@@ -61,6 +64,7 @@ export const registerDependencies = (): void => {
 		"GetTasksByProjectService",
 		GetTasksByProjectService,
 	);
+	container.registerSingleton("TaskService", TaskService);
 
 	// Project Controllers
 	container.registerSingleton(CreateProjectController);

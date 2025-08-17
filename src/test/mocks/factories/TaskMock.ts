@@ -1,3 +1,4 @@
+import type { ProjectService } from "@/project/service";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import {
@@ -15,10 +16,6 @@ import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
 import { generateUUID } from "@/test/factories/UUIDFactory";
-import {
-	mockProjectRepository,
-	mockProjectService,
-} from "@/test/mocks/factories/ProjectMock";
 import { MockTaskRepository } from "@/test/mocks/repositories";
 
 const mockTaskValidation = {
@@ -27,13 +24,32 @@ const mockTaskValidation = {
 
 const mockTaskRepository = new MockTaskRepository();
 
+// Create a local ProjectService mock to avoid circular dependency
+const mockProjectServiceForTasks = {
+	create: jest.fn(),
+	getAll: jest.fn(),
+	get: jest.fn(),
+	update: jest.fn(),
+	delete: jest.fn(),
+} as unknown as ProjectService;
+
+// Create a local ProjectRepository mock to avoid circular dependency
+const mockProjectRepositoryForTasks = {
+	findById: jest.fn(),
+	save: jest.fn(),
+	findAll: jest.fn(),
+	update: jest.fn(),
+	delete: jest.fn(),
+	clear: jest.fn(),
+};
+
 const mockCreateTaskServiceImplementation = new CreateTaskService(
 	mockTaskRepository,
-	mockProjectRepository,
+	mockProjectRepositoryForTasks,
 );
 const mockGetTasksByProjectServiceImplementation = new GetTasksByProjectService(
 	mockTaskRepository,
-	mockProjectService,
+	mockProjectServiceForTasks,
 );
 const mockGetTaskServiceImplementation = new GetTaskService(mockTaskRepository);
 const mockGetAllTasksServiceImplementation = new GetAllTasksService(
@@ -134,4 +150,6 @@ export {
 	mockDeleteTaskController,
 	mockCreateTaskController,
 	mockTaskService,
+	mockProjectServiceForTasks,
+	mockProjectRepositoryForTasks,
 };
