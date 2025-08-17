@@ -3,16 +3,22 @@ import { injectable } from "tsyringe";
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError } from "@/shared/Errors";
 import { Task } from "@/task/domain";
-import {
-	type GetAllTasksParams,
+import type {
+	GetAllTasksParams,
 	TaskModel,
-	type TaskRepository,
+	TaskRepository,
 } from "@/task/infra";
 
 @injectable()
 export class SequelizeTaskRepository implements TaskRepository {
+	private sequelizeModel: typeof TaskModel;
+
+	constructor(sequelizeModel: typeof TaskModel) {
+		this.sequelizeModel = sequelizeModel;
+	}
+
 	async save(task: Task): Promise<Task> {
-		const taskData = await TaskModel.create({
+		const taskData = await this.sequelizeModel.create({
 			id: task.id,
 			title: task.title,
 			description: task.description,
@@ -24,7 +30,7 @@ export class SequelizeTaskRepository implements TaskRepository {
 	}
 
 	async findById(id: EntityId): Promise<Task | null> {
-		const taskData = await TaskModel.findByPk(id);
+		const taskData = await this.sequelizeModel.findByPk(id);
 
 		if (!taskData) return null;
 
@@ -32,7 +38,7 @@ export class SequelizeTaskRepository implements TaskRepository {
 	}
 
 	async findByProjectId(projectId: EntityId): Promise<Task[]> {
-		const tasksData = await TaskModel.findAll({
+		const tasksData = await this.sequelizeModel.findAll({
 			where: { projectId },
 		});
 
@@ -42,7 +48,7 @@ export class SequelizeTaskRepository implements TaskRepository {
 	}
 
 	async update(task: Task): Promise<Task> {
-		await TaskModel.update(
+		await this.sequelizeModel.update(
 			{
 				title: task.title,
 				description: task.description,
@@ -66,7 +72,7 @@ export class SequelizeTaskRepository implements TaskRepository {
 	}
 
 	async delete(id: EntityId): Promise<void> {
-		await TaskModel.destroy({
+		await this.sequelizeModel.destroy({
 			where: { id },
 		});
 	}
@@ -83,7 +89,7 @@ export class SequelizeTaskRepository implements TaskRepository {
 
 		const offset = (page - 1) * limit;
 
-		const tasks = await TaskModel.findAll({
+		const tasks = await this.sequelizeModel.findAll({
 			where,
 			offset,
 			limit,
