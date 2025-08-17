@@ -4,11 +4,14 @@ export type ProjectProps = Entity & {
 	title: string;
 	description: string;
 	tags: string[];
+	taskIds: string[];
 };
 
 export type CreateProjectParams = Omit<
 	ProjectProps,
-	"id" | "createdAt" | "updatedAt"
+	"id" | "createdAt" | "updatedAt" | "taskIds"
 >;
 
-export type UpdateProjectParams = Partial<CreateProjectParams>;
+export type UpdateProjectParams = Partial<
+	Omit<ProjectProps, "id" | "createdAt" | "updatedAt">
+>;

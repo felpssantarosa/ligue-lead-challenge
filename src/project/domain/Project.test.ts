@@ -20,6 +20,7 @@ const validProps = (): ProjectProps => ({
 	title: "Test Project",
 	description: "A test project description",
 	tags: ["test", "typescript"],
+	taskIds: [],
 	createdAt: new Date("2023-01-01T00:00:00.000Z"),
 	updatedAt: new Date("2023-01-01T00:00:00.000Z"),
 });

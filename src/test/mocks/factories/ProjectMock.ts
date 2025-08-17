@@ -15,6 +15,7 @@ import { GetProjectService } from "@/project/service/GetProjectService";
 import { UpdateProjectService } from "@/project/service/UpdateProjectService";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { generateUUID } from "@/test/factories";
+import { mockTaskService } from "@/test/mocks/factories/TaskMock";
 import { MockProjectRepository } from "@/test/mocks/repositories";
 
 const mockValidation = {
@@ -28,6 +29,7 @@ const mockCreateProjectServiceImplementation = new CreateProjectService(
 );
 const mockGetProjectServiceImplementation = new GetProjectService(
 	mockProjectRepository,
+	mockTaskService,
 );
 const mockGetAllProjectsServiceImplementation = new GetAllProjectsService(
 	mockProjectRepository,
@@ -94,6 +96,7 @@ export const createProject = (params: Partial<ProjectProps>) => {
 		title: "Test Project",
 		description: "Test project description",
 		tags: ["test"],
+		taskIds: [],
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};

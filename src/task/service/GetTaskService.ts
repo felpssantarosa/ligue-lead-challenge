@@ -2,18 +2,11 @@ import { inject, injectable } from "tsyringe";
 import type { EntityId } from "@/shared/domain/Entity";
 import { NotFoundError } from "@/shared/Errors";
 import type { TaskRepository } from "@/task/infra";
+import { Task } from "@/task/domain";
 
 export type GetTaskServiceParams = { id: EntityId };
 
-export type GetTaskServiceResponse = {
-	id: string;
-	title: string;
-	description: string;
-	status: string;
-	projectId: string;
-	createdAt: Date;
-	updatedAt: Date;
-};
+export type GetTaskServiceResponse = Task;
 
 @injectable()
 export class GetTaskService {
@@ -26,7 +19,7 @@ export class GetTaskService {
 
 		if (!task) throw NotFoundError.task(params.id);
 
-		return {
+		return Task.fromJSON({
 			id: task.id,
 			title: task.title,
 			description: task.description,
@@ -34,6 +27,6 @@ export class GetTaskService {
 			projectId: task.projectId,
 			createdAt: task.createdAt,
 			updatedAt: task.updatedAt,
-		};
+		});
 	}
 }

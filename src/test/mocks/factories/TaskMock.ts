@@ -7,6 +7,7 @@ import {
 } from "@/task/controller";
 import type { TaskProps } from "@/task/domain";
 import { Task } from "@/task/domain/Task";
+import { TaskService } from "@/task/service";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
 import { DeleteTaskService } from "@/task/service/DeleteTaskService";
 import { GetAllTasksService } from "@/task/service/GetAllTasksService";
@@ -106,6 +107,14 @@ export function createTask(params: Partial<TaskProps>): Task {
 	});
 }
 
+const mockTaskService = new TaskService(
+	mockCreateTaskServiceImplementation,
+	mockGetAllTasksServiceImplementation,
+	mockGetTaskServiceImplementation,
+	mockUpdateTaskServiceImplementation,
+	mockDeleteTaskServiceImplementation,
+);
+
 export {
 	mockTaskValidation,
 	mockCreateTaskService,
@@ -124,4 +133,5 @@ export {
 	mockUpdateTaskController,
 	mockDeleteTaskController,
 	mockCreateTaskController,
+	mockTaskService,
 };

@@ -18,6 +18,7 @@ export class Project extends Entity {
 	private _title: string;
 	private _description: string;
 	private _tags: string[];
+	private _taskIds: string[];
 
 	private constructor({
 		description,
@@ -38,8 +39,9 @@ export class Project extends Entity {
 		const id = crypto.randomUUID();
 		const createdAt = new Date();
 		const updatedAt = new Date();
+		const taskIds: string[] = [];
 
-		return new Project({ id, createdAt, updatedAt, ...params });
+		return new Project({ id, createdAt, updatedAt, taskIds, ...params });
 	}
 
 	public static fromJSON(params: ProjectProps): Project {
@@ -50,6 +52,7 @@ export class Project extends Entity {
 			title: params.title,
 			tags: params.tags,
 			id: params.id,
+			taskIds: params.taskIds,
 		});
 	}
 
@@ -65,6 +68,10 @@ export class Project extends Entity {
 		return [...this._tags];
 	}
 
+	public get taskIds(): string[] {
+		return [...this._taskIds];
+	}
+
 	public update(params: UpdateProjectParams): void {
 		if (params.description !== undefined && params.description !== null) {
 			this.updateDescription(params.description);
@@ -74,6 +81,9 @@ export class Project extends Entity {
 		}
 		if (params.tags !== undefined && params.tags !== null) {
 			this.updateTags(params.tags);
+		}
+		if (params.taskIds !== undefined && params.taskIds !== null) {
+			this.updateTaskIds(params.taskIds);
 		}
 
 		this.updatedAt = new Date();
@@ -97,6 +107,10 @@ export class Project extends Entity {
 
 	public updateTags(tags: string[]): void {
 		this._tags = [...tags];
+	}
+
+	public updateTaskIds(taskIds: string[]): void {
+		this._taskIds = [...taskIds];
 	}
 
 	public addTag(tag: string): void {
@@ -126,6 +140,7 @@ export class Project extends Entity {
 			title: this._title,
 			description: this._description,
 			tags: this._tags,
+			taskIds: this._taskIds,
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt,
 		};

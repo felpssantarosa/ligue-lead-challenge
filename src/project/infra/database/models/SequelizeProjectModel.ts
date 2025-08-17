@@ -62,7 +62,7 @@ export class ProjectModel extends Model<ProjectModelAttributes> {
 	})
 	updatedAt!: Date;
 
-	@HasMany(() => TaskModel)
+	@HasMany(() => TaskModel, { onDelete: "CASCADE", hooks: true })
 	tasks!: TaskModel[];
 }
 
