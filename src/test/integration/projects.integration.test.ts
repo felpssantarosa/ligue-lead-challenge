@@ -1,16 +1,29 @@
 import type { Application } from "express";
 import request from "supertest";
-import { registerDependencies } from "@/shared/infra/container";
 import { createApp } from "@/shared/infra/http/app";
 import { generateUUID } from "../factories/UUIDFactory";
 import "reflect-metadata";
+import { 
+	setupIntegrationContainer, 
+	cleanupIntegrationContainer 
+} from "./setup/container";
+import { cleanTestDatabase, closeTestDatabase } from "./setup/database";
 
 describe("Projects API Integration", () => {
 	let app: Application;
 
-	beforeAll(() => {
-		registerDependencies();
+	beforeAll(async () => {
+		await setupIntegrationContainer();
 		app = createApp();
+	});
+
+	afterAll(async () => {
+		cleanupIntegrationContainer();
+		await closeTestDatabase();
+	});
+
+	beforeEach(async () => {
+		await cleanTestDatabase();
 	});
 
 	describe("POST /api/projects", () => {
