@@ -1,7 +1,7 @@
 import {
 	createTask,
-	mockTaskRepository,
 	mockGetAllTasksServiceImplementation as getAllTasksService,
+	mockTaskRepository,
 } from "@/test/mocks";
 
 describe("GetAllTasksService", () => {

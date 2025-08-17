@@ -1,13 +1,13 @@
+import type { Project } from "@/project/domain";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
 import {
-	createTask,
 	createProject,
-	mockTaskRepository,
-	mockProjectRepository as projectRepository,
+	createTask,
 	mockGetTasksByProjectServiceImplementation as getTasksByProjectService,
 	mockProjectService,
+	mockTaskRepository,
+	mockProjectRepository as projectRepository,
 } from "@/test/mocks";
-import type { Project } from "@/project/domain";
 
 describe("GetTasksByProjectService", () => {
 	let existingProject: Project;
@@ -68,9 +68,7 @@ describe("GetTasksByProjectService", () => {
 			expect(getProjectServiceSpy).toHaveBeenCalledWith({
 				id: projectId,
 			});
-			expect(findByProjectSpy).toHaveBeenCalledWith(
-				projectId,
-			);
+			expect(findByProjectSpy).toHaveBeenCalledWith(projectId);
 		});
 
 		it("should return empty array when project has no tasks", async () => {
@@ -136,9 +134,7 @@ describe("GetTasksByProjectService", () => {
 			expect(getProjectServiceSpy).toHaveBeenCalledWith({
 				id: projectId,
 			});
-			expect(findByProjectSpy).toHaveBeenCalledWith(
-				projectId,
-			);
+			expect(findByProjectSpy).toHaveBeenCalledWith(projectId);
 		});
 
 		it("should handle project service errors", async () => {

@@ -72,5 +72,5 @@ export * from "./CreateTaskService";
 export * from "./DeleteTaskService";
 export * from "./GetAllTasksService";
 export * from "./GetTaskService";
-export * from "./UpdateTaskService";
 export * from "./GetTasksByProjectService";
+export * from "./UpdateTaskService";

@@ -71,7 +71,7 @@ export class ProjectService {
 }
 
 export * from "./CreateProjectService";
+export * from "./DeleteProjectService";
 export * from "./GetAllProjectsService";
 export * from "./GetProjectService";
 export * from "./UpdateProjectService";
-export * from "./DeleteProjectService";

@@ -3,10 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { UpdateTaskService } from "@/task/service";
-import type {
-	TaskIdInput,
-	UpdateTaskInput,
-} from "@/task/validation";
+import type { TaskIdInput, UpdateTaskInput } from "@/task/validation";
 
 @injectable()
 export class UpdateTaskController extends BaseController {

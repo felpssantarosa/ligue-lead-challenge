@@ -3,9 +3,9 @@ import { container } from "tsyringe";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
+import { UpdateTaskController } from "@/task/controller";
 import type { UpdateTaskService } from "@/task/service";
 import { createTask } from "@/test/mocks";
-import { UpdateTaskController } from "@/task/controller";
 
 describe("UpdateTaskController", () => {
 	let updateTaskController: UpdateTaskController;

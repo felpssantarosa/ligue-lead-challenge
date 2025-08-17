@@ -4,8 +4,8 @@ import type {
 	GetAllProjectsService,
 	GetAllProjectsServiceParams,
 } from "@/project/service";
-import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { BaseController } from "@/shared/BaseController";
+import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 
 type PaginationInput = {
 	page: number;

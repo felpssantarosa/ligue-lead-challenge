@@ -1,8 +1,8 @@
 import { Op } from "sequelize";
 import { Project } from "@/project/domain";
 import type {
-	ProjectModel,
 	GetAllProjectsParams,
+	ProjectModel,
 	ProjectRepository,
 } from "@/project/infra";
 

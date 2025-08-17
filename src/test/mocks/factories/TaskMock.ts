@@ -9,10 +9,11 @@ import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
 import { generateUUID } from "@/test/factories/UUIDFactory";
-import { mockProjectRepository, mockProjectService } from "@/test/mocks/factories/ProjectMock";
 import {
-	MockTaskRepository,
-} from "@/test/mocks/repositories";
+	mockProjectRepository,
+	mockProjectService,
+} from "@/test/mocks/factories/ProjectMock";
+import { MockTaskRepository } from "@/test/mocks/repositories";
 
 const mockTaskValidation = {
 	execute: jest.fn(),

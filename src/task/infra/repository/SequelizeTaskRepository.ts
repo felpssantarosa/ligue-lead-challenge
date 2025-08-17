@@ -4,8 +4,8 @@ import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError } from "@/shared/Errors";
 import { Task } from "@/task/domain";
 import {
-	TaskModel,
 	type GetAllTasksParams,
+	TaskModel,
 	type TaskRepository,
 } from "@/task/infra";
 
