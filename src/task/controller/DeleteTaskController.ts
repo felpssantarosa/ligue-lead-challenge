@@ -25,10 +25,7 @@ export class DeleteTaskController extends BaseController {
 
 			await this.deleteTaskService.execute({ id: validatedParams.id });
 
-			res.status(200).json({
-				success: true,
-				message: "Task deleted successfully",
-			});
+			res.status(204).send();
 		} catch (error) {
 			this.handleError(error, res, "DeleteTaskController.handle");
 		}

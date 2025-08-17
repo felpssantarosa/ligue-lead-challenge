@@ -1,13 +1,16 @@
 import type { Request, Response } from "express";
 import { ValidationError } from "sequelize";
+import { inject, injectable } from "tsyringe";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { TaskProps } from "@/task/domain";
 import type { CreateTaskService } from "@/task/service";
 
+@injectable()
 export class CreateTaskController {
 	constructor(
+		@inject("CreateTaskService")
 		private readonly createTaskService: CreateTaskService,
-		private readonly validation: ValidationHandler,
+		@inject("Validation") private readonly validation: ValidationHandler,
 	) {}
 
 	async create(req: Request, res: Response): Promise<Response> {
@@ -15,7 +18,7 @@ export class CreateTaskController {
 			const { projectId } = req.params;
 			const taskData = req.body;
 
-			const validatedProjectId = this.validation.execute<string>(
+			const validatedProjectData = this.validation.execute<{ id: string }>(
 				"project-id",
 				{ id: projectId },
 				"CreateTaskByProjectIdController.create",
@@ -29,7 +32,7 @@ export class CreateTaskController {
 
 			const task = await this.createTaskService.execute({
 				...validatedTaskParams,
-				projectId: validatedProjectId,
+				projectId: validatedProjectData.id,
 			});
 
 			return res.status(201).json({

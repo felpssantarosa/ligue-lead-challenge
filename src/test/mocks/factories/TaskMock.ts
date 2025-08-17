@@ -15,7 +15,10 @@ import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
 import { generateUUID } from "@/test/factories/UUIDFactory";
-import { mockProjectRepository, mockProjectService } from "@/test/mocks/factories/ProjectMock";
+import {
+	mockProjectRepository,
+	mockProjectService,
+} from "@/test/mocks/factories/ProjectMock";
 import { MockTaskRepository } from "@/test/mocks/repositories";
 
 const mockTaskValidation = {
@@ -40,6 +43,7 @@ const mockUpdateTaskServiceImplementation = new UpdateTaskService(
 );
 const mockDeleteTaskServiceImplementation = new DeleteTaskService(
 	mockTaskRepository,
+	mockProjectRepository,
 );
 
 const mockCreateTaskService = {
@@ -85,7 +89,7 @@ export function createTask(params: Partial<TaskProps>): Task {
 		title: "Test Task",
 		description: "Test task description",
 		status: TaskStatus.TODO,
-		ProjectId: generateUUID(),
+		projectId: generateUUID(),
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
@@ -97,7 +101,7 @@ export function createTask(params: Partial<TaskProps>): Task {
 		title: taskData.title,
 		description: taskData.description,
 		status: taskData.status,
-		projectId: taskData.ProjectId,
+		projectId: taskData.projectId,
 		createdAt: taskData.createdAt,
 		updatedAt: taskData.updatedAt,
 	});

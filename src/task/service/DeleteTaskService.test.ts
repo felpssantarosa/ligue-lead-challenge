@@ -1,59 +1,80 @@
 import { NotFoundError } from "@/shared/Errors";
+import { DeleteTaskService } from "@/task/service/DeleteTaskService";
 import {
+	createProject,
 	createTask,
-	mockDeleteTaskServiceImplementation as deleteTaskService,
+	mockProjectRepository,
 	mockTaskRepository,
 } from "@/test/mocks";
 
 describe("DeleteTaskService", () => {
-	const findSpy = jest.spyOn(mockTaskRepository, "findById");
-	const deleteSpy = jest.spyOn(mockTaskRepository, "delete");
+	let deleteTaskService: DeleteTaskService;
+	const findTaskSpy = jest.spyOn(mockTaskRepository, "findById");
+	const deleteTaskSpy = jest.spyOn(mockTaskRepository, "delete");
+	const findProjectSpy = jest.spyOn(mockProjectRepository, "findById");
+	const saveProjectSpy = jest.spyOn(mockProjectRepository, "save");
 
 	beforeEach(() => {
 		mockTaskRepository.clear();
+		mockProjectRepository.clear();
 		jest.clearAllMocks();
+
+		deleteTaskService = new DeleteTaskService(
+			mockTaskRepository,
+			mockProjectRepository,
+		);
 	});
 
 	describe("execute", () => {
 		it("should delete task when found", async () => {
+			const projectId = "project-id-123";
 			const taskId = "task-id-123";
-			const task = createTask({ id: taskId });
+			const task = createTask({ id: taskId, projectId });
+			const project = createProject({ id: projectId, taskIds: [taskId] });
 
-			findSpy.mockResolvedValue(task);
-			deleteSpy.mockResolvedValue(undefined);
+			findTaskSpy.mockResolvedValue(task);
+			findProjectSpy.mockResolvedValue(project);
+			deleteTaskSpy.mockResolvedValue(undefined);
+			saveProjectSpy.mockResolvedValue(project);
 
 			await deleteTaskService.execute({ id: taskId });
 
-			expect(findSpy).toHaveBeenCalledWith(taskId);
-			expect(deleteSpy).toHaveBeenCalledWith(taskId);
+			expect(findTaskSpy).toHaveBeenCalledWith(taskId);
+			expect(findProjectSpy).toHaveBeenCalledWith(projectId);
+			expect(saveProjectSpy).toHaveBeenCalledWith(project);
+			expect(deleteTaskSpy).toHaveBeenCalledWith(taskId);
 		});
 
 		it("should throw NotFoundError when task not found", async () => {
 			const taskId = "non-existent-task-id";
 
-			findSpy.mockResolvedValue(null);
+			findTaskSpy.mockResolvedValue(null);
 
 			await expect(deleteTaskService.execute({ id: taskId })).rejects.toThrow(
 				NotFoundError,
 			);
 
-			expect(findSpy).toHaveBeenCalledWith(taskId);
-			expect(deleteSpy).not.toHaveBeenCalled();
+			expect(findTaskSpy).toHaveBeenCalledWith(taskId);
+			expect(deleteTaskSpy).not.toHaveBeenCalled();
 		});
 
 		it("should handle repository errors gracefully", async () => {
+			const projectId = "project-id-123";
 			const taskId = "task-id-123";
-			const task = createTask({ id: taskId });
+			const task = createTask({ id: taskId, projectId });
+			const project = createProject({ id: projectId, taskIds: [taskId] });
 
-			findSpy.mockResolvedValue(task);
-			deleteSpy.mockRejectedValue(new Error("Database connection failed"));
+			findTaskSpy.mockResolvedValue(task);
+			findProjectSpy.mockResolvedValue(project);
+			deleteTaskSpy.mockRejectedValue(new Error("Database connection failed"));
 
 			await expect(deleteTaskService.execute({ id: taskId })).rejects.toThrow(
 				"Database connection failed",
 			);
 
-			expect(findSpy).toHaveBeenCalledWith(taskId);
-			expect(deleteSpy).toHaveBeenCalledWith(taskId);
+			expect(findTaskSpy).toHaveBeenCalledWith(taskId);
+			expect(findProjectSpy).toHaveBeenCalledWith(projectId);
+			expect(deleteTaskSpy).toHaveBeenCalledWith(taskId);
 		});
 	});
 });

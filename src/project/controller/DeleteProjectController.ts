@@ -45,13 +45,9 @@ export class DeleteProjectController extends BaseController {
 				force: validatedQuery.force,
 			};
 
-			const result = await this.deleteProjectService.execute(deleteRequest);
+			await this.deleteProjectService.execute(deleteRequest);
 
-			res.status(200).json({
-				success: true,
-				data: result,
-				message: result.message,
-			});
+			res.status(204).send();
 		} catch (error) {
 			this.handleError(error, res, "DeleteProjectController.handle");
 		}

@@ -39,11 +39,8 @@ describe("DeleteTaskController", () => {
 			expect(mockDeleteTaskService.execute).toHaveBeenCalledWith({
 				id: taskId,
 			});
-			expect(mockResponse.status).toHaveBeenCalledWith(200);
-			expect(mockResponse.json).toHaveBeenCalledWith({
-				success: true,
-				message: "Task deleted successfully",
-			});
+			expect(mockResponse.status).toHaveBeenCalledWith(204);
+			expect(mockResponse.send).toHaveBeenCalledWith();
 		});
 
 		it("should handle validation error", async () => {

@@ -50,6 +50,12 @@ export class CreateTaskService {
 
 		const savedTask = await this.taskRepository.save(task);
 
+		const updatedTaskIds = [...project.taskIds, savedTask.id];
+
+		project.updateTaskIds(updatedTaskIds);
+
+		await this.projectRepository.save(project);
+
 		return {
 			id: savedTask.id,
 			title: savedTask.title,

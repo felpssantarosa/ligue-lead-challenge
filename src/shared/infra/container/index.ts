@@ -19,7 +19,6 @@ import type { ValidationProvider } from "@/shared/validation/ValidationProvider"
 import { ZodValidationProvider } from "@/shared/validation/ZodValidationProvider";
 import { DeleteTaskController } from "@/task/controller";
 import { UpdateTaskController } from "@/task/controller/UpdateTaskController";
-import { SequelizeTaskRepository } from "@/task/infra/repository/SequelizeTaskRepository";
 import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
 import { TaskService } from "@/task/service";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
@@ -29,6 +28,7 @@ import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
 import { UpdateTaskService } from "@/task/service/UpdateTaskService";
 import { MockProjectRepository } from "@/test/mocks/repositories/MockProjectRepository";
+import { MockTaskRepository } from "@/test/mocks/repositories/MockTaskRepository";
 
 export const registerDependencies = (): void => {
 	container.registerSingleton<ValidationProvider>(
@@ -44,7 +44,7 @@ export const registerDependencies = (): void => {
 	);
 	container.registerSingleton<TaskRepository>(
 		"TaskRepository",
-		SequelizeTaskRepository,
+		MockTaskRepository,
 	);
 
 	container.registerSingleton("CreateProjectService", CreateProjectService);

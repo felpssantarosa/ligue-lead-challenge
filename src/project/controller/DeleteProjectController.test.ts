@@ -54,12 +54,8 @@ describe("DeleteProjectController", () => {
 				id: projectId,
 				force: false,
 			});
-			expect(mockResponse.status).toHaveBeenCalledWith(200);
-			expect(mockResponse.json).toHaveBeenCalledWith({
-				success: true,
-				data: deleteResult,
-				message: deleteResult.message,
-			});
+			expect(mockResponse.status).toHaveBeenCalledWith(204);
+			expect(mockResponse.send).toHaveBeenCalledWith();
 		});
 
 		it("should handle force delete", async () => {

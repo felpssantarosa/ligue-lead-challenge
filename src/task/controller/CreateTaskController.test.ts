@@ -40,7 +40,7 @@ describe("CreateTaskController", () => {
 			mockRequest.body = taskData;
 
 			mockTaskValidation.execute
-				.mockReturnValueOnce(projectId)
+				.mockReturnValueOnce({ id: projectId })
 				.mockReturnValueOnce(taskData);
 			mockCreateTaskService.execute.mockResolvedValue(createdTask);
 
