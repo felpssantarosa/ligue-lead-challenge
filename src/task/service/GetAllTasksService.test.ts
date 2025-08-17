@@ -104,7 +104,7 @@ describe("GetAllTasksService", () => {
 		});
 
 		it("should use default parameters when none provided", async () => {
-			const tasks = [createTask()];
+			const tasks = [createTask({})];
 
 			findAllSpy.mockResolvedValue(tasks);
 
