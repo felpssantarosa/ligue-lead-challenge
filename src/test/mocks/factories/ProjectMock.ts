@@ -5,6 +5,7 @@ import {
 	GetProjectController,
 	UpdateProjectController,
 } from "@/project/controller";
+import type { ProjectProps } from "@/project/domain";
 import { Project } from "@/project/domain/Project";
 import { ProjectService } from "@/project/service";
 import { CreateProjectService } from "@/project/service/CreateProjectService";
@@ -87,14 +88,7 @@ const mockProjectService = new ProjectService(
 	mockDeleteProjectServiceImplementation,
 );
 
-export const createProject = (
-	overrides: Partial<{
-		id: string;
-		title: string;
-		description: string;
-		tags: string[];
-	}> = {},
-) => {
+export const createProject = (params: Partial<ProjectProps>) => {
 	const defaults = {
 		id: generateUUID(),
 		title: "Test Project",
@@ -104,7 +98,7 @@ export const createProject = (
 		updatedAt: new Date(),
 	};
 
-	const projectData = { ...defaults, ...overrides };
+	const projectData = { ...defaults, ...params };
 
 	return Project.fromJSON(projectData);
 };

@@ -1,42 +1,23 @@
 import type { Request, Response } from "express";
-import { container } from "tsyringe";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
-import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
-import { UpdateTaskController } from "@/task/controller";
-import type { UpdateTaskService } from "@/task/service";
-import { createTask } from "@/test/mocks";
+import type { UpdateTaskController } from "@/task/controller";
+import {
+	createTask,
+	mockRequest,
+	mockResponse,
+	mockTaskValidation,
+	mockUpdateTaskController,
+	mockUpdateTaskService,
+} from "@/test/mocks";
 
 describe("UpdateTaskController", () => {
 	let updateTaskController: UpdateTaskController;
-	let mockUpdateTaskService: jest.Mocked<UpdateTaskService>;
-	let mockValidation: jest.Mocked<ValidationHandler>;
-	let mockReq: Partial<Request>;
-	let mockRes: Partial<Response>;
 
 	beforeEach(() => {
-		mockUpdateTaskService = {
-			execute: jest.fn(),
-		} as unknown as jest.Mocked<UpdateTaskService>;
+		updateTaskController = mockUpdateTaskController;
 
-		mockValidation = {
-			execute: jest.fn(),
-		} as unknown as jest.Mocked<ValidationHandler>;
-
-		mockRes = {
-			status: jest.fn().mockReturnThis(),
-			json: jest.fn(),
-		};
-
-		mockReq = {
-			params: {},
-			body: {},
-		};
-
-		container.clearInstances();
-		container.registerInstance("UpdateTaskService", mockUpdateTaskService);
-		container.registerInstance("Validation", mockValidation);
-		updateTaskController = container.resolve(UpdateTaskController);
+		jest.clearAllMocks();
 	});
 
 	describe("handle", () => {
@@ -49,27 +30,27 @@ describe("UpdateTaskController", () => {
 			};
 			const updatedTask = createTask({ id: taskId, ...updateData });
 
-			mockReq.params = { id: taskId };
-			mockReq.body = updateData;
+			mockRequest.params = { id: taskId };
+			mockRequest.body = updateData;
 
-			mockValidation.execute
+			mockTaskValidation.execute
 				.mockReturnValueOnce({ id: taskId })
 				.mockReturnValueOnce(updateData);
 			mockUpdateTaskService.execute.mockResolvedValue(updatedTask);
 
 			await updateTaskController.handle(
-				mockReq as Request,
-				mockRes as Response,
+				mockRequest as Request,
+				mockResponse as Response,
 			);
 
-			expect(mockValidation.execute).toHaveBeenCalledTimes(2);
-			expect(mockValidation.execute).toHaveBeenNthCalledWith(
+			expect(mockTaskValidation.execute).toHaveBeenCalledTimes(2);
+			expect(mockTaskValidation.execute).toHaveBeenNthCalledWith(
 				1,
 				"task-id",
 				{ id: taskId },
 				"UpdateTaskController.handle",
 			);
-			expect(mockValidation.execute).toHaveBeenNthCalledWith(
+			expect(mockTaskValidation.execute).toHaveBeenNthCalledWith(
 				2,
 				"update-task",
 				updateData,
@@ -79,8 +60,8 @@ describe("UpdateTaskController", () => {
 				id: taskId,
 				...updateData,
 			});
-			expect(mockRes.status).toHaveBeenCalledWith(200);
-			expect(mockRes.json).toHaveBeenCalledWith({
+			expect(mockResponse.status).toHaveBeenCalledWith(200);
+			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: true,
 				data: updatedTask,
 				message: "Task updated successfully",
@@ -92,29 +73,29 @@ describe("UpdateTaskController", () => {
 			const updateData = { title: "Updated Title Only" };
 			const updatedTask = createTask({ id: taskId, ...updateData });
 
-			mockReq.params = { id: taskId };
-			mockReq.body = updateData;
+			mockRequest.params = { id: taskId };
+			mockRequest.body = updateData;
 
-			mockValidation.execute
+			mockTaskValidation.execute
 				.mockReturnValueOnce({ id: taskId })
 				.mockReturnValueOnce(updateData);
 			mockUpdateTaskService.execute.mockResolvedValue(updatedTask);
 
 			await updateTaskController.handle(
-				mockReq as Request,
-				mockRes as Response,
+				mockRequest as Request,
+				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
 				id: taskId,
 				...updateData,
 			});
-			expect(mockRes.status).toHaveBeenCalledWith(200);
+			expect(mockResponse.status).toHaveBeenCalledWith(200);
 		});
 
 		it("should handle validation error for params", async () => {
-			mockReq.params = { id: "" };
-			mockReq.body = { title: "Valid Title" };
+			mockRequest.params = { id: "" };
+			mockRequest.body = { title: "Valid Title" };
 
 			const validationError = new ValidationError({
 				field: "id",
@@ -122,23 +103,23 @@ describe("UpdateTaskController", () => {
 				message: "ID is required",
 			});
 
-			mockValidation.execute.mockImplementation(() => {
+			mockTaskValidation.execute.mockImplementation(() => {
 				throw validationError;
 			});
 
 			await updateTaskController.handle(
-				mockReq as Request,
-				mockRes as Response,
+				mockRequest as Request,
+				mockResponse as Response,
 			);
 
-			expect(mockValidation.execute).toHaveBeenCalledWith(
+			expect(mockTaskValidation.execute).toHaveBeenCalledWith(
 				"task-id",
 				{ id: "" },
 				"UpdateTaskController.handle",
 			);
 			expect(mockUpdateTaskService.execute).not.toHaveBeenCalled();
-			expect(mockRes.status).toHaveBeenCalledWith(400);
-			expect(mockRes.json).toHaveBeenCalledWith({
+			expect(mockResponse.status).toHaveBeenCalledWith(400);
+			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: false,
 				error: {
 					type: "VALIDATION_ERROR",
@@ -151,8 +132,8 @@ describe("UpdateTaskController", () => {
 
 		it("should handle validation error for body", async () => {
 			const taskId = "task-id-123";
-			mockReq.params = { id: taskId };
-			mockReq.body = { title: "" };
+			mockRequest.params = { id: taskId };
+			mockRequest.body = { title: "" };
 
 			const validationError = new ValidationError({
 				field: "title",
@@ -160,30 +141,30 @@ describe("UpdateTaskController", () => {
 				message: "Title cannot be empty",
 			});
 
-			mockValidation.execute
+			mockTaskValidation.execute
 				.mockReturnValueOnce({ id: taskId })
 				.mockImplementation(() => {
 					throw validationError;
 				});
 
 			await updateTaskController.handle(
-				mockReq as Request,
-				mockRes as Response,
+				mockRequest as Request,
+				mockResponse as Response,
 			);
 
-			expect(mockValidation.execute).toHaveBeenCalledTimes(2);
+			expect(mockTaskValidation.execute).toHaveBeenCalledTimes(2);
 			expect(mockUpdateTaskService.execute).not.toHaveBeenCalled();
-			expect(mockRes.status).toHaveBeenCalledWith(400);
+			expect(mockResponse.status).toHaveBeenCalledWith(400);
 		});
 
 		it("should handle task not found error", async () => {
 			const taskId = "non-existent-task-id";
 			const updateData = { title: "Updated Title" };
 
-			mockReq.params = { id: taskId };
-			mockReq.body = updateData;
+			mockRequest.params = { id: taskId };
+			mockRequest.body = updateData;
 
-			mockValidation.execute
+			mockTaskValidation.execute
 				.mockReturnValueOnce({ id: taskId })
 				.mockReturnValueOnce(updateData);
 
@@ -191,16 +172,16 @@ describe("UpdateTaskController", () => {
 			mockUpdateTaskService.execute.mockRejectedValue(notFoundError);
 
 			await updateTaskController.handle(
-				mockReq as Request,
-				mockRes as Response,
+				mockRequest as Request,
+				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
 				id: taskId,
 				...updateData,
 			});
-			expect(mockRes.status).toHaveBeenCalledWith(404);
-			expect(mockRes.json).toHaveBeenCalledWith({
+			expect(mockResponse.status).toHaveBeenCalledWith(404);
+			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: false,
 				error: {
 					type: "NOT_FOUND",
@@ -216,33 +197,33 @@ describe("UpdateTaskController", () => {
 			const emptyData = {};
 			const task = createTask({ id: taskId });
 
-			mockReq.params = { id: taskId };
-			mockReq.body = emptyData;
+			mockRequest.params = { id: taskId };
+			mockRequest.body = emptyData;
 
-			mockValidation.execute
+			mockTaskValidation.execute
 				.mockReturnValueOnce({ id: taskId })
 				.mockReturnValueOnce(emptyData);
 			mockUpdateTaskService.execute.mockResolvedValue(task);
 
 			await updateTaskController.handle(
-				mockReq as Request,
-				mockRes as Response,
+				mockRequest as Request,
+				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
 				id: taskId,
 			});
-			expect(mockRes.status).toHaveBeenCalledWith(200);
+			expect(mockResponse.status).toHaveBeenCalledWith(200);
 		});
 
 		it("should handle service errors", async () => {
 			const taskId = "task-id-123";
 			const updateData = { title: "Updated Title" };
 
-			mockReq.params = { id: taskId };
-			mockReq.body = updateData;
+			mockRequest.params = { id: taskId };
+			mockRequest.body = updateData;
 
-			mockValidation.execute
+			mockTaskValidation.execute
 				.mockReturnValueOnce({ id: taskId })
 				.mockReturnValueOnce(updateData);
 			mockUpdateTaskService.execute.mockRejectedValue(
@@ -250,16 +231,16 @@ describe("UpdateTaskController", () => {
 			);
 
 			await updateTaskController.handle(
-				mockReq as Request,
-				mockRes as Response,
+				mockRequest as Request,
+				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
 				id: taskId,
 				...updateData,
 			});
-			expect(mockRes.status).toHaveBeenCalledWith(500);
-			expect(mockRes.json).toHaveBeenCalledWith({
+			expect(mockResponse.status).toHaveBeenCalledWith(500);
+			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: false,
 				error: {
 					type: "UNEXPECTED_ERROR",

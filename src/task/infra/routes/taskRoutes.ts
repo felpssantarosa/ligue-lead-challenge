@@ -1,6 +1,10 @@
 import { Router } from "express";
 import { container } from "tsyringe";
-import { DeleteTaskController, UpdateTaskController } from "@/task/controller";
+import {
+	CreateTaskController,
+	DeleteTaskController,
+	UpdateTaskController,
+} from "@/task/controller";
 
 const taskRoutes = Router();
 const taskRoutesBoundByProject = Router();
@@ -19,8 +23,8 @@ taskRoutes.delete("/:id", (req, res) => {
 
 // Create task under project: POST /api/projects/:projectId/tasks
 taskRoutesBoundByProject.post("/:projectId/tasks", (req, res) => {
-	// const taskController = container.resolve(TaskController);
-	// return taskController.create(req, res);
+	const createTaskController = container.resolve(CreateTaskController);
+	return createTaskController.create(req, res);
 });
 
 export { taskRoutes, taskRoutesBoundByProject };

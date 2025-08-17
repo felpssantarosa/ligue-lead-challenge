@@ -1,6 +1,11 @@
-import type { EntityId } from "@/shared/domain/Entity";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
+import {
+	CreateTaskController,
+	DeleteTaskController,
+	UpdateTaskController,
+} from "@/task/controller";
+import type { TaskProps } from "@/task/domain";
 import { Task } from "@/task/domain/Task";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
 import { DeleteTaskService } from "@/task/service/DeleteTaskService";
@@ -64,17 +69,20 @@ const mockGetTasksByProjectService = {
 	execute: jest.fn(),
 } as GetTasksByProjectService & { execute: jest.Mock };
 
-export function createTask(
-	overrides: Partial<{
-		id: EntityId;
-		title: string;
-		description: string;
-		status: TaskStatus;
-		projectId: EntityId;
-		createdAt: Date;
-		updatedAt: Date;
-	}> = {},
-): Task {
+const mockCreateTaskController = new CreateTaskController(
+	mockCreateTaskService,
+	mockTaskValidation,
+);
+const mockDeleteTaskController = new DeleteTaskController(
+	mockDeleteTaskService,
+	mockTaskValidation,
+);
+const mockUpdateTaskController = new UpdateTaskController(
+	mockUpdateTaskService,
+	mockTaskValidation,
+);
+
+export function createTask(params: Partial<TaskProps>): Task {
 	const defaults = {
 		id: generateUUID(),
 		title: "Test Task",
@@ -85,7 +93,7 @@ export function createTask(
 		updatedAt: new Date(),
 	};
 
-	const taskData = { ...defaults, ...overrides };
+	const taskData = { ...defaults, ...params };
 
 	return Task.fromJSON({
 		id: taskData.id,
@@ -113,4 +121,7 @@ export {
 	mockUpdateTaskServiceImplementation,
 	mockDeleteTaskServiceImplementation,
 	mockGetTasksByProjectServiceImplementation,
+	mockUpdateTaskController,
+	mockDeleteTaskController,
+	mockCreateTaskController,
 };
