@@ -1,7 +1,7 @@
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError } from "@/shared/Errors";
-import { UpdateTaskService } from "@/task/service/UpdateTaskService";
-import { generateUUID } from "@/test/factories/UUIDFactory";
+import { UpdateTaskService } from "@/task/service";
+import { generateUUID } from "@/test/factories";
 import {
 	createTask,
 	mockTaskRepository,

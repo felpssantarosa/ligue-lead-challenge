@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
+import type { ProjectRepository } from "@/project/infra";
 import { ApplicationError } from "@/shared/Errors";
 
 export interface GetAllProjectsServiceParams {

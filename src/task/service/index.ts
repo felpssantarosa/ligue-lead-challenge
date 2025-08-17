@@ -67,3 +67,10 @@ export class TaskService {
 		return this.deleteTaskService.execute(params);
 	}
 }
+
+export * from "./CreateTaskService";
+export * from "./DeleteTaskService";
+export * from "./GetAllTasksService";
+export * from "./GetTaskService";
+export * from "./UpdateTaskService";
+export * from "./GetTasksByProjectService";

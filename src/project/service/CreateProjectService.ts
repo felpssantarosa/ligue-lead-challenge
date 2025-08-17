@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import { Project } from "@/project/domain/Project";
-import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
+import { Project } from "@/project/domain";
+import type { ProjectRepository } from "@/project/infra";
 
 export interface CreateProjectServiceParams {
 	title: string;

@@ -3,9 +3,9 @@ import { inject, injectable } from "tsyringe";
 import type {
 	GetAllProjectsService,
 	GetAllProjectsServiceParams,
-} from "@/project/service/GetAllProjectsService";
+} from "@/project/service";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
-import { BaseController } from "../../shared/BaseController";
+import { BaseController } from "@/shared/BaseController";
 
 type PaginationInput = {
 	page: number;

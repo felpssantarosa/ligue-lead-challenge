@@ -1,4 +1,4 @@
-import type { Project } from "@/project/domain/Project";
+import type { Project } from "@/project/domain";
 import type { EntityId } from "@/shared/domain/Entity";
 
 type PaginationParams = {

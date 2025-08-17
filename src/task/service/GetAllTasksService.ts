@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import type { Task } from "@/task/domain/Task";
-import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
+import type { Task } from "@/task/domain";
+import type { TaskRepository } from "@/task/infra";
 
 export interface GetAllTasksServiceParams {
 	page?: number;

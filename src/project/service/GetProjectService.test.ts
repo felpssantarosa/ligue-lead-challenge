@@ -1,4 +1,4 @@
-import { Project } from "@/project/domain/Project";
+import { Project } from "@/project/domain";
 import { NotFoundError } from "@/shared/Errors";
 import {
 	mockGetProjectServiceImplementation as getProjectService,

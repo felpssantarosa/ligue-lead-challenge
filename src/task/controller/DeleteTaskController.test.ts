@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { container } from "tsyringe";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
-import type { DeleteTaskService } from "@/task/service/DeleteTaskService";
+import type { DeleteTaskService } from "@/task/service";
 import { DeleteTaskController } from "./DeleteTaskController";
 
 describe("DeleteTaskController", () => {

@@ -1,2 +1,2 @@
-export { DeleteTaskController } from "./DeleteTaskController";
-export { UpdateTaskController } from "./UpdateTaskController";
+export * from "./DeleteTaskController";
+export * from "./UpdateTaskController";

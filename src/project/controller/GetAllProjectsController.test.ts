@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import type { GetAllProjectsController } from "@/project/controller/GetAllProjectsController";
-import type { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
+import type { GetAllProjectsController } from "@/project/controller";
+import type { GetAllProjectsService } from "@/project/service";
 import { ValidationError } from "@/shared/Errors/ValidationError";
 import {
 	mockGetAllProjectsController,

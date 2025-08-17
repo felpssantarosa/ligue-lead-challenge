@@ -8,7 +8,7 @@ import {
 	Table,
 	UpdatedAt,
 } from "sequelize-typescript";
-import { TaskModel } from "@/task/infra/database/models/Task.model";
+import { TaskModel } from "@/task/infra";
 
 export interface ProjectModelAttributes {
 	id: string;

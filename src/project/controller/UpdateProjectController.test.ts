@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import type { UpdateProjectController } from "@/project/controller/UpdateProjectController";
-import type { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import type { UpdateProjectController } from "@/project/controller";
+import type { UpdateProjectService } from "@/project/service";
 import { ValidationError } from "@/shared/Errors/ValidationError";
 import { generateUUID } from "@/test/factories";
 import {

@@ -1,9 +1,9 @@
 import { inject, injectable } from "tsyringe";
-import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
+import type { ProjectRepository } from "@/project/infra";
 import type { EntityId } from "@/shared/domain/Entity";
 import type { TaskStatus } from "@/shared/domain/TaskStatus";
-import { Task } from "@/task/domain/Task";
-import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
+import { Task } from "@/task/domain";
+import type { TaskRepository } from "@/task/infra";
 
 export interface CreateTaskServiceParams {
 	title: string;

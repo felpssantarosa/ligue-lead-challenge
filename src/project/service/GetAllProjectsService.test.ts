@@ -1,5 +1,5 @@
-import { Project } from "@/project/domain/Project";
-import type { GetAllProjectsServiceParams } from "@/project/service/GetAllProjectsService";
+import { Project } from "@/project/domain";
+import type { GetAllProjectsServiceParams } from "@/project/service";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	mockGetAllProjectsServiceImplementation as getAllProjectsService,

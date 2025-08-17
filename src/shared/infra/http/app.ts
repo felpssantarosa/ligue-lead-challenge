@@ -1,7 +1,7 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
-import { projectRoutes } from "@/project/infra/routes/projectRoutes";
+import { projectRoutes } from "@/project/infra/routes/ProjectRoutes";
 import {
 	getErrorInfo,
 	isBusinessRuleError,

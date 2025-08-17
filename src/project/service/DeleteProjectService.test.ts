@@ -1,5 +1,5 @@
-import { Project } from "@/project/domain/Project";
-import type { DeleteProjectServiceParams } from "@/project/service/DeleteProjectService";
+import { Project } from "@/project/domain";
+import type { DeleteProjectServiceParams } from "@/project/service";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	mockDeleteProjectServiceImplementation as deleteProjectService,

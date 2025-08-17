@@ -1,6 +1,6 @@
-import type { Project } from "@/project/domain/Project";
+import type { Project } from "@/project/domain";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
-import type { CreateTaskServiceParams } from "@/task/service/CreateTaskService";
+import type { CreateTaskServiceParams } from "@/task/service";
 import {
 	createProject,
 	mockCreateTaskServiceImplementation as createTaskService,

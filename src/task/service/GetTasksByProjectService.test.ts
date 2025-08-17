@@ -7,7 +7,7 @@ import {
 	mockGetTasksByProjectServiceImplementation as getTasksByProjectService,
 	mockProjectService,
 } from "@/test/mocks";
-import type { Project } from "@/project/domain/Project";
+import type { Project } from "@/project/domain";
 
 describe("GetTasksByProjectService", () => {
 	let existingProject: Project;

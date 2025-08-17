@@ -2,12 +2,12 @@ import { Op, type WhereOptions } from "sequelize";
 import { injectable } from "tsyringe";
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError } from "@/shared/Errors";
-import { Task } from "@/task/domain/Task";
-import { TaskModel } from "@/task/infra/database/models/Task.model";
-import type {
-	GetAllTasksParams,
-	TaskRepository,
-} from "@/task/infra/repository/TaskRepository";
+import { Task } from "@/task/domain";
+import {
+	TaskModel,
+	type GetAllTasksParams,
+	type TaskRepository,
+} from "@/task/infra";
 
 @injectable()
 export class SequelizeTaskRepository implements TaskRepository {

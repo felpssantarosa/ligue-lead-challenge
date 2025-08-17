@@ -1,5 +1,5 @@
-import type { ProjectValidationId } from "@/project/validation/schemas/zod";
-import type { TaskValidationId } from "@/task/validation/schemas/zod";
+import type { ProjectValidationId } from "@/project/validation/schemas/ZodSchema";
+import type { TaskValidationId } from "@/task/validation/schemas/ZodSchema";
 
 export interface ValidationResult<T> {
 	success: boolean;

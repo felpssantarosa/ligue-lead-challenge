@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import type { GetProjectService } from "@/project/service/GetProjectService";
+import type { GetProjectService } from "@/project/service";
 import { NotFoundError } from "@/shared/Errors";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
-import { BaseController } from "../../shared/BaseController";
+import { BaseController } from "@/shared/BaseController";
 
 type ProjectIdInput = {
 	id: string;

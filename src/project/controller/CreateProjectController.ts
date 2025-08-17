@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import type { CreateProjectService } from "@/project/service/CreateProjectService";
+import type { CreateProjectService } from "@/project/service";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 

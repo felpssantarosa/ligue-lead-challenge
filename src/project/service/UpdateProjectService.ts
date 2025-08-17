@@ -1,6 +1,6 @@
 import { inject, injectable } from "tsyringe";
-import type { UpdateProjectParams } from "@/project/domain/ProjectDTO";
-import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
+import type { UpdateProjectParams } from "@/project/domain";
+import type { ProjectRepository } from "@/project/infra";
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
 

@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
-import type { DeleteProjectService } from "@/project/service/DeleteProjectService";
+import type { DeleteProjectService } from "@/project/service";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
-import { BaseController } from "../../shared/BaseController";
+import { BaseController } from "@/shared/BaseController";
 
 type ProjectIdInput = {
 	id: string;

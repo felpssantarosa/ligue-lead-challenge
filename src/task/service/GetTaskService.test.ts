@@ -1,10 +1,10 @@
 import { NotFoundError } from "@/shared/Errors";
-import { GetTaskService } from "@/task/service/GetTaskService";
-import { generateUUID } from "@/test/factories/UUIDFactory";
+import { GetTaskService } from "@/task/service";
+import { generateUUID } from "@/test/factories";
 import {
 	createTask,
 	mockTaskRepository,
-} from "@/test/mocks/factories/TaskMock";
+} from "@/test/mocks";
 
 describe("GetTaskService", () => {
 	let getTaskService: GetTaskService;

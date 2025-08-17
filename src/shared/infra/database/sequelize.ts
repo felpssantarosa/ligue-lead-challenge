@@ -1,7 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import { config } from "@/config/environment";
-import ProjectModel from "@/project/infra/database/models/Project.model";
-import TaskModel from "@/task/infra/database/models/Task.model";
+import ProjectModel from "@/project/infra/database/models/SequelizeProjectModel";
+import TaskModel from "@/task/infra/database/models/SequelizeTaskModel";
 
 let sequelize: Sequelize;
 

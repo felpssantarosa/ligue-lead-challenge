@@ -9,7 +9,7 @@ import {
 	Table,
 	UpdatedAt,
 } from "sequelize-typescript";
-import { ProjectModel } from "@/project/infra/database/models/Project.model";
+import { ProjectModel } from "@/project/infra";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 
 @Table({

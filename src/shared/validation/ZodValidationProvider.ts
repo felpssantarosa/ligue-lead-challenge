@@ -3,11 +3,11 @@ import type { z } from "zod";
 import {
 	type ProjectValidationId,
 	projectSchemas,
-} from "@/project/validation/schemas/zod";
+} from "@/project/validation/schemas/ZodSchema";
 import {
 	type TaskValidationId,
 	taskSchemas,
-} from "@/task/validation/schemas/zod";
+} from "@/task/validation/schemas/ZodSchema";
 import type {
 	ValidationId,
 	ValidationProvider,

@@ -1,4 +1,4 @@
-import type { CreateProjectServiceParams } from "@/project/service/CreateProjectService";
+import type { CreateProjectServiceParams } from "@/project/service";
 import {
 	mockCreateProjectServiceImplementation as createProjectService,
 	mockProjectRepository,

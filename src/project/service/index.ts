@@ -69,3 +69,9 @@ export class ProjectService {
 		return this.deleteProjectService.execute(params);
 	}
 }
+
+export * from "./CreateProjectService";
+export * from "./GetAllProjectsService";
+export * from "./GetProjectService";
+export * from "./UpdateProjectService";
+export * from "./DeleteProjectService";

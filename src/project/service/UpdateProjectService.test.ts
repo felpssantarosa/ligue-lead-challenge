@@ -1,5 +1,5 @@
-import { Project } from "@/project/domain/Project";
-import type { UpdateProjectServiceParams } from "@/project/service/UpdateProjectService";
+import { Project } from "@/project/domain";
+import type { UpdateProjectServiceParams } from "@/project/service";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	mockProjectRepository,

@@ -5,7 +5,7 @@ import type {
 	CreateTaskParams,
 	TaskProps,
 	UpdateTaskParams,
-} from "@/task/domain/TaskDTO";
+} from "@/task/domain";
 
 export class Task extends Entity {
 	public readonly id: string;

@@ -1,10 +1,10 @@
 import { Op } from "sequelize";
-import { Project } from "@/project/domain/Project";
-import type { ProjectModel } from "@/project/infra/database/models/Project.model";
+import { Project } from "@/project/domain";
 import type {
+	ProjectModel,
 	GetAllProjectsParams,
 	ProjectRepository,
-} from "@/project/infra/repository/ProjectRepository";
+} from "@/project/infra";
 
 export class SequelizeRepository implements ProjectRepository {
 	private sequelizeModel: typeof ProjectModel;

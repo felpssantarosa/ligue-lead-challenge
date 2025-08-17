@@ -1,5 +1,5 @@
 import { inject, injectable } from "tsyringe";
-import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
+import type { ProjectRepository } from "@/project/infra";
 import type { EntityId } from "@/shared/domain/Entity";
 import { NotFoundError } from "@/shared/Errors";
 
