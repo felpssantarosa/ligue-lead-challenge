@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import type { ProjectRepository } from "@/project/infra";
 import type { EntityId } from "@/shared/domain/Entity";
 import type { TaskStatus } from "@/shared/domain/TaskStatus";
+import { NotFoundError } from "@/shared/Errors/NotFoundError";
 import { Task } from "@/task/domain";
 import type { TaskRepository } from "@/task/infra";
 
@@ -39,7 +40,14 @@ export class CreateTaskService {
 
 		const project = await this.projectRepository.findById(request.projectId);
 
-		if (!project) throw new Error("Project not found");
+		if (!project) {
+			throw new NotFoundError({
+				message: `Project with id ${request.projectId} not found`,
+				resourceType: "Project",
+				resourceId: request.projectId,
+				trace: "CreateTaskService.execute",
+			});
+		}
 
 		const task = Task.create({
 			title: request.title,
@@ -49,12 +57,6 @@ export class CreateTaskService {
 		});
 
 		const savedTask = await this.taskRepository.save(task);
-
-		const updatedTaskIds = [...project.taskIds, savedTask.id];
-
-		project.updateTaskIds(updatedTaskIds);
-
-		await this.projectRepository.save(project);
 
 		return {
 			id: savedTask.id,
