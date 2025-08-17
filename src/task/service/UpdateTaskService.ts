@@ -1,4 +1,6 @@
 import { inject, injectable } from "tsyringe";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
 import type { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError } from "@/shared/Errors";
@@ -25,6 +27,7 @@ export interface UpdateTaskServiceResponse {
 export class UpdateTaskService {
 	constructor(
 		@inject("TaskRepository") private readonly taskRepository: TaskRepository,
+		@inject("CacheProvider") private readonly cacheProvider: CacheProvider,
 	) {}
 
 	async execute(
@@ -47,6 +50,15 @@ export class UpdateTaskService {
 		});
 
 		const updatedTask = await this.taskRepository.update(taskFound);
+
+		const taskCacheKey = CacheKeys.task(request.id);
+		await this.cacheProvider.delete(taskCacheKey);
+		await this.cacheProvider.deleteByPattern(CacheKeys.allTasksLists());
+
+		const tasksByProjectKey = CacheKeys.tasksByProject(updatedTask.projectId);
+		await this.cacheProvider.delete(tasksByProjectKey);
+		const projectCacheKey = CacheKeys.project(updatedTask.projectId);
+		await this.cacheProvider.delete(projectCacheKey);
 
 		return {
 			id: updatedTask.id,

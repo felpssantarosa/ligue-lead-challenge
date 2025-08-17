@@ -3,16 +3,19 @@ import type { GetAllProjectsServiceParams } from "@/project/service";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	mockGetAllProjectsServiceImplementation as getAllProjectsService,
+	mockProjectCacheProvider,
 	mockProjectRepository,
 } from "@/test/mocks";
 
 describe("GetAllProjectsService", () => {
-	beforeEach(() => {
+	beforeEach(async () => {
 		mockProjectRepository.clear();
+		await mockProjectCacheProvider.clear();
 	});
 
-	afterEach(() => {
+	afterEach(async () => {
 		mockProjectRepository.clear();
+		await mockProjectCacheProvider.clear();
 	});
 
 	it("should get all projects successfully", async () => {

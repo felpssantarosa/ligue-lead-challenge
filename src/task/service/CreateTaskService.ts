@@ -1,5 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import type { ProjectRepository } from "@/project/infra";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
 import type { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError } from "@/shared/Errors/NotFoundError";
@@ -29,6 +31,7 @@ export class CreateTaskService {
 		@inject("TaskRepository") private readonly taskRepository: TaskRepository,
 		@inject("ProjectRepository")
 		private readonly projectRepository: ProjectRepository,
+		@inject("CacheProvider") private readonly cacheProvider: CacheProvider,
 	) {}
 
 	async execute(
@@ -58,9 +61,15 @@ export class CreateTaskService {
 
 		const savedTask = await this.taskRepository.save(task);
 
+		await this.cacheProvider.deleteByPattern(CacheKeys.allTasksLists());
+		const tasksByProjectKey = CacheKeys.tasksByProject(request.projectId);
+		await this.cacheProvider.delete(tasksByProjectKey);
+
 		project.updateTaskIds([...project.taskIds, savedTask.id]);
 
 		await this.projectRepository.update(project);
+		const projectCacheKey = CacheKeys.project(request.projectId);
+		await this.cacheProvider.delete(projectCacheKey);
 
 		return {
 			id: savedTask.id,

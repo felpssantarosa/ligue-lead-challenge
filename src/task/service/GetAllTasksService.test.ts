@@ -1,14 +1,16 @@
 import {
 	createTask,
 	mockGetAllTasksServiceImplementation as getAllTasksService,
+	mockTaskCacheProvider,
 	mockTaskRepository,
 } from "@/test/mocks";
 
 describe("GetAllTasksService", () => {
 	const findAllSpy = jest.spyOn(mockTaskRepository, "findAll");
 
-	beforeEach(() => {
+	beforeEach(async () => {
 		mockTaskRepository.clear();
+		await mockTaskCacheProvider.clear();
 		jest.clearAllMocks();
 	});
 

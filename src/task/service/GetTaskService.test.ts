@@ -1,14 +1,21 @@
 import { NotFoundError } from "@/shared/Errors";
 import { GetTaskService } from "@/task/service";
 import { generateUUID } from "@/test/factories";
-import { createTask, mockTaskRepository } from "@/test/mocks";
+import {
+	createTask,
+	MockCacheProvider,
+	mockTaskRepository,
+} from "@/test/mocks";
 
 describe("GetTaskService", () => {
 	let getTaskService: GetTaskService;
 	const findByIdSpy = jest.spyOn(mockTaskRepository, "findById");
 
 	beforeEach(() => {
-		getTaskService = new GetTaskService(mockTaskRepository);
+		getTaskService = new GetTaskService(
+			mockTaskRepository,
+			new MockCacheProvider(),
+		);
 		jest.clearAllMocks();
 	});
 

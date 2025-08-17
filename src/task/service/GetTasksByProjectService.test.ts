@@ -6,6 +6,7 @@ import {
 	createProjectServiceMock,
 	createTask,
 	createTaskRepositoryMock,
+	MockCacheProvider,
 } from "@/test/mocks";
 
 describe("GetTasksByProjectService", () => {
@@ -15,14 +16,13 @@ describe("GetTasksByProjectService", () => {
 	let getTasksByProjectService: GetTasksByProjectService;
 
 	beforeEach(async () => {
-		// Create fresh mocks for each test
 		projectService = createProjectServiceMock();
 		taskRepository = createTaskRepositoryMock();
 
-		// Create the service with the mocks
 		getTasksByProjectService = new GetTasksByProjectService(
 			taskRepository,
 			projectService,
+			new MockCacheProvider(),
 		);
 
 		existingProject = createProject({

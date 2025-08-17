@@ -4,8 +4,9 @@ import { UpdateTaskService } from "@/task/service";
 import { generateUUID } from "@/test/factories";
 import {
 	createTask,
+	MockCacheProvider,
 	mockTaskRepository,
-} from "@/test/mocks/factories/TaskMock";
+} from "@/test/mocks";
 
 describe("UpdateTaskService", () => {
 	let updateTaskService: UpdateTaskService;
@@ -13,7 +14,10 @@ describe("UpdateTaskService", () => {
 	const updateSpy = jest.spyOn(mockTaskRepository, "update");
 
 	beforeEach(() => {
-		updateTaskService = new UpdateTaskService(mockTaskRepository);
+		updateTaskService = new UpdateTaskService(
+			mockTaskRepository,
+			new MockCacheProvider(),
+		);
 		jest.clearAllMocks();
 	});
 

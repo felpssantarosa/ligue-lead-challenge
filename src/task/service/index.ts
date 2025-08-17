@@ -5,6 +5,10 @@ import type {
 	CreateTaskServiceResponse,
 } from "@/task/service/CreateTaskService";
 import type {
+	DeleteByProjectIdService,
+	DeleteByProjectIdServiceResponse,
+} from "@/task/service/DeleteByProjectIdService";
+import type {
 	DeleteTaskService,
 	DeleteTaskServiceParams,
 	DeleteTaskServiceResponse,
@@ -38,6 +42,8 @@ export class TaskService {
 		private readonly updateTaskService: UpdateTaskService,
 		@inject("DeleteTaskService")
 		private readonly deleteTaskService: DeleteTaskService,
+		@inject("DeleteByProjectIdService")
+		private readonly deleteByProjectIdService: DeleteByProjectIdService,
 	) {}
 
 	public create(
@@ -67,9 +73,16 @@ export class TaskService {
 	): Promise<DeleteTaskServiceResponse> {
 		return this.deleteTaskService.execute(params);
 	}
+
+	public deleteByProjectId(
+		projectId: string,
+	): Promise<DeleteByProjectIdServiceResponse> {
+		return this.deleteByProjectIdService.execute(projectId);
+	}
 }
 
 export * from "./CreateTaskService";
+export * from "./DeleteByProjectIdService";
 export * from "./DeleteTaskService";
 export * from "./GetAllTasksService";
 export * from "./GetTaskService";

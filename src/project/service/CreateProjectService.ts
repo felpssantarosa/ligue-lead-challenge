@@ -1,6 +1,8 @@
 import { inject, injectable } from "tsyringe";
 import { Project } from "@/project/domain";
 import type { ProjectRepository } from "@/project/infra";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
 
 export interface CreateProjectServiceParams {
 	title: string;
@@ -22,6 +24,8 @@ export class CreateProjectService {
 	constructor(
 		@inject("ProjectRepository")
 		private readonly projectRepository: ProjectRepository,
+		@inject("CacheProvider")
+		private readonly cacheProvider: CacheProvider,
 	) {}
 
 	async execute(
@@ -38,6 +42,8 @@ export class CreateProjectService {
 		});
 
 		const savedProject = await this.projectRepository.save(project);
+
+		await this.cacheProvider.deleteByPattern(CacheKeys.allProjectsLists());
 
 		return {
 			id: savedProject.id,

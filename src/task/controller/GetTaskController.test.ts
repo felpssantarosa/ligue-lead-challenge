@@ -4,16 +4,16 @@ import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
 import type { GetTaskController } from "@/task/controller/GetTaskController";
 import { Task } from "@/task/domain";
+import { generateUUID } from "@/test/factories";
 import {
 	createTask,
 	mockGetTaskController,
 	mockGetTaskService,
-	mockTaskValidation,
 	mockRequest,
 	mockResponse,
+	mockTaskValidation,
 } from "@/test/mocks";
 import { setupTestValidation } from "@/test/setup/validation";
-import { generateUUID } from "@/test/factories";
 
 describe("GetTaskController", () => {
 	let getTaskController: GetTaskController;

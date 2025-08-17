@@ -1,7 +1,10 @@
 import { inject, injectable } from "tsyringe";
 import type { ProjectRepository } from "@/project/infra";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
+import type { TaskService } from "@/task/service";
 
 export interface DeleteProjectServiceParams {
 	id: EntityId;
@@ -19,7 +22,10 @@ export class DeleteProjectService {
 	constructor(
 		@inject("ProjectRepository")
 		private readonly projectRepository: ProjectRepository,
-		// TODO: Inject TaskRepository when available to check for dependencies
+		@inject("CacheProvider")
+		private readonly cacheProvider: CacheProvider,
+		@inject("TaskService")
+		private readonly taskService: TaskService,
 	) {}
 
 	async execute(
@@ -32,7 +38,14 @@ export class DeleteProjectService {
 				throw NotFoundError.project(request.id, "DeleteProjectService.execute");
 			}
 
+			await this.taskService.deleteByProjectId(request.id);
 			await this.projectRepository.delete(request.id);
+			await this.cacheProvider.delete(CacheKeys.project(request.id));
+			await this.cacheProvider.deleteByPattern(CacheKeys.allProjectsLists());
+
+			await this.cacheProvider.delete(CacheKeys.tasksByProject(request.id));
+			await this.cacheProvider.deleteByPattern(CacheKeys.allTasksLists());
+			await this.cacheProvider.deleteByPattern(CacheKeys.taskPattern());
 
 			return {
 				id: request.id,

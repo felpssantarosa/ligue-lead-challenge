@@ -7,6 +7,7 @@ import {
 	createProject,
 	createProjectRepositoryMock,
 	createTaskRepositoryMock,
+	MockCacheProvider,
 } from "@/test/mocks";
 
 describe("CreateTaskService", () => {
@@ -22,6 +23,7 @@ describe("CreateTaskService", () => {
 		createTaskService = new CreateTaskService(
 			taskRepository,
 			projectRepository,
+			new MockCacheProvider(),
 		);
 
 		existingProject = createProject({

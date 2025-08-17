@@ -1,5 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import type { ProjectRepository } from "@/project/infra";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
 import { NotFoundError } from "@/shared/Errors";
 import type { Task } from "@/task/domain";
@@ -34,11 +36,20 @@ export class GetProjectService {
 		private readonly projectRepository: ProjectRepository,
 		@inject("TaskService")
 		private readonly taskService: TaskService,
+		@inject("CacheProvider")
+		private readonly cacheProvider: CacheProvider,
 	) {}
 
 	async execute(
 		params: GetProjectServiceParams,
 	): Promise<GetProjectServiceResponse> {
+		const cacheKey = CacheKeys.project(params.id);
+
+		const cachedProject =
+			await this.cacheProvider.get<GetProjectServiceResponse>(cacheKey);
+
+		if (cachedProject) return cachedProject;
+
 		const project = await this.projectRepository.findById(params.id);
 
 		if (!project) {
@@ -49,7 +60,7 @@ export class GetProjectService {
 			project.taskIds.map((taskId) => this.taskService.get({ id: taskId })),
 		);
 
-		return {
+		const result = {
 			id: project.id,
 			title: project.title,
 			description: project.description,
@@ -58,5 +69,11 @@ export class GetProjectService {
 			createdAt: project.createdAt,
 			updatedAt: project.updatedAt,
 		};
+
+		const tenMinutesInSeconds = 600;
+
+		await this.cacheProvider.set(cacheKey, result, tenMinutesInSeconds);
+
+		return result;
 	}
 }

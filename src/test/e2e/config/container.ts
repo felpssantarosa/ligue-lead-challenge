@@ -27,8 +27,8 @@ import { TaskModel } from "@/task/infra";
 import { SequelizeTaskRepository } from "@/task/infra/repository/SequelizeTaskRepository";
 import { TaskService } from "@/task/service";
 import { CreateTaskService } from "@/task/service/CreateTaskService";
-import { DeleteTaskService } from "@/task/service/DeleteTaskService";
 import { DeleteByProjectIdService } from "@/task/service/DeleteByProjectIdService";
+import { DeleteTaskService } from "@/task/service/DeleteTaskService";
 import { GetAllTasksService } from "@/task/service/GetAllTasksService";
 import { GetTaskService } from "@/task/service/GetTaskService";
 import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
@@ -76,7 +76,10 @@ export const setupE2EContainer = async (): Promise<void> => {
 	container.registerSingleton("GetTaskService", GetTaskService);
 	container.registerSingleton("UpdateTaskService", UpdateTaskService);
 	container.registerSingleton("DeleteTaskService", DeleteTaskService);
-	container.registerSingleton("DeleteByProjectIdService", DeleteByProjectIdService);
+	container.registerSingleton(
+		"DeleteByProjectIdService",
+		DeleteByProjectIdService,
+	);
 	container.registerSingleton("GetAllTasksService", GetAllTasksService);
 	container.registerSingleton(
 		"GetTasksByProjectService",

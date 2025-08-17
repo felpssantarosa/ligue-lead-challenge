@@ -1,5 +1,7 @@
 import "reflect-metadata";
+import { container } from "tsyringe";
 import { config } from "@/config/environment";
+import type { CacheProvider } from "@/shared/cache";
 import { registerDependencies } from "@/shared/infra/container";
 import { createSequelizeConnection } from "@/shared/infra/database/sequelize";
 import { createApp } from "@/shared/infra/http/app";
@@ -32,6 +34,19 @@ async function bootstrap(): Promise<void> {
 				console.log("HTTP server closed.");
 
 				try {
+					// Close Redis connection
+					const cacheProvider =
+						container.resolve<CacheProvider>("CacheProvider");
+					if (
+						"disconnect" in cacheProvider &&
+						typeof cacheProvider.disconnect === "function"
+					) {
+						await (
+							cacheProvider as { disconnect: () => Promise<void> }
+						).disconnect();
+						console.log("Cache connection closed.");
+					}
+
 					await sequelize.close();
 					console.log("Database connection closed.");
 					process.exit(0);

@@ -1,15 +1,15 @@
 import { DeleteByProjectIdService } from "@/task/service/DeleteByProjectIdService";
-import {
-	createTask,
-	mockTaskRepository,
-} from "@/test/mocks";
+import { createTask, mockTaskRepository } from "@/test/mocks";
 import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
 
 describe("DeleteByProjectIdService", () => {
 	let deleteByProjectIdService: DeleteByProjectIdService;
 	let mockCache: MockCacheProvider;
 	const findByProjectIdSpy = jest.spyOn(mockTaskRepository, "findByProjectId");
-	const deleteByProjectIdSpy = jest.spyOn(mockTaskRepository, "deleteByProjectId");
+	const deleteByProjectIdSpy = jest.spyOn(
+		mockTaskRepository,
+		"deleteByProjectId",
+	);
 
 	beforeEach(() => {
 		mockTaskRepository.clear();
@@ -76,11 +76,17 @@ describe("DeleteByProjectIdService", () => {
 			expect(deleteSpy).toHaveBeenCalledWith("ligue-lead:task:task-2");
 
 			// Should delete tasks by project cache
-			expect(deleteSpy).toHaveBeenCalledWith(`ligue-lead:tasks:project:${projectId}`);
+			expect(deleteSpy).toHaveBeenCalledWith(
+				`ligue-lead:tasks:project:${projectId}`,
+			);
 
 			// Should invalidate task list patterns
-			expect(deleteByPatternSpy).toHaveBeenCalledWith("ligue-lead:tasks:list:*");
-			expect(deleteByPatternSpy).toHaveBeenCalledWith("ligue-lead:tasks:project:*");
+			expect(deleteByPatternSpy).toHaveBeenCalledWith(
+				"ligue-lead:tasks:list:*",
+			);
+			expect(deleteByPatternSpy).toHaveBeenCalledWith(
+				"ligue-lead:tasks:project:*",
+			);
 			expect(deleteByPatternSpy).toHaveBeenCalledWith("ligue-lead:task:*");
 		});
 
@@ -89,7 +95,9 @@ describe("DeleteByProjectIdService", () => {
 			const task = createTask({ id: "task-1", projectId });
 
 			findByProjectIdSpy.mockResolvedValue([task]);
-			deleteByProjectIdSpy.mockRejectedValue(new Error("Database connection failed"));
+			deleteByProjectIdSpy.mockRejectedValue(
+				new Error("Database connection failed"),
+			);
 
 			await expect(deleteByProjectIdService.execute(projectId)).rejects.toThrow(
 				"Database connection failed",

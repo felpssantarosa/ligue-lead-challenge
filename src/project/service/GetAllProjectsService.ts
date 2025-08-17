@@ -1,5 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import type { ProjectRepository } from "@/project/infra";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
 import { ApplicationError } from "@/shared/Errors";
 
 export interface GetAllProjectsServiceParams {
@@ -26,6 +28,8 @@ export class GetAllProjectsService {
 	constructor(
 		@inject("ProjectRepository")
 		private readonly projectRepository: ProjectRepository,
+		@inject("CacheProvider")
+		private readonly cacheProvider: CacheProvider,
 	) {}
 
 	async execute(
@@ -41,6 +45,15 @@ export class GetAllProjectsService {
 				});
 			}
 
+			const filters = { tags, search };
+
+			const cacheKey = CacheKeys.projectsList({ page, limit, filters });
+
+			const cachedResult =
+				await this.cacheProvider.get<GetAllProjectsServiceResponse>(cacheKey);
+
+			if (cachedResult) return cachedResult;
+
 			const projects = await this.projectRepository.findAll({
 				limit,
 				page,
@@ -48,7 +61,7 @@ export class GetAllProjectsService {
 				search,
 			});
 
-			return {
+			const result = {
 				projects: projects.map((project) => ({
 					id: project.id,
 					title: project.title,
@@ -59,6 +72,12 @@ export class GetAllProjectsService {
 				})),
 				total: projects.length,
 			};
+
+			const TenMinutesInSeconds = 600;
+
+			await this.cacheProvider.set(cacheKey, result, TenMinutesInSeconds);
+
+			return result;
 		} catch (error) {
 			throw new ApplicationError({
 				message: `Failed to retrieve projects: ${error}`,

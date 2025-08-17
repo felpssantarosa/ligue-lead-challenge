@@ -1,5 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import type { ProjectService } from "@/project/service";
+import type { CacheProvider } from "@/shared/cache";
+import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
 import type { TaskRepository } from "@/task/infra";
@@ -27,11 +29,19 @@ export class GetTasksByProjectService {
 		@inject("TaskRepository") private readonly taskRepository: TaskRepository,
 		@inject("ProjectService")
 		private readonly projectService: ProjectService,
+		@inject("CacheProvider") private readonly cacheProvider: CacheProvider,
 	) {}
 
 	async execute(
 		params: GetTasksByProjectServiceParams,
 	): Promise<GetTasksByProjectServiceResponse> {
+		const cacheKey = CacheKeys.tasksByProject(params.projectId);
+
+		const cachedResult =
+			await this.cacheProvider.get<GetTasksByProjectServiceResponse>(cacheKey);
+
+		if (cachedResult) return cachedResult;
+
 		const project = await this.projectService.get({ id: params.projectId });
 
 		if (!project) {
@@ -51,7 +61,7 @@ export class GetTasksByProjectService {
 
 		const tasks = await this.taskRepository.findByProjectId(project.id);
 
-		return {
+		const result = {
 			tasks: tasks.map((task) => ({
 				id: task.id,
 				title: task.title,
@@ -63,5 +73,10 @@ export class GetTasksByProjectService {
 			})),
 			projectId: project.id,
 		};
+
+		const tenMinutesInSeconds = 600;
+		await this.cacheProvider.set(cacheKey, result, tenMinutesInSeconds);
+
+		return result;
 	}
 }

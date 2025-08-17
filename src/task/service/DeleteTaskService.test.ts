@@ -3,6 +3,7 @@ import { DeleteTaskService } from "@/task/service/DeleteTaskService";
 import {
 	createProject,
 	createTask,
+	MockCacheProvider,
 	mockProjectRepository,
 	mockTaskRepository,
 } from "@/test/mocks";
@@ -22,6 +23,7 @@ describe("DeleteTaskService", () => {
 		deleteTaskService = new DeleteTaskService(
 			mockTaskRepository,
 			mockProjectRepository,
+			new MockCacheProvider(),
 		);
 	});
 

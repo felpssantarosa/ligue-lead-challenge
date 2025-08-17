@@ -22,25 +22,20 @@ export class DeleteByProjectIdService {
 	async execute(
 		projectId: DeleteByProjectIdServiceParams,
 	): Promise<DeleteByProjectIdServiceResponse> {
-		// Find all tasks for this project to count them before deletion
 		const existingTasks = await this.taskRepository.findByProjectId(projectId);
 		const deletedTasksCount = existingTasks.length;
 
-		// Delete all tasks for this project
 		await this.taskRepository.deleteByProjectId(projectId);
 
-		// Invalidate cache for individual tasks (gracefully handle errors)
 		for (const task of existingTasks) {
 			try {
 				const taskCacheKey = CacheKeys.task(task.id);
 				await this.cacheProvider.delete(taskCacheKey);
 			} catch (error) {
-				// Log cache error but don't fail the operation
 				console.warn(`Failed to invalidate cache for task ${task.id}:`, error);
 			}
 		}
 
-		// Invalidate cache patterns (gracefully handle errors)
 		try {
 			await this.cacheProvider.deleteByPattern(CacheKeys.allTasksLists());
 		} catch (error) {
@@ -51,7 +46,10 @@ export class DeleteByProjectIdService {
 			const tasksByProjectKey = CacheKeys.tasksByProject(projectId);
 			await this.cacheProvider.delete(tasksByProjectKey);
 		} catch (error) {
-			console.warn(`Failed to invalidate tasks by project cache for ${projectId}:`, error);
+			console.warn(
+				`Failed to invalidate tasks by project cache for ${projectId}:`,
+				error,
+			);
 		}
 
 		try {

@@ -56,10 +56,8 @@ const mockDeleteTaskServiceImplementation = new DeleteTaskService(
 	mockProjectRepository,
 	mockTaskCacheProvider,
 );
-const mockDeleteTaskByProjectIdServiceImplementation = new DeleteByProjectIdService(
-	mockTaskRepository,
-	mockTaskCacheProvider,
-);
+const mockDeleteTaskByProjectIdServiceImplementation =
+	new DeleteByProjectIdService(mockTaskRepository, mockTaskCacheProvider);
 
 const mockCreateTaskService = {
 	execute: jest.fn(),
@@ -132,7 +130,7 @@ const mockTaskService = new TaskService(
 	mockGetTaskServiceImplementation,
 	mockUpdateTaskServiceImplementation,
 	mockDeleteTaskServiceImplementation,
-	mockDeleteTaskByProjectIdServiceImplementation
+	mockDeleteTaskByProjectIdServiceImplementation,
 );
 
 export {
