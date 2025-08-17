@@ -12,7 +12,7 @@ describe("DeleteTaskService", () => {
 	const findTaskSpy = jest.spyOn(mockTaskRepository, "findById");
 	const deleteTaskSpy = jest.spyOn(mockTaskRepository, "delete");
 	const findProjectSpy = jest.spyOn(mockProjectRepository, "findById");
-	const saveProjectSpy = jest.spyOn(mockProjectRepository, "save");
+	const updateProjectSpy = jest.spyOn(mockProjectRepository, "update");
 
 	beforeEach(() => {
 		mockTaskRepository.clear();
@@ -35,13 +35,13 @@ describe("DeleteTaskService", () => {
 			findTaskSpy.mockResolvedValue(task);
 			findProjectSpy.mockResolvedValue(project);
 			deleteTaskSpy.mockResolvedValue(undefined);
-			saveProjectSpy.mockResolvedValue(project);
+			updateProjectSpy.mockResolvedValue(project);
 
 			await deleteTaskService.execute({ id: taskId });
 
 			expect(findTaskSpy).toHaveBeenCalledWith(taskId);
 			expect(findProjectSpy).toHaveBeenCalledWith(projectId);
-			expect(saveProjectSpy).toHaveBeenCalledWith(project);
+			expect(updateProjectSpy).toHaveBeenCalledWith(project);
 			expect(deleteTaskSpy).toHaveBeenCalledWith(taskId);
 		});
 

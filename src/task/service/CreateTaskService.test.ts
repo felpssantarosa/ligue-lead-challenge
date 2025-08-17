@@ -85,7 +85,7 @@ describe("CreateTaskService", () => {
 		projectRepository.findById.mockResolvedValueOnce(null);
 
 		await expect(createTaskService.execute(request)).rejects.toThrow(
-			"Project not found",
+			"Project with id non-existent-project-id not found",
 		);
 	});
 

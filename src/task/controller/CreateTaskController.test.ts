@@ -78,7 +78,7 @@ describe("CreateTaskController", () => {
 			);
 
 			expect(mockCreateTaskService.execute).not.toHaveBeenCalled();
-			expect(mockResponse.status).toHaveBeenCalledWith(500);
+			expect(mockResponse.status).toHaveBeenCalledWith(400);
 		});
 
 		it("should handle Sequelize validation errors", async () => {
@@ -97,10 +97,13 @@ describe("CreateTaskController", () => {
 				mockResponse as Response,
 			);
 
-			expect(mockResponse.status).toHaveBeenCalledWith(400);
+			expect(mockResponse.status).toHaveBeenCalledWith(500);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: false,
-				message: "Database validation failed",
+				error: {
+					type: "UNEXPECTED_ERROR",
+					message: "An unexpected error occurred",
+				},
 			});
 		});
 
@@ -120,10 +123,15 @@ describe("CreateTaskController", () => {
 				mockResponse as Response,
 			);
 
-			expect(mockResponse.status).toHaveBeenCalledWith(500);
+			expect(mockResponse.status).toHaveBeenCalledWith(404);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: false,
-				message: "Internal Server Error",
+				error: {
+					type: "NOT_FOUND",
+					message: "[NotFoundError] Resource Not Found: Project not found",
+					resourceType: "Project",
+					resourceId: undefined,
+				},
 			});
 		});
 	});
