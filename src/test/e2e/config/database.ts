@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
-import ProjectModel from "@/project/infra/database/models/SequelizeProjectModel";
-import TaskModel from "@/task/infra/database/models/SequelizeTaskModel";
+import { ProjectModel } from "@/project/infra";
+import { TaskModel } from "@/task/infra";
 
 let testSequelize: Sequelize;
 

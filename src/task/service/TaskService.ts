@@ -5,24 +5,24 @@ import type {
 	CreateTaskServiceResponse,
 } from "@/task/service/create/CreateTaskService";
 import type {
-	DeleteByProjectIdService,
-	DeleteByProjectIdServiceResponse,
-} from "@/task/service/delete-by-project-id/DeleteByProjectIdService";
-import type {
 	DeleteTaskService,
 	DeleteTaskServiceParams,
 	DeleteTaskServiceResponse,
 } from "@/task/service/delete/DeleteTaskService";
 import type {
-	GetAllTasksService,
-	GetAllTasksServiceParams,
-	GetAllTasksServiceResponse,
-} from "@/task/service/get-all/GetAllTasksService";
+	DeleteByProjectIdService,
+	DeleteByProjectIdServiceResponse,
+} from "@/task/service/delete-by-project-id/DeleteByProjectIdService";
 import type {
 	GetTaskService,
 	GetTaskServiceParams,
 	GetTaskServiceResponse,
 } from "@/task/service/get/GetTaskService";
+import type {
+	GetAllTasksService,
+	GetAllTasksServiceParams,
+	GetAllTasksServiceResponse,
+} from "@/task/service/get-all/GetAllTasksService";
 import type {
 	UpdateTaskService,
 	UpdateTaskServiceParams,
