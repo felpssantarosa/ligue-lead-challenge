@@ -110,6 +110,7 @@ export class User extends Entity {
 		}
 
 		Email.validate(params.email);
+		Name.validate(params.name);
 
 		return true;
 	}

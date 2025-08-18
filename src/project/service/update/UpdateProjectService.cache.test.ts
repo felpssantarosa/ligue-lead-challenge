@@ -6,9 +6,9 @@ import { ApplicationError } from "@/shared/Errors";
 import { generateUUID } from "@/test/factories";
 import {
 	MockCacheProvider,
+	mockCheckProjectOwnershipService,
 	mockProjectRepository,
 	mockUserService,
-	mockCheckProjectOwnershipService,
 } from "@/test/mocks";
 import { createUser } from "@/test/mocks/factories/UserMock";
 

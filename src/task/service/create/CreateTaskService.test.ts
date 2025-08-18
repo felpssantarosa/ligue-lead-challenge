@@ -3,16 +3,16 @@ import { TaskStatus } from "@/shared/domain/TaskStatus";
 import type { Task } from "@/task/domain";
 import type { CreateTaskServiceParams } from "@/task/service";
 import { CreateTaskService } from "@/task/service/create/CreateTaskService";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 import {
 	createProject,
 	createProjectRepositoryMock,
 	createTaskRepositoryMock,
 	MockCacheProvider,
 } from "@/test/mocks";
-import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
 import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
+import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
 import { createUser } from "@/test/mocks/factories/UserMock";
-import { generateUUID } from "@/test/factories/UUIDFactory";
 
 describe("CreateTaskService", () => {
 	let existingProject: Project;

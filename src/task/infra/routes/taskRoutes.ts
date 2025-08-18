@@ -6,8 +6,8 @@ import {
 	GetTaskController,
 	UpdateTaskController,
 } from "@/task/controller";
-import { authMiddleware } from "@/user/infra/middleware/authMiddleware";
 import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
+import { authMiddleware } from "@/user/infra/middleware/authMiddleware";
 
 const taskRoutes = Router();
 const taskRoutesBoundByProject = Router();

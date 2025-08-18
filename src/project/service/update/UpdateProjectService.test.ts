@@ -2,10 +2,10 @@ import { Project } from "@/project/domain";
 import type { UpdateProjectServiceParams } from "@/project/service";
 import { ApplicationError } from "@/shared/Errors";
 import {
-	mockProjectRepository,
-	mockUpdateProjectServiceImplementation as updateProjectService,
-	mockUserService,
 	mockCheckProjectOwnershipService,
+	mockProjectRepository,
+	mockUserService,
+	mockUpdateProjectServiceImplementation as updateProjectService,
 } from "@/test/mocks";
 import { createUser } from "@/test/mocks/factories/UserMock";
 

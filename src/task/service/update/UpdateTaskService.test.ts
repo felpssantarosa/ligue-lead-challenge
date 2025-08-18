@@ -7,8 +7,8 @@ import {
 	MockCacheProvider,
 	mockTaskRepository,
 } from "@/test/mocks";
-import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
 import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
+import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
 import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("UpdateTaskService", () => {

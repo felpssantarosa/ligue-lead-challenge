@@ -1,5 +1,6 @@
 import { NotFoundError } from "@/shared/Errors";
 import { DeleteTaskService } from "@/task/service/delete/DeleteTaskService";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 import {
 	createProject,
 	createTask,
@@ -7,10 +8,9 @@ import {
 	mockProjectRepository,
 	mockTaskRepository,
 } from "@/test/mocks";
-import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
 import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
+import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
 import { createUser } from "@/test/mocks/factories/UserMock";
-import { generateUUID } from "@/test/factories/UUIDFactory";
 
 describe("DeleteTaskService", () => {
 	let deleteTaskService: DeleteTaskService;

@@ -31,13 +31,15 @@ describe("Task Services - Cache Invalidation", () => {
 
 	beforeEach(() => {
 		mockCacheProvider = new MockCacheProvider();
-		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(true);
+		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(
+			true,
+		);
 		(mockUserService.findById as jest.Mock).mockResolvedValue({
 			id: "test-user-id",
 			name: "Test User",
 			email: "test@example.com",
 		});
-		
+
 		updateTaskService = new UpdateTaskService(
 			mockTaskRepository,
 			mockCacheProvider,

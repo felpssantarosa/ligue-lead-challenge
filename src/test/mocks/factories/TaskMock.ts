@@ -17,12 +17,12 @@ import { GetTasksByProjectService } from "@/task/service/get-by-project-td/GetTa
 import { UpdateTaskService } from "@/task/service/update/UpdateTaskService";
 import { generateUUID } from "@/test/factories/UUIDFactory";
 import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
+import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
 import {
+	mockCheckProjectOwnershipService,
 	mockProjectRepository,
 	mockProjectService,
-	mockCheckProjectOwnershipService,
 } from "@/test/mocks/factories/ProjectMock";
-import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
 import { MockTaskRepository } from "@/test/mocks/repositories";
 
 const mockTaskValidation = {

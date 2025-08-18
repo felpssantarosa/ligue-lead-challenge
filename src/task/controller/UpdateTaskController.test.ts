@@ -2,7 +2,6 @@ import type { Response } from "express";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
 import type { UpdateTaskController } from "@/task/controller";
-import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 import {
 	createTask,
 	mockRequest,
@@ -11,6 +10,7 @@ import {
 	mockUpdateTaskController,
 	mockUpdateTaskService,
 } from "@/test/mocks";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 describe("UpdateTaskController", () => {
 	let updateTaskController: UpdateTaskController;

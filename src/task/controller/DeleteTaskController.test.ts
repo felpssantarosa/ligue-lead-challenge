@@ -1,6 +1,5 @@
 import type { Response } from "express";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
-import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 import {
 	mockDeleteTaskController,
 	mockDeleteTaskService,
@@ -8,6 +7,7 @@ import {
 	mockResponse,
 	mockTaskValidation,
 } from "@/test/mocks";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 import type { DeleteTaskController } from "./DeleteTaskController";
 
 describe("DeleteTaskController", () => {

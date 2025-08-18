@@ -2,6 +2,7 @@ import type { ProjectRepository } from "@/project/infra/repository/ProjectReposi
 
 export * from "./MockProjectRepository";
 export * from "./MockTaskRepository";
+export * from "./MockUserRepository";
 
 export const mockRepository = {
 	save: jest.fn(),

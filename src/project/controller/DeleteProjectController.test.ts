@@ -42,7 +42,7 @@ describe("DeleteProjectController", () => {
 			const projectId = generateUUID();
 			const deleteResult = {
 				projectId: projectId,
-			ownerId: "test-user-id",
+				ownerId: "test-user-id",
 				message: "Project deleted successfully",
 				deletedAt: new Date(),
 			};
@@ -62,7 +62,7 @@ describe("DeleteProjectController", () => {
 
 			expect(deleteService.execute).toHaveBeenCalledWith({
 				projectId: projectId,
-			ownerId: "test-user-id",
+				ownerId: "test-user-id",
 				force: false,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(204);
@@ -89,7 +89,7 @@ describe("DeleteProjectController", () => {
 
 			expect(deleteService.execute).toHaveBeenCalledWith({
 				projectId: projectId,
-			ownerId: "test-user-id",
+				ownerId: "test-user-id",
 				force: true,
 			});
 		});

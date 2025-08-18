@@ -3,7 +3,6 @@ import { ValidationError as SequelizeValidationError } from "sequelize";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
 import type { CreateTaskController } from "@/task/controller/CreateTaskController";
-import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 import {
 	createTask,
 	mockCreateTaskController,
@@ -13,6 +12,7 @@ import {
 	mockTaskValidation,
 } from "@/test/mocks";
 import { setupTestValidation } from "@/test/setup/validation";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 describe("CreateTaskController", () => {
 	let createTaskController: CreateTaskController;

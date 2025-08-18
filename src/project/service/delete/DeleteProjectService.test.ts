@@ -3,9 +3,9 @@ import type { DeleteProjectServiceParams } from "@/project/service";
 import { ApplicationError } from "@/shared/Errors";
 import {
 	mockDeleteProjectServiceImplementation as deleteProjectService,
+	mockCheckProjectOwnershipService,
 	mockProjectRepository,
 	mockUserService,
-	mockCheckProjectOwnershipService,
 } from "@/test/mocks";
 import { createUser } from "@/test/mocks/factories/UserMock";
 
