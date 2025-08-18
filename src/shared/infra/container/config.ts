@@ -11,11 +11,11 @@ import {
 import { SequelizeProjectRepository } from "@/project/infra";
 import type { ProjectRepository } from "@/project/infra/repository/ProjectRepository";
 import { ProjectService } from "@/project/service";
-import { CreateProjectService } from "@/project/service/CreateProjectService";
-import { DeleteProjectService } from "@/project/service/DeleteProjectService";
-import { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
-import { GetProjectService } from "@/project/service/GetProjectService";
-import { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import { CreateProjectService } from "@/project/service/create/CreateProjectService";
+import { DeleteProjectService } from "@/project/service/delete/DeleteProjectService";
+import { GetProjectService } from "@/project/service/get/GetProjectService";
+import { GetAllProjectsService } from "@/project/service/get-all/GetAllProjectsService";
+import { UpdateProjectService } from "@/project/service/update/UpdateProjectService";
 import type { CacheProvider } from "@/shared/cache";
 import { RedisCacheProvider } from "@/shared/cache";
 import { ValidationHandler } from "@/shared/validation/ValidationHandler";
@@ -28,13 +28,13 @@ import { UpdateTaskController } from "@/task/controller/UpdateTaskController";
 import { SequelizeTaskRepository } from "@/task/infra";
 import type { TaskRepository } from "@/task/infra/repository/TaskRepository";
 import { TaskService } from "@/task/service";
-import { CreateTaskService } from "@/task/service/CreateTaskService";
-import { DeleteByProjectIdService } from "@/task/service/DeleteByProjectIdService";
-import { DeleteTaskService } from "@/task/service/DeleteTaskService";
-import { GetAllTasksService } from "@/task/service/GetAllTasksService";
-import { GetTaskService } from "@/task/service/GetTaskService";
-import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
-import { UpdateTaskService } from "@/task/service/UpdateTaskService";
+import { CreateTaskService } from "@/task/service/create/CreateTaskService";
+import { DeleteByProjectIdService } from "@/task/service/delete-by-project-id/DeleteByProjectIdService";
+import { DeleteTaskService } from "@/task/service/delete/DeleteTaskService";
+import { GetAllTasksService } from "@/task/service/get-all/GetAllTasksService";
+import { GetTaskService } from "@/task/service/get/GetTaskService";
+import { GetTasksByProjectService } from "@/task/service/get-by-project-td/GetTasksByProjectService";
+import { UpdateTaskService } from "@/task/service/update/UpdateTaskService";
 
 export const registerDependencies = (sequelize: Sequelize): void => {
 	// Get connected models

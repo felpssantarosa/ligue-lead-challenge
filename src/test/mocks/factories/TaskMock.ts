@@ -9,12 +9,12 @@ import {
 import type { TaskProps } from "@/task/domain";
 import { Task } from "@/task/domain/Task";
 import { DeleteByProjectIdService, TaskService } from "@/task/service";
-import { CreateTaskService } from "@/task/service/CreateTaskService";
-import { DeleteTaskService } from "@/task/service/DeleteTaskService";
-import { GetAllTasksService } from "@/task/service/GetAllTasksService";
-import { GetTaskService } from "@/task/service/GetTaskService";
-import { GetTasksByProjectService } from "@/task/service/GetTasksByProjectService";
-import { UpdateTaskService } from "@/task/service/UpdateTaskService";
+import { CreateTaskService } from "@/task/service/create/CreateTaskService";
+import { DeleteTaskService } from "@/task/service/delete/DeleteTaskService";
+import { GetAllTasksService } from "@/task/service/get-all/GetAllTasksService";
+import { GetTaskService } from "@/task/service/get/GetTaskService";
+import { GetTasksByProjectService } from "@/task/service/get-by-project-td/GetTasksByProjectService";
+import { UpdateTaskService } from "@/task/service/update/UpdateTaskService";
 import { generateUUID } from "@/test/factories/UUIDFactory";
 import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
 import {

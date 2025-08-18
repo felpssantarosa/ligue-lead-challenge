@@ -1,9 +1,9 @@
 import "reflect-metadata";
 import { container } from "tsyringe";
-import { CreateProjectService } from "@/project/service/CreateProjectService";
-import { DeleteProjectService } from "@/project/service/DeleteProjectService";
-import { GetProjectService } from "@/project/service/GetProjectService";
-import { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import { CreateProjectService } from "@/project/service/create/CreateProjectService";
+import { DeleteProjectService } from "@/project/service/delete/DeleteProjectService";
+import { GetProjectService } from "@/project/service/get/GetProjectService";
+import { UpdateProjectService } from "@/project/service/update/UpdateProjectService";
 import type { CacheProvider } from "@/shared/cache";
 import { CacheKeys } from "@/shared/cache";
 import {

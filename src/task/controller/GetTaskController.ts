@@ -2,7 +2,7 @@ import type { Request, Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
-import type { GetTaskService } from "@/task/service/GetTaskService";
+import type { GetTaskService } from "@/task/service/get/GetTaskService";
 import type { GetTaskInput } from "@/task/validation";
 
 @injectable()

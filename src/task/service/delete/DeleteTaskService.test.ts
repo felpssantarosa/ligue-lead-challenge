@@ -1,5 +1,5 @@
 import { NotFoundError } from "@/shared/Errors";
-import { DeleteTaskService } from "@/task/service/DeleteTaskService";
+import { DeleteTaskService } from "@/task/service/delete/DeleteTaskService";
 import {
 	createProject,
 	createTask,

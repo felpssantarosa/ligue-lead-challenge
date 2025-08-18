@@ -1,4 +1,4 @@
-import { DeleteByProjectIdService } from "@/task/service/DeleteByProjectIdService";
+import { DeleteByProjectIdService } from "@/task/service/delete-by-project-id/DeleteByProjectIdService";
 import { createTask, mockTaskRepository } from "@/test/mocks";
 import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
 

@@ -8,11 +8,11 @@ import {
 import type { ProjectProps } from "@/project/domain";
 import { Project } from "@/project/domain/Project";
 import { ProjectService } from "@/project/service";
-import { CreateProjectService } from "@/project/service/CreateProjectService";
-import { DeleteProjectService } from "@/project/service/DeleteProjectService";
-import { GetAllProjectsService } from "@/project/service/GetAllProjectsService";
-import { GetProjectService } from "@/project/service/GetProjectService";
-import { UpdateProjectService } from "@/project/service/UpdateProjectService";
+import { CreateProjectService } from "@/project/service/create/CreateProjectService";
+import { DeleteProjectService } from "@/project/service/delete/DeleteProjectService";
+import { GetProjectService } from "@/project/service/get/GetProjectService";
+import { GetAllProjectsService } from "@/project/service/get-all/GetAllProjectsService";
+import { UpdateProjectService } from "@/project/service/update/UpdateProjectService";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { generateUUID } from "@/test/factories";
 import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";

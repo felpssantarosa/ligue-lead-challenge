@@ -2,7 +2,7 @@ import type { Project } from "@/project/domain";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import type { Task } from "@/task/domain";
 import type { CreateTaskServiceParams } from "@/task/service";
-import { CreateTaskService } from "@/task/service/CreateTaskService";
+import { CreateTaskService } from "@/task/service/create/CreateTaskService";
 import {
 	createProject,
 	createProjectRepositoryMock,

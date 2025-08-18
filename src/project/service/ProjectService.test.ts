@@ -1,5 +1,5 @@
 import { container } from "tsyringe";
-import { ProjectService } from "@/project/service/index";
+import { ProjectService } from "@/project/service";
 import { createProject } from "@/test/mocks/factories/ProjectMock";
 
 interface MockCreateProjectService {
