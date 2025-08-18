@@ -1,7 +1,9 @@
 import {
+	BelongsTo,
 	Column,
 	CreatedAt,
 	DataType,
+	ForeignKey,
 	HasMany,
 	Model,
 	PrimaryKey,
@@ -9,12 +11,14 @@ import {
 	UpdatedAt,
 } from "sequelize-typescript";
 import { TaskModel } from "@/task/infra";
+import { UserModel } from "@/user";
 
 export interface ProjectModelAttributes {
 	id: string;
 	title: string;
 	description: string;
 	tags: string[];
+	ownerId: string;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -50,6 +54,13 @@ export class ProjectModel extends Model<ProjectModelAttributes> {
 	})
 	tags!: string[];
 
+	@ForeignKey(() => UserModel)
+	@Column({
+		type: DataType.UUID,
+		allowNull: false,
+	})
+	ownerId!: string;
+
 	@CreatedAt
 	@Column({
 		type: DataType.DATE,
@@ -64,6 +75,9 @@ export class ProjectModel extends Model<ProjectModelAttributes> {
 
 	@HasMany(() => TaskModel, { onDelete: "CASCADE", hooks: true })
 	tasks!: TaskModel[];
+
+	@BelongsTo(() => UserModel)
+	owner!: UserModel;
 }
 
 export default ProjectModel;

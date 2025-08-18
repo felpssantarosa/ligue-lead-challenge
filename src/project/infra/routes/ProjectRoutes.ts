@@ -7,12 +7,19 @@ import {
 	GetProjectController,
 	UpdateProjectController,
 } from "@/project/controller";
+import {
+	type AuthenticatedRequest,
+	authMiddleware,
+} from "@/user/infra/middleware/authMiddleware";
 
 const projectRoutes = Router();
 
+// Apply authentication middleware to all routes
+projectRoutes.use(authMiddleware);
+
 projectRoutes.post("/", (req, res) => {
 	const createController = container.resolve(CreateProjectController);
-	return createController.handle(req, res);
+	return createController.handle(req as unknown as AuthenticatedRequest, res);
 });
 projectRoutes.get("/", (req, res) => {
 	const getAllController = container.resolve(GetAllProjectsController);
@@ -24,11 +31,11 @@ projectRoutes.get("/:id", (req, res) => {
 });
 projectRoutes.put("/:id", (req, res) => {
 	const updateController = container.resolve(UpdateProjectController);
-	return updateController.handle(req, res);
+	return updateController.handle(req as unknown as AuthenticatedRequest, res);
 });
 projectRoutes.delete("/:id", (req, res) => {
 	const deleteController = container.resolve(DeleteProjectController);
-	return deleteController.handle(req, res);
+	return deleteController.handle(req as unknown as AuthenticatedRequest, res);
 });
 
 export { projectRoutes };
