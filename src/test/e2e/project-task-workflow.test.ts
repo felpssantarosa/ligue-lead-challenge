@@ -7,6 +7,7 @@ import "reflect-metadata";
 
 describe("E2E: Complete Project and Task Management Workflow", () => {
 	let app: Application;
+	let authToken: string;
 
 	beforeAll(async () => {
 		await setupE2EContainer();
@@ -19,8 +20,25 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 	});
 
 	beforeEach(async () => {
-		// Clean database before each test
 		await cleanTestDatabase();
+
+		const testUser = {
+			email: "test@example.com",
+			password: "testpassword123",
+			name: "Test User",
+		};
+
+		await request(app).post("/auth/register").send(testUser).expect(201);
+
+		const loginResponse = await request(app)
+			.post("/auth/login")
+			.send({
+				email: testUser.email,
+				password: testUser.password,
+			})
+			.expect(200);
+
+		authToken = loginResponse.body.data.token;
 	});
 
 	describe("Complete Project and Task Lifecycle", () => {
@@ -34,6 +52,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 
 			const createProjectResponse = await request(app)
 				.post("/api/projects")
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(initialProjectData)
 				.expect(201);
 
@@ -56,6 +75,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 
 			const updateProjectResponse = await request(app)
 				.put(`/api/projects/${projectId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(updatedProjectData)
 				.expect(200);
 
@@ -77,6 +97,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 
 			const createFirstTaskResponse = await request(app)
 				.post(`/api/projects/${projectId}/tasks`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(firstTaskData)
 				.expect(201);
 
@@ -99,6 +120,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 
 			const createSecondTaskResponse = await request(app)
 				.post(`/api/projects/${projectId}/tasks`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(secondTaskData)
 				.expect(201);
 
@@ -117,6 +139,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			// Step 5: Get project data and verify tasks are associated
 			const getProjectWithTasksResponse = await request(app)
 				.get(`/api/projects/${projectId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.expect(200);
 
 			expect(getProjectWithTasksResponse.body.success).toBe(true);
@@ -149,6 +172,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 
 			const updateTaskResponse = await request(app)
 				.put(`/api/tasks/${firstTaskId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(updateTaskData)
 				.expect(200);
 
@@ -162,11 +186,15 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			); // Should remain unchanged
 
 			// Step 7: Delete the first task
-			await request(app).delete(`/api/tasks/${firstTaskId}`).expect(204);
+			await request(app)
+				.delete(`/api/tasks/${firstTaskId}`)
+				.set("Authorization", `Bearer ${authToken}`)
+				.expect(204);
 
 			// Step 8: Verify first task is deleted and project-task relationship is updated
 			const getProjectAfterDeletionResponse = await request(app)
 				.get(`/api/projects/${projectId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.expect(200);
 
 			expect(getProjectAfterDeletionResponse.body.success).toBe(true);
@@ -193,6 +221,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			// Step 9: Verify deleted task cannot be retrieved directly
 			const getDeletedTaskResponse = await request(app)
 				.get(`/api/tasks/${firstTaskId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.expect(404);
 
 			expect(getDeletedTaskResponse.body.error.type).toBe("NOT_FOUND");
@@ -200,11 +229,15 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			expect(getDeletedTaskResponse.body.error.resourceId).toBe(firstTaskId);
 
 			// Step 10: Delete the entire project
-			await request(app).delete(`/api/projects/${projectId}`).expect(204);
+			await request(app)
+				.delete(`/api/projects/${projectId}`)
+				.set("Authorization", `Bearer ${authToken}`)
+				.expect(204);
 
 			// Step 11: Verify project is deleted and all associated tasks are cleaned up
 			const getDeletedProjectResponse = await request(app)
 				.get(`/api/projects/${projectId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.expect(404);
 
 			expect(getDeletedProjectResponse.body.error.type).toBe("NOT_FOUND");
@@ -214,6 +247,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			// Step 12: Verify remaining task is also deleted when project is deleted
 			const getRemainingTaskResponse = await request(app)
 				.get(`/api/tasks/${secondTaskId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.expect(404);
 
 			expect(getRemainingTaskResponse.body.error.type).toBe("NOT_FOUND");
@@ -230,6 +264,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 
 			const invalidProjectResponse = await request(app)
 				.post("/api/projects")
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(invalidProjectData)
 				.expect(400);
 
@@ -247,6 +282,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			const nonExistentProjectId = "550e8400-e29b-41d4-a716-446655440000"; // Valid UUID format but non-existent
 			const invalidTaskResponse = await request(app)
 				.post(`/api/projects/${nonExistentProjectId}/tasks`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(validTaskData)
 				.expect(404);
 
@@ -265,6 +301,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 
 			const createResponse = await request(app)
 				.post("/api/projects")
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(projectData)
 				.expect(201);
 
@@ -274,6 +311,7 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			for (let i = 0; i < 3; i++) {
 				const getResponse = await request(app)
 					.get(`/api/projects/${projectId}`)
+					.set("Authorization", `Bearer ${authToken}`)
 					.expect(200);
 
 				expect(getResponse.body.data.title).toBe("Persistence Test Project");
@@ -281,7 +319,10 @@ describe("E2E: Complete Project and Task Management Workflow", () => {
 			}
 
 			// Clean up
-			await request(app).delete(`/api/projects/${projectId}`).expect(204);
+			await request(app)
+				.delete(`/api/projects/${projectId}`)
+				.set("Authorization", `Bearer ${authToken}`)
+				.expect(204);
 		});
 	});
 });

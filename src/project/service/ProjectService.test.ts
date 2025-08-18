@@ -56,6 +56,7 @@ describe("ProjectService Orchestrator", () => {
 				title: "Test Project",
 				description: "Test description",
 				tags: ["test"],
+				ownerId: "test-owner-id",
 			};
 			const project = createProject({});
 			mockCreateProjectService.execute.mockResolvedValue(project);
@@ -101,7 +102,11 @@ describe("ProjectService Orchestrator", () => {
 	describe("update", () => {
 		it("should delegate to UpdateProjectService", async () => {
 			const project = createProject({});
-			const params = { id: project.id, title: "Updated Project" };
+			const params = {
+				projectId: project.id,
+				title: "Updated Project",
+				ownerId: "test-owner-id",
+			};
 			const updatedProject = { ...project, title: "Updated Project" };
 
 			mockUpdateProjectService.execute.mockResolvedValue(updatedProject);
@@ -115,7 +120,7 @@ describe("ProjectService Orchestrator", () => {
 
 	describe("delete", () => {
 		it("should delegate to DeleteProjectService", async () => {
-			const params = { id: "test-project-id" };
+			const params = { projectId: "test-project-id", ownerId: "test-owner-id" };
 
 			mockDeleteProjectService.execute.mockResolvedValue(undefined);
 

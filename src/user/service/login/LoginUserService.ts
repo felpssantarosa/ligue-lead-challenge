@@ -4,6 +4,9 @@ import type { AuthResult, LoginParams } from "@/user/domain";
 import type { JwtService } from "@/user/infra/jwt";
 import type { UserRepository } from "@/user/infra/repository";
 
+export type LoginUserServiceParams = LoginParams;
+export type LoginUserServiceResponse = AuthResult;
+
 @injectable()
 export class LoginUserService {
 	constructor(
@@ -13,7 +16,9 @@ export class LoginUserService {
 		private readonly jwtService: JwtService,
 	) {}
 
-	async execute(params: LoginParams): Promise<AuthResult> {
+	async execute(
+		params: LoginUserServiceParams,
+	): Promise<LoginUserServiceResponse> {
 		const user = await this.userRepository.findByEmail(params.email);
 
 		if (!user) {

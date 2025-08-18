@@ -1,9 +1,10 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { inject, injectable } from "tsyringe";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { TaskProps } from "@/task/domain";
 import type { CreateTaskService } from "@/task/service";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 @injectable()
 export class CreateTaskController extends BaseController {
@@ -15,7 +16,7 @@ export class CreateTaskController extends BaseController {
 		super();
 	}
 
-	async create(req: Request, res: Response): Promise<Response> {
+	async create(req: AuthenticatedRequest, res: Response): Promise<Response> {
 		try {
 			const { projectId } = req.params;
 			const taskData = req.body;
@@ -35,6 +36,7 @@ export class CreateTaskController extends BaseController {
 			const task = await this.createTaskService.execute({
 				...validatedTaskParams,
 				projectId: validatedProjectData.id,
+				ownerId: req.user.id,
 			});
 
 			return res.status(201).json({

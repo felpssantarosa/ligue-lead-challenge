@@ -1,5 +1,6 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 import {
 	mockDeleteTaskController,
 	mockDeleteTaskService,
@@ -15,6 +16,14 @@ describe("DeleteTaskController", () => {
 	beforeEach(() => {
 		deleteTaskController = mockDeleteTaskController;
 
+		Object.assign(mockRequest, {
+			user: {
+				id: "test-user-id",
+				email: "test@example.com",
+				name: "Test User",
+			},
+		});
+
 		jest.clearAllMocks();
 	});
 
@@ -27,7 +36,7 @@ describe("DeleteTaskController", () => {
 			mockDeleteTaskService.execute.mockResolvedValue(undefined);
 
 			await deleteTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -37,7 +46,8 @@ describe("DeleteTaskController", () => {
 				"DeleteTaskController.handle",
 			);
 			expect(mockDeleteTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(204);
 			expect(mockResponse.send).toHaveBeenCalledWith();
@@ -57,7 +67,7 @@ describe("DeleteTaskController", () => {
 			});
 
 			await deleteTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -89,7 +99,7 @@ describe("DeleteTaskController", () => {
 			mockDeleteTaskService.execute.mockRejectedValue(notFoundError);
 
 			await deleteTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -99,7 +109,8 @@ describe("DeleteTaskController", () => {
 				"DeleteTaskController.handle",
 			);
 			expect(mockDeleteTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(404);
 			expect(mockResponse.json).toHaveBeenCalledWith({
@@ -127,7 +138,7 @@ describe("DeleteTaskController", () => {
 			});
 
 			await deleteTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -150,12 +161,13 @@ describe("DeleteTaskController", () => {
 			);
 
 			await deleteTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(mockDeleteTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(500);
 			expect(mockResponse.json).toHaveBeenCalledWith({

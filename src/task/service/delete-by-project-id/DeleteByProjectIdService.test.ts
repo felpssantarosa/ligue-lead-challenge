@@ -71,16 +71,13 @@ describe("DeleteByProjectIdService", () => {
 
 			await deleteByProjectIdService.execute(projectId);
 
-			// Should delete individual task caches
 			expect(deleteSpy).toHaveBeenCalledWith("ligue-lead:task:task-1");
 			expect(deleteSpy).toHaveBeenCalledWith("ligue-lead:task:task-2");
 
-			// Should delete tasks by project cache
 			expect(deleteSpy).toHaveBeenCalledWith(
 				`ligue-lead:tasks:project:${projectId}`,
 			);
 
-			// Should invalidate task list patterns
 			expect(deleteByPatternSpy).toHaveBeenCalledWith(
 				"ligue-lead:tasks:list:*",
 			);
@@ -117,7 +114,6 @@ describe("DeleteByProjectIdService", () => {
 			const deleteSpy = jest.spyOn(mockCache, "delete");
 			deleteSpy.mockRejectedValue(new Error("Cache connection failed"));
 
-			// Should not throw even if cache fails
 			const result = await deleteByProjectIdService.execute(projectId);
 
 			expect(result.projectId).toBe(projectId);

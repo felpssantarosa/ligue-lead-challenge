@@ -4,32 +4,49 @@ import { UpdateProjectService } from "@/project/service/update/UpdateProjectServ
 import { CacheKeys } from "@/shared/cache";
 import { ApplicationError } from "@/shared/Errors";
 import { generateUUID } from "@/test/factories";
-import { MockCacheProvider, mockProjectRepository } from "@/test/mocks";
+import {
+	MockCacheProvider,
+	mockProjectRepository,
+	mockUserService,
+	mockCheckProjectOwnershipService,
+} from "@/test/mocks";
+import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("UpdateProjectService - Cache Invalidation", () => {
-	let updateProjectService: UpdateProjectService;
 	let mockCacheProvider: MockCacheProvider;
+	let updateProjectService: UpdateProjectService;
 	const findByIdSpy = jest.spyOn(mockProjectRepository, "findById");
 	const updateSpy = jest.spyOn(mockProjectRepository, "update");
 
 	beforeEach(() => {
 		mockCacheProvider = new MockCacheProvider();
+		mockProjectRepository.clear();
+		jest.clearAllMocks();
+
 		updateProjectService = new UpdateProjectService(
 			mockProjectRepository,
 			mockCacheProvider,
+			mockCheckProjectOwnershipService,
+			mockUserService,
 		);
 
-		mockProjectRepository.clear();
-		jest.clearAllMocks();
+		const testUser = createUser({ id: "test-owner-id" });
+		(mockUserService.findById as jest.Mock).mockResolvedValue(testUser);
+
+		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(
+			true,
+		);
 	});
 
 	describe("Cache Invalidation on Update", () => {
 		it("should invalidate project cache after successful update", async () => {
 			const projectId = generateUUID();
+
 			const existingProject = Project.create({
 				title: "Original Project",
 				description: "Original description",
 				tags: ["original"],
+				ownerId: "test-owner-id",
 			});
 
 			findByIdSpy.mockResolvedValue(existingProject);
@@ -38,6 +55,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Updated Project",
 				description: "Updated description",
 				tags: ["updated"],
+				ownerId: "test-owner-id",
 			});
 			updateSpy.mockResolvedValue(updatedProject);
 
@@ -46,7 +64,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 			const allTasksByProjectKey = CacheKeys.allTasksByProject();
 
 			await mockCacheProvider.set(projectCacheKey, {
-				id: projectId,
+				projectId: projectId,
 				title: "Cached Project",
 			});
 			await mockCacheProvider.set(`${allProjectsListKey}:list1`, {
@@ -65,7 +83,8 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 			).toBeTruthy();
 
 			const result = await updateProjectService.execute({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-owner-id",
 				title: "Updated Project",
 				description: "Updated description",
 			});
@@ -89,6 +108,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Test Project",
 				description: "Test description",
 				tags: ["test"],
+				ownerId: "test-owner-id",
 			});
 
 			findByIdSpy.mockResolvedValue(existingProject);
@@ -122,7 +142,8 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 			}
 
 			await updateProjectService.execute({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-owner-id",
 				title: "Updated Title",
 			});
 
@@ -156,7 +177,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			const projectCacheKey = CacheKeys.project(projectId);
 			await mockCacheProvider.set(projectCacheKey, {
-				id: projectId,
+				projectId: projectId,
 				title: "Cached",
 			});
 
@@ -164,7 +185,8 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			await expect(
 				updateProjectService.execute({
-					id: projectId,
+					projectId: projectId,
+					ownerId: "test-owner-id",
 					title: "New Title",
 				}),
 			).rejects.toThrow(ApplicationError);
@@ -179,6 +201,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Existing Project",
 				description: "Existing description",
 				tags: ["existing"],
+				ownerId: "test-owner-id",
 			});
 
 			findByIdSpy.mockResolvedValue(existingProject);
@@ -186,7 +209,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			const projectCacheKey = CacheKeys.project(projectId);
 			await mockCacheProvider.set(projectCacheKey, {
-				id: projectId,
+				projectId: projectId,
 				title: "Cached",
 			});
 
@@ -194,7 +217,8 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			await expect(
 				updateProjectService.execute({
-					id: projectId,
+					projectId: projectId,
+					ownerId: "test-owner-id",
 					title: "New Title",
 				}),
 			).rejects.toThrow("Database update failed");
@@ -210,6 +234,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Pattern Test Project",
 				description: "Testing cache patterns",
 				tags: ["pattern"],
+				ownerId: "test-owner-id",
 			});
 
 			findByIdSpy.mockResolvedValue(existingProject);
@@ -222,7 +247,8 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 			);
 
 			await updateProjectService.execute({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-owner-id",
 				title: "Updated",
 			});
 
@@ -246,6 +272,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Original Title",
 				description: "Original description",
 				tags: ["original", "tags"],
+				ownerId: "test-owner-id",
 			});
 
 			findByIdSpy.mockResolvedValue(existingProject);
@@ -253,12 +280,13 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			const projectCacheKey = CacheKeys.project(projectId);
 			await mockCacheProvider.set(projectCacheKey, {
-				id: projectId,
+				projectId: projectId,
 				title: "Cached",
 			});
 
 			await updateProjectService.execute({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-owner-id",
 				title: "New Title Only",
 			});
 
@@ -271,6 +299,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Project Title",
 				description: "Project description",
 				tags: ["old", "tags"],
+				ownerId: "test-owner-id",
 			});
 
 			findByIdSpy.mockResolvedValue(existingProject);
@@ -278,12 +307,13 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			const projectCacheKey = CacheKeys.project(projectId);
 			await mockCacheProvider.set(projectCacheKey, {
-				id: projectId,
+				projectId: projectId,
 				tags: ["old", "tags"],
 			});
 
 			await updateProjectService.execute({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-owner-id",
 				tags: ["new", "tags"],
 			});
 

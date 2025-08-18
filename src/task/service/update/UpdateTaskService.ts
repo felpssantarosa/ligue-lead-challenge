@@ -1,13 +1,16 @@
 import { inject, injectable } from "tsyringe";
+import type { CheckProjectOwnershipService } from "@/project/service";
 import type { CacheProvider } from "@/shared/cache";
 import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
 import type { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError } from "@/shared/Errors";
 import type { TaskRepository } from "@/task/infra";
+import type { UserService } from "@/user/service";
 
 export interface UpdateTaskServiceParams {
-	id: EntityId;
+	taskId: EntityId;
+	ownerId: EntityId;
 	title?: string;
 	description?: string;
 	status?: TaskStatus;
@@ -28,19 +31,45 @@ export class UpdateTaskService {
 	constructor(
 		@inject("TaskRepository") private readonly taskRepository: TaskRepository,
 		@inject("CacheProvider") private readonly cacheProvider: CacheProvider,
+		@inject("CheckProjectOwnershipService")
+		private readonly checkProjectOwnershipService: CheckProjectOwnershipService,
+		@inject("UserService") private readonly userService: UserService,
 	) {}
 
 	async execute(
 		request: UpdateTaskServiceParams,
 	): Promise<UpdateTaskServiceResponse> {
-		const taskFound = await this.taskRepository.findById(request.id);
+		// Validate user exists and is authenticated
+		const existingUser = await this.userService.findById({
+			userId: request.ownerId,
+		});
+
+		if (!existingUser) {
+			throw NotFoundError.user(request.ownerId, "UpdateTaskService.execute");
+		}
+
+		// Find the task
+		const taskFound = await this.taskRepository.findById(request.taskId);
 
 		if (!taskFound) {
 			throw new NotFoundError({
-				message: `Task with id ${request.id} not found`,
+				message: `Task with id ${request.taskId} not found`,
 				resourceType: "Task",
-				resourceId: request.id,
+				resourceId: request.taskId,
 			});
+		}
+
+		// Validate user owns the project that contains this task
+		const hasOwnership = await this.checkProjectOwnershipService.execute({
+			projectId: taskFound.projectId,
+			ownerId: request.ownerId,
+		});
+
+		if (!hasOwnership) {
+			throw NotFoundError.project(
+				taskFound.projectId,
+				"UpdateTaskService.execute",
+			);
 		}
 
 		taskFound.update({
@@ -51,7 +80,7 @@ export class UpdateTaskService {
 
 		const updatedTask = await this.taskRepository.update(taskFound);
 
-		const taskCacheKey = CacheKeys.task(request.id);
+		const taskCacheKey = CacheKeys.task(request.taskId);
 		await this.cacheProvider.delete(taskCacheKey);
 		await this.cacheProvider.deleteByPattern(CacheKeys.allTasksLists());
 

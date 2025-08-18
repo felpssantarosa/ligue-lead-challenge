@@ -38,6 +38,7 @@ describe("Project Service Cache Integration", () => {
 				title: "Cache Test Project",
 				description: "Testing cache functionality",
 				tags: ["test", "cache"],
+				ownerId: "test-owner-id",
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
@@ -47,7 +48,7 @@ describe("Project Service Cache Integration", () => {
 			await cacheProvider.clear();
 
 			// First request - should hit database and cache the result
-			const firstResult = await getProjectService.execute({ id: projectId });
+			const firstResult = await getProjectService.execute({ projectId, ownerId: "test-user-id" });
 
 			// Verify the cache key exists
 			const cacheKey = CacheKeys.project(projectId);
@@ -55,7 +56,7 @@ describe("Project Service Cache Integration", () => {
 			expect(cachedData).toBeDefined();
 
 			// Second request - should serve from cache
-			const secondResult = await getProjectService.execute({ id: projectId });
+			const secondResult = await getProjectService.execute({ projectId, ownerId: "test-user-id" });
 
 			expect(firstResult).toEqual(secondResult);
 			expect(firstResult).toBeDefined();
@@ -69,13 +70,14 @@ describe("Project Service Cache Integration", () => {
 				title: "Update Cache Test",
 				description: "Testing cache invalidation on update",
 				tags: ["test"],
+				ownerId: "test-owner-id",
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
 			const projectId = createdProject.id;
 
 			// Get a project to cache
-			await getProjectService.execute({ id: projectId });
+			await getProjectService.execute({ projectId, ownerId: "test-user-id" });
 
 			// Verify if cache exists
 			const cacheKey = CacheKeys.project(projectId);
@@ -84,7 +86,8 @@ describe("Project Service Cache Integration", () => {
 
 			// Update the project
 			await updateProjectService.execute({
-				id: projectId,
+				projectId,
+		ownerId: "test-user-id",
 				title: "Updated Title",
 			});
 
@@ -98,13 +101,14 @@ describe("Project Service Cache Integration", () => {
 				title: "Delete Cache Test",
 				description: "Testing cache invalidation on delete",
 				tags: ["test"],
+				ownerId: "test-owner-id",
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
 			const projectId = createdProject.id;
 
 			// Get a project to cache
-			await getProjectService.execute({ id: projectId });
+			await getProjectService.execute({ projectId, ownerId: "test-user-id" });
 
 			// Verify if cache exists
 			const cacheKey = CacheKeys.project(projectId);
@@ -112,7 +116,7 @@ describe("Project Service Cache Integration", () => {
 			expect(cachedData).toBeDefined();
 
 			// Delete the project
-			await deleteProjectService.execute({ id: projectId });
+			await deleteProjectService.execute({ projectId, ownerId: "test-user-id" });
 
 			// Verify if cache was invalidated
 			cachedData = await cacheProvider.get(cacheKey);
@@ -126,13 +130,14 @@ describe("Project Service Cache Integration", () => {
 				title: "TTL Test Project",
 				description: "Testing TTL functionality",
 				tags: ["ttl"],
+				ownerId: "test-owner-id",
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
 			const projectId = createdProject.id;
 
 			// Get a project to cache
-			await getProjectService.execute({ id: projectId });
+			await getProjectService.execute({ projectId, ownerId: "test-user-id" });
 
 			// Check TTL
 			const cacheKey = CacheKeys.project(projectId);

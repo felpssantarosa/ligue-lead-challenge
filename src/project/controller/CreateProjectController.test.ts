@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import type { CreateProjectController } from "@/project/controller";
 import type { CreateProjectService } from "@/project/service";
 import { ValidationError } from "@/shared/Errors/ValidationError";
@@ -14,6 +14,7 @@ import {
 	cleanupTestValidation,
 	setupTestValidation,
 } from "@/test/setup/validation";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 describe("CreateProjectController", () => {
 	let createController: CreateProjectController;
@@ -25,6 +26,14 @@ describe("CreateProjectController", () => {
 		createService = mockCreateProjectService;
 
 		mockValidation.execute.mockReset();
+
+		Object.assign(mockRequest, {
+			user: {
+				id: "test-user-id",
+				email: "test@example.com",
+				name: "Test User",
+			},
+		});
 	});
 
 	afterEach(() => {
@@ -35,6 +44,7 @@ describe("CreateProjectController", () => {
 		it("should create a project successfully", async () => {
 			const projectData = {
 				title: "Test Project",
+				ownerId: "test-user-id",
 				description: "Test Description",
 				tags: ["tag1", "tag2"],
 			};
@@ -46,15 +56,19 @@ describe("CreateProjectController", () => {
 			};
 
 			mockRequest.body = projectData;
+
 			mockValidation.execute.mockReturnValue(projectData);
 			createService.execute.mockResolvedValue(createdProject);
 
 			await createController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
-			expect(createService.execute).toHaveBeenCalledWith(projectData);
+			expect(createService.execute).toHaveBeenCalledWith({
+				...projectData,
+				ownerId: "test-user-id",
+			});
 			expect(mockResponse.status).toHaveBeenCalledWith(201);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: true,
@@ -77,7 +91,7 @@ describe("CreateProjectController", () => {
 			});
 
 			await createController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -106,6 +120,7 @@ describe("CreateProjectController", () => {
 			const createdProject = {
 				id: generateUUID(),
 				...expectedServiceCall,
+				ownerId: "test-user-id",
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			};
@@ -116,11 +131,14 @@ describe("CreateProjectController", () => {
 			createService.execute.mockResolvedValue(createdProject);
 
 			await createController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
-			expect(createService.execute).toHaveBeenCalledWith(expectedServiceCall);
+			expect(createService.execute).toHaveBeenCalledWith({
+				...expectedServiceCall,
+				ownerId: "test-user-id",
+			});
 			expect(mockResponse.status).toHaveBeenCalledWith(201);
 			expect(mockResponse.json).toHaveBeenCalledWith({
 				success: true,

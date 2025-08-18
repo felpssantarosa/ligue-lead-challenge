@@ -8,6 +8,7 @@ import {
 } from "@/project/controller";
 import { SequelizeProjectRepository } from "@/project/infra";
 import {
+	CheckProjectOwnershipService,
 	CreateProjectService,
 	DeleteProjectService,
 	GetAllProjectsService,
@@ -37,6 +38,17 @@ import {
 	UpdateTaskService,
 } from "@/task/service";
 import { MockCacheProvider } from "@/test/mocks";
+import { LoginUserController, RegisterUserController } from "@/user/controller";
+import { SequelizeUserRepository, UserModel } from "@/user/infra";
+import type { JwtService } from "@/user/infra/jwt";
+import { JsonWebTokenService } from "@/user/infra/jwt";
+import {
+	AuthUserService,
+	FindUserByIdService,
+	LoginUserService,
+	RegisterUserService,
+	UserService,
+} from "@/user/service";
 import { createTestDatabase, setupTestDatabase } from "./database";
 
 export const setupE2EContainer = async (): Promise<void> => {
@@ -59,6 +71,20 @@ export const setupE2EContainer = async (): Promise<void> => {
 	);
 	container.registerSingleton("Validation", ValidationHandler);
 
+	// Auth module
+	container.registerSingleton<JwtService>("JwtService", JsonWebTokenService);
+	container.registerInstance(
+		"UserRepository",
+		new SequelizeUserRepository(UserModel),
+	);
+	container.registerSingleton("RegisterUserService", RegisterUserService);
+	container.registerSingleton("LoginUserService", LoginUserService);
+	container.registerSingleton("AuthUserService", AuthUserService);
+	container.registerSingleton("FindUserByIdService", FindUserByIdService);
+	container.registerSingleton("UserService", UserService);
+	container.registerSingleton(RegisterUserController);
+	container.registerSingleton(LoginUserController);
+
 	container.registerInstance(
 		"ProjectRepository",
 		new SequelizeProjectRepository(ProjectModel),
@@ -73,6 +99,10 @@ export const setupE2EContainer = async (): Promise<void> => {
 	container.registerSingleton("GetAllProjectsService", GetAllProjectsService);
 	container.registerSingleton("UpdateProjectService", UpdateProjectService);
 	container.registerSingleton("DeleteProjectService", DeleteProjectService);
+	container.registerSingleton(
+		"CheckProjectOwnershipService",
+		CheckProjectOwnershipService,
+	);
 	container.registerSingleton("ProjectService", ProjectService);
 
 	container.registerSingleton("CreateTaskService", CreateTaskService);

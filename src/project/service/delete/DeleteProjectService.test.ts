@@ -4,15 +4,26 @@ import { ApplicationError } from "@/shared/Errors";
 import {
 	mockDeleteProjectServiceImplementation as deleteProjectService,
 	mockProjectRepository,
+	mockUserService,
+	mockCheckProjectOwnershipService,
 } from "@/test/mocks";
+import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("DeleteProjectService", () => {
 	beforeEach(() => {
 		mockProjectRepository.clear();
+
+		const testUser = createUser({ id: "test-owner-id" });
+		(mockUserService.findById as jest.Mock).mockResolvedValue(testUser);
+
+		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(
+			true,
+		);
 	});
 
 	afterEach(() => {
 		mockProjectRepository.clear();
+		jest.clearAllMocks();
 	});
 
 	it("should delete a project successfully", async () => {
@@ -20,17 +31,19 @@ describe("DeleteProjectService", () => {
 			title: "Test Project",
 			description: "A test project to be deleted",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 
 		const deleteRequest: DeleteProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: "test-owner-id",
 		};
 
 		const result = await deleteProjectService.execute(deleteRequest);
 
 		expect(result).toBeDefined();
-		expect(result.id).toBe(project.id);
+		expect(result.projectId).toBe(project.id);
 		expect(result.message).toContain("deleted successfully");
 		expect(result.deletedAt).toBeInstanceOf(Date);
 
@@ -40,7 +53,8 @@ describe("DeleteProjectService", () => {
 
 	it("should throw ApplicationError when project does not exist", async () => {
 		const deleteRequest: DeleteProjectServiceParams = {
-			id: "non-existent-id",
+			projectId: "non-existent-id",
+			ownerId: "test-owner-id",
 		};
 
 		await expect(deleteProjectService.execute(deleteRequest)).rejects.toThrow(
@@ -50,7 +64,8 @@ describe("DeleteProjectService", () => {
 
 	it("should throw ApplicationError when id is empty", async () => {
 		const deleteRequest: DeleteProjectServiceParams = {
-			id: "",
+			projectId: "",
+			ownerId: "test-owner-id",
 		};
 
 		await expect(deleteProjectService.execute(deleteRequest)).rejects.toThrow(
@@ -63,25 +78,28 @@ describe("DeleteProjectService", () => {
 			title: "Test Project",
 			description: "A test project to be force deleted",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 
 		const deleteRequest: DeleteProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: "test-owner-id",
 			force: true,
 		};
 
 		const result = await deleteProjectService.execute(deleteRequest);
 
 		expect(result).toBeDefined();
-		expect(result.id).toBe(project.id);
+		expect(result.projectId).toBe(project.id);
 		expect(result.message).toContain("deleted successfully");
 		expect(result.deletedAt).toBeInstanceOf(Date);
 	});
 
 	it("should handle repository errors and wrap in ApplicationError", async () => {
 		const deleteRequest: DeleteProjectServiceParams = {
-			id: "test-id",
+			projectId: "test-id",
+			ownerId: "test-owner-id",
 		};
 
 		const findByIdSpy = jest.spyOn(mockProjectRepository, "findById");
@@ -99,18 +117,20 @@ describe("DeleteProjectService", () => {
 			title: "Test Project",
 			description: "A test project to be deleted",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		});
 
 		await mockProjectRepository.save(project);
 
 		const deleteRequest: DeleteProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: "test-owner-id",
 		};
 
 		const result = await deleteProjectService.execute(deleteRequest);
 
 		expect(result).toBeDefined();
-		expect(result.id).toBe(project.id);
+		expect(result.projectId).toBe(project.id);
 		expect(result.message).toContain("deleted successfully");
 	});
 });

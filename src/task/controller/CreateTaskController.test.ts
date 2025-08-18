@@ -1,8 +1,9 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { ValidationError as SequelizeValidationError } from "sequelize";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
 import type { CreateTaskController } from "@/task/controller/CreateTaskController";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 import {
 	createTask,
 	mockCreateTaskController,
@@ -19,6 +20,15 @@ describe("CreateTaskController", () => {
 	beforeEach(() => {
 		setupTestValidation();
 		createTaskController = mockCreateTaskController;
+
+		Object.assign(mockRequest, {
+			user: {
+				id: "test-user-id",
+				email: "test@example.com",
+				name: "Test User",
+			},
+		});
+
 		jest.clearAllMocks();
 	});
 
@@ -45,13 +55,14 @@ describe("CreateTaskController", () => {
 			mockCreateTaskService.execute.mockResolvedValue(createdTask);
 
 			await createTaskController.create(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(mockCreateTaskService.execute).toHaveBeenCalledWith({
 				...taskData,
 				projectId,
+				ownerId: "test-user-id",
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(201);
 			expect(mockResponse.json).toHaveBeenCalledWith({
@@ -73,7 +84,7 @@ describe("CreateTaskController", () => {
 			});
 
 			await createTaskController.create(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -93,7 +104,7 @@ describe("CreateTaskController", () => {
 			mockCreateTaskService.execute.mockRejectedValue(sequelizeError);
 
 			await createTaskController.create(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -119,7 +130,7 @@ describe("CreateTaskController", () => {
 			mockCreateTaskService.execute.mockRejectedValue(serviceError);
 
 			await createTaskController.create(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 

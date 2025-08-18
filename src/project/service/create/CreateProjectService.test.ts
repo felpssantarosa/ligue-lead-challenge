@@ -2,11 +2,17 @@ import type { CreateProjectServiceParams } from "@/project/service";
 import {
 	mockCreateProjectServiceImplementation as createProjectService,
 	mockProjectRepository,
+	mockUserService,
 } from "@/test/mocks";
+import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("CreateProjectService", () => {
-	beforeEach(() => {
+	beforeEach(async () => {
 		mockProjectRepository.clear();
+		jest.clearAllMocks();
+
+		const testUser = createUser({ id: "test-owner-id" });
+		mockUserService.findById.mockResolvedValue(testUser);
 	});
 
 	it("should create a project successfully", async () => {
@@ -14,6 +20,7 @@ describe("CreateProjectService", () => {
 			title: "Test Project",
 			description: "A test project description",
 			tags: ["test", "typescript"],
+			ownerId: "test-owner-id",
 		};
 
 		const result = await createProjectService.execute(request);
@@ -32,6 +39,7 @@ describe("CreateProjectService", () => {
 			title: "",
 			description: "A test project description",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		};
 
 		await expect(createProjectService.execute(request)).rejects.toThrow(
@@ -44,6 +52,7 @@ describe("CreateProjectService", () => {
 			title: "Test Project",
 			description: "A test project description",
 			tags: [],
+			ownerId: "test-owner-id",
 		};
 
 		const result = await createProjectService.execute(request);
@@ -56,6 +65,7 @@ describe("CreateProjectService", () => {
 			title: "Test Project",
 			description: "A test project description",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		};
 
 		const result = await createProjectService.execute(request);
@@ -70,6 +80,7 @@ describe("CreateProjectService", () => {
 			title: "   ",
 			description: "A test project description",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		};
 
 		await expect(createProjectService.execute(request)).rejects.toThrow(
@@ -81,6 +92,7 @@ describe("CreateProjectService", () => {
 		const request = {
 			title: "Test Project",
 			description: "A test project description",
+			ownerId: "test-owner-id",
 		} as CreateProjectServiceParams;
 
 		const result = await createProjectService.execute(request);
@@ -93,6 +105,7 @@ describe("CreateProjectService", () => {
 			title: "Test Project",
 			description: "A test project description",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		};
 
 		const saveSpy = jest.spyOn(mockProjectRepository, "save");

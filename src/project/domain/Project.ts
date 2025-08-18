@@ -19,6 +19,7 @@ export class Project extends Entity {
 	private _description: string;
 	private _tags: string[];
 	private _taskIds: string[];
+	private _ownerId: string;
 
 	private constructor({
 		description,
@@ -28,6 +29,7 @@ export class Project extends Entity {
 		updatedAt,
 		id,
 		taskIds,
+		ownerId,
 	}: ProjectProps) {
 		super({ id, createdAt, updatedAt });
 
@@ -35,6 +37,7 @@ export class Project extends Entity {
 		this._description = description;
 		this._tags = tags;
 		this._taskIds = taskIds;
+		this._ownerId = ownerId;
 	}
 
 	public static create(params: CreateProjectParams): Project {
@@ -55,6 +58,7 @@ export class Project extends Entity {
 			tags: params.tags,
 			id: params.id,
 			taskIds: params.taskIds,
+			ownerId: params.ownerId,
 		});
 	}
 
@@ -72,6 +76,10 @@ export class Project extends Entity {
 
 	public get taskIds(): string[] {
 		return [...this._taskIds];
+	}
+
+	public get ownerId(): string {
+		return this._ownerId;
 	}
 
 	public update(params: UpdateProjectParams): void {
@@ -143,6 +151,7 @@ export class Project extends Entity {
 			description: this._description,
 			tags: this._tags,
 			taskIds: this._taskIds,
+			ownerId: this._ownerId,
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt,
 		};

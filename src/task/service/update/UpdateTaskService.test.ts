@@ -7,17 +7,30 @@ import {
 	MockCacheProvider,
 	mockTaskRepository,
 } from "@/test/mocks";
+import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
+import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
+import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("UpdateTaskService", () => {
 	let updateTaskService: UpdateTaskService;
+	let userService: ReturnType<typeof createUserServiceMock>;
+	const ownerId = generateUUID();
 	const findByIdSpy = jest.spyOn(mockTaskRepository, "findById");
 	const updateSpy = jest.spyOn(mockTaskRepository, "update");
 
 	beforeEach(() => {
+		userService = createUserServiceMock();
 		updateTaskService = new UpdateTaskService(
 			mockTaskRepository,
 			new MockCacheProvider(),
+			mockCheckProjectOwnershipService,
+			userService,
 		);
+
+		const testUser = createUser({ id: ownerId });
+		userService.findById.mockResolvedValue(testUser);
+		mockCheckProjectOwnershipService.execute.mockResolvedValue(true);
+
 		jest.clearAllMocks();
 	});
 
@@ -42,7 +55,8 @@ describe("UpdateTaskService", () => {
 			updateSpy.mockResolvedValue(updatedTask);
 
 			const result = await updateTaskService.execute({
-				id: taskId,
+				taskId: taskId,
+				ownerId,
 				title: "Updated Title",
 				description: "Updated Description",
 				status: TaskStatus.IN_PROGRESS,
@@ -67,7 +81,8 @@ describe("UpdateTaskService", () => {
 
 			await expect(
 				updateTaskService.execute({
-					id: taskId,
+					taskId: taskId,
+					ownerId,
 					title: "New Title",
 				}),
 			).rejects.toThrow(NotFoundError);
@@ -89,7 +104,8 @@ describe("UpdateTaskService", () => {
 			updateSpy.mockResolvedValue(originalTask);
 
 			await updateTaskService.execute({
-				id: taskId,
+				taskId: taskId,
+				ownerId,
 				title: "Updated Title Only",
 			});
 

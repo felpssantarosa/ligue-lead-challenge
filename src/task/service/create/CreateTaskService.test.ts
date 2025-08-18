@@ -9,21 +9,31 @@ import {
 	createTaskRepositoryMock,
 	MockCacheProvider,
 } from "@/test/mocks";
+import { mockCheckProjectOwnershipService } from "@/test/mocks/factories/ProjectMock";
+import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
+import { createUser } from "@/test/mocks/factories/UserMock";
+import { generateUUID } from "@/test/factories/UUIDFactory";
 
 describe("CreateTaskService", () => {
 	let existingProject: Project;
 	let projectRepository: ReturnType<typeof createProjectRepositoryMock>;
 	let taskRepository: ReturnType<typeof createTaskRepositoryMock>;
 	let createTaskService: CreateTaskService;
+	let userService: ReturnType<typeof createUserServiceMock>;
+	const ownerId = generateUUID();
+	let testUser: ReturnType<typeof createUser>;
 
 	beforeEach(async () => {
 		projectRepository = createProjectRepositoryMock();
 		taskRepository = createTaskRepositoryMock();
+		userService = createUserServiceMock();
 
 		createTaskService = new CreateTaskService(
 			taskRepository,
 			projectRepository,
 			new MockCacheProvider(),
+			mockCheckProjectOwnershipService,
+			userService,
 		);
 
 		existingProject = createProject({
@@ -32,7 +42,11 @@ describe("CreateTaskService", () => {
 			tags: ["test"],
 		});
 
+		testUser = createUser({ id: ownerId });
+
 		projectRepository.findById.mockResolvedValue(existingProject);
+		userService.findById.mockResolvedValue(testUser);
+		mockCheckProjectOwnershipService.execute.mockResolvedValue(true);
 
 		taskRepository.save.mockImplementation(async (task: Task) => {
 			return task;
@@ -49,6 +63,7 @@ describe("CreateTaskService", () => {
 			description: "A test task description",
 			status: TaskStatus.TODO,
 			projectId: existingProject.id,
+			ownerId,
 		};
 
 		const result = await createTaskService.execute(request);
@@ -69,6 +84,7 @@ describe("CreateTaskService", () => {
 			description: "A test task description",
 			status: TaskStatus.TODO,
 			projectId: existingProject.id,
+			ownerId,
 		};
 
 		await expect(createTaskService.execute(request)).rejects.toThrow(
@@ -82,6 +98,7 @@ describe("CreateTaskService", () => {
 			description: "A test task description",
 			status: TaskStatus.TODO,
 			projectId: "non-existent-project-id",
+			ownerId,
 		};
 
 		projectRepository.findById.mockResolvedValueOnce(null);
@@ -97,6 +114,7 @@ describe("CreateTaskService", () => {
 			description: "A test task description",
 			status: TaskStatus.TODO,
 			projectId: existingProject.id,
+			ownerId,
 		};
 
 		const result = await createTaskService.execute(request);
@@ -119,6 +137,7 @@ describe("CreateTaskService", () => {
 			description: "A test task description",
 			status: TaskStatus.TODO,
 			projectId: existingProject.id,
+			ownerId,
 		};
 
 		const result = await createTaskService.execute(request);

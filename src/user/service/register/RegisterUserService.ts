@@ -3,6 +3,9 @@ import { ConflictError } from "@/shared/Errors";
 import { type CreateUserParams, User } from "@/user/domain";
 import type { UserRepository } from "@/user/infra/repository";
 
+export type RegisterUserServiceParams = CreateUserParams;
+export type RegisterUserServiceResponse = User;
+
 @injectable()
 export class RegisterUserService {
 	constructor(
@@ -10,7 +13,9 @@ export class RegisterUserService {
 		private readonly userRepository: UserRepository,
 	) {}
 
-	async execute(params: CreateUserParams): Promise<User> {
+	async execute(
+		params: RegisterUserServiceParams,
+	): Promise<RegisterUserServiceResponse> {
 		const userExists = await this.userRepository.findByEmail(params.email);
 
 		if (userExists) {

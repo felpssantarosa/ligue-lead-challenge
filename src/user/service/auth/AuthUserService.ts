@@ -5,7 +5,7 @@ import type { JwtService } from "@/user/infra/jwt";
 import type { UserRepository } from "@/user/infra/repository";
 
 @injectable()
-export class AuthService {
+export class AuthUserService {
 	constructor(
 		@inject("UserRepository")
 		private readonly userRepository: UserRepository,

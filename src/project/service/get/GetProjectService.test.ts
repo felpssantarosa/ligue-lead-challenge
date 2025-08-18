@@ -19,6 +19,7 @@ describe("GetProjectService", () => {
 			title: "Test Project",
 			description: "A test project description",
 			tags: ["test", "typescript"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 

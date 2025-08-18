@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
 import { ProjectModel } from "@/project/infra";
 import { TaskModel } from "@/task/infra";
+import { UserModel } from "@/user/infra";
 
 let testSequelize: Sequelize;
 
@@ -9,7 +10,7 @@ export const createTestDatabase = (): Sequelize => {
 		testSequelize = new Sequelize({
 			dialect: "sqlite",
 			storage: ":memory:",
-			models: [ProjectModel, TaskModel],
+			models: [ProjectModel, TaskModel, UserModel],
 			logging: false,
 			sync: { force: true },
 		});

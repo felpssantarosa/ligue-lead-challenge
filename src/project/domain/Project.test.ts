@@ -13,6 +13,7 @@ const validParams = (): CreateProjectParams => ({
 	title: "Test Project",
 	description: "A test project description",
 	tags: ["test", "typescript"],
+	ownerId: "test-owner-id",
 });
 
 const validProps = (): ProjectProps => ({
@@ -21,6 +22,7 @@ const validProps = (): ProjectProps => ({
 	description: "A test project description",
 	tags: ["test", "typescript"],
 	taskIds: [],
+	ownerId: "test-owner-id",
 	createdAt: new Date("2023-01-01T00:00:00.000Z"),
 	updatedAt: new Date("2023-01-01T00:00:00.000Z"),
 });
@@ -92,6 +94,7 @@ describe("Project", () => {
 		it("should return correct property values", () => {
 			expect(project.title).toBe("Test Project");
 			expect(project.description).toBe("A test project description");
+			expect(project.ownerId).toBe("test-owner-id");
 		});
 
 		it("should return immutable tags copy", () => {
@@ -322,6 +325,7 @@ describe("Project", () => {
 				description: project.description,
 				tags: project.tags,
 				taskIds: project.taskIds,
+				ownerId: project.ownerId,
 				createdAt: project.createdAt,
 				updatedAt: project.updatedAt,
 			});

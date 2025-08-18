@@ -11,6 +11,7 @@ import { cleanTestDatabase, closeTestDatabase } from "./setup/database";
 
 describe("Projects API Integration", () => {
 	let app: Application;
+	let authToken: string;
 
 	beforeAll(async () => {
 		await setupIntegrationContainer();
@@ -24,6 +25,24 @@ describe("Projects API Integration", () => {
 
 	beforeEach(async () => {
 		await cleanTestDatabase();
+
+		const testUser = {
+			email: "test@example.com",
+			password: "testpassword123",
+			name: "Test User",
+		};
+
+		await request(app).post("/auth/register").send(testUser).expect(201);
+
+		const loginResponse = await request(app)
+			.post("/auth/login")
+			.send({
+				email: testUser.email,
+				password: testUser.password,
+			})
+			.expect(200);
+
+		authToken = loginResponse.body.data.token;
 	});
 
 	describe("POST /api/projects", () => {
@@ -36,6 +55,7 @@ describe("Projects API Integration", () => {
 
 			const response = await request(app)
 				.post("/api/projects")
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(projectData)
 				.expect(201);
 
@@ -61,6 +81,7 @@ describe("Projects API Integration", () => {
 
 			const response = await request(app)
 				.post("/api/projects")
+				.set("Authorization", `Bearer ${authToken}`)
 				.send(projectData)
 				.expect(400);
 
@@ -78,6 +99,7 @@ describe("Projects API Integration", () => {
 
 			const response = await request(app)
 				.get(`/api/projects/${nonExistentId}`)
+				.set("Authorization", `Bearer ${authToken}`)
 				.expect(404);
 
 			expect(response.body.error).toMatchObject({

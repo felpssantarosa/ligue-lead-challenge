@@ -5,7 +5,9 @@ import {
 	createProject,
 	MockCacheProvider,
 	mockProjectRepository,
+	mockUserService,
 } from "@/test/mocks";
+import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("CreateProjectService - Cache Invalidation", () => {
 	let createProjectService: CreateProjectService;
@@ -19,10 +21,14 @@ describe("CreateProjectService - Cache Invalidation", () => {
 		createProjectService = new CreateProjectService(
 			mockProjectRepository,
 			mockCacheProvider,
+			mockUserService,
 		);
 
 		mockProjectRepository.clear();
 		jest.clearAllMocks();
+
+		const testUser = createUser({ id: "test-owner-id" });
+		(mockUserService.findById as jest.Mock).mockResolvedValue(testUser);
 	});
 
 	describe("Cache Invalidation on Create", () => {
@@ -31,6 +37,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "New Test Project",
 				description: "A test project for cache invalidation",
 				tags: ["test", "cache"],
+				ownerId: "test-owner-id",
 			};
 
 			const savedProject = createProject({
@@ -86,6 +93,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "Project Without Tags",
 				description: "A project without any tags",
 				tags: [],
+				ownerId: "test-owner-id",
 			};
 
 			const savedProject = createProject({
@@ -116,6 +124,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "Project With Undefined Tags",
 				description: "A project with undefined tags",
 				tags: undefined as unknown as string[],
+				ownerId: "test-owner-id",
 			};
 
 			const savedProject = createProject({
@@ -148,6 +157,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "",
 				description: "Project with empty title",
 				tags: ["test"],
+				ownerId: "test-owner-id",
 			};
 
 			const projectsListKey = "ligue-lead:projects:list:p1_l10";
@@ -167,6 +177,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "   ",
 				description: "Project with whitespace-only title",
 				tags: ["test"],
+				ownerId: "test-owner-id",
 			};
 
 			const projectsListKey = "ligue-lead:projects:list:p1_l10";
@@ -187,6 +198,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "Pattern Test Project",
 				description: "Testing cache pattern specificity",
 				tags: ["pattern", "test"],
+				ownerId: "test-owner-id",
 			};
 
 			const savedProject = createProject(projectData);
@@ -221,6 +233,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "Failing Project",
 				description: "Project that will fail to save",
 				tags: ["error"],
+				ownerId: "test-owner-id",
 			};
 
 			saveSpy.mockRejectedValue(new Error("Database connection failed"));
@@ -242,6 +255,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "Domain Test Project",
 				description: "Testing proper domain entity creation",
 				tags: ["domain", "entity"],
+				ownerId: "test-owner-id",
 			};
 
 			const savedProject = createProject(projectData);
@@ -265,6 +279,7 @@ describe("CreateProjectService - Cache Invalidation", () => {
 				title: "Performance Test Project",
 				description: "Testing cache invalidation performance",
 				tags: ["performance"],
+				ownerId: "test-owner-id",
 			};
 
 			const savedProject = createProject(projectData);

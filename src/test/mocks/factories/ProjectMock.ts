@@ -8,6 +8,7 @@ import {
 import type { ProjectProps } from "@/project/domain";
 import { Project } from "@/project/domain/Project";
 import { ProjectService } from "@/project/service";
+import { CheckProjectOwnershipService } from "@/project/service/check-ownership/CheckProjectOwnershipService";
 import { CreateProjectService } from "@/project/service/create/CreateProjectService";
 import { DeleteProjectService } from "@/project/service/delete/DeleteProjectService";
 import { GetProjectService } from "@/project/service/get/GetProjectService";
@@ -16,6 +17,7 @@ import { UpdateProjectService } from "@/project/service/update/UpdateProjectServ
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import { generateUUID } from "@/test/factories";
 import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
+import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
 import { mockTaskService } from "@/test/mocks/factories/TaskMock";
 import { MockProjectRepository } from "@/test/mocks/repositories";
 
@@ -23,12 +25,18 @@ const mockValidation = {
 	execute: jest.fn(),
 } as ValidationHandler & { execute: jest.Mock };
 
+const mockCheckProjectOwnershipService = {
+	execute: jest.fn(),
+} as CheckProjectOwnershipService & { execute: jest.Mock };
+
 const mockProjectRepository = new MockProjectRepository();
 const mockProjectCacheProvider = new MockCacheProvider();
+const mockUserService = createUserServiceMock();
 
 const mockCreateProjectServiceImplementation = new CreateProjectService(
 	mockProjectRepository,
 	mockProjectCacheProvider,
+	mockUserService,
 );
 const mockGetProjectServiceImplementation = new GetProjectService(
 	mockProjectRepository,
@@ -39,14 +47,20 @@ const mockGetAllProjectsServiceImplementation = new GetAllProjectsService(
 	mockProjectRepository,
 	mockProjectCacheProvider,
 );
+const mockCheckProjectOwnershipImplementation =
+	new CheckProjectOwnershipService(mockProjectRepository);
 const mockUpdateProjectServiceImplementation = new UpdateProjectService(
 	mockProjectRepository,
 	mockProjectCacheProvider,
+	mockCheckProjectOwnershipService,
+	mockUserService,
 );
 const mockDeleteProjectServiceImplementation = new DeleteProjectService(
 	mockProjectRepository,
 	mockProjectCacheProvider,
 	mockTaskService,
+	mockCheckProjectOwnershipService,
+	mockUserService,
 );
 
 const mockCreateProjectService = {
@@ -105,6 +119,7 @@ export const createProject = (params: Partial<ProjectProps>) => {
 		description: "Test project description",
 		tags: ["test"],
 		taskIds: [],
+		ownerId: "test-owner-id",
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
@@ -125,13 +140,16 @@ export {
 	mockGetAllProjectsService,
 	mockUpdateProjectService,
 	mockDeleteProjectService,
+	mockCheckProjectOwnershipService,
 	mockCreateProjectServiceImplementation,
 	mockGetProjectServiceImplementation,
 	mockGetAllProjectsServiceImplementation,
 	mockUpdateProjectServiceImplementation,
 	mockDeleteProjectServiceImplementation,
+	mockCheckProjectOwnershipImplementation,
 	mockValidation,
 	mockProjectRepository,
 	mockProjectService,
 	mockProjectCacheProvider,
+	mockUserService,
 };

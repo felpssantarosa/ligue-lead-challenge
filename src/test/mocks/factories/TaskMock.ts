@@ -20,7 +20,9 @@ import { MockCacheProvider } from "@/test/mocks/cache/MockCacheProvider";
 import {
 	mockProjectRepository,
 	mockProjectService,
+	mockCheckProjectOwnershipService,
 } from "@/test/mocks/factories/ProjectMock";
+import { createUserServiceMock } from "@/test/mocks/factories/MockFactory";
 import { MockTaskRepository } from "@/test/mocks/repositories";
 
 const mockTaskValidation = {
@@ -29,10 +31,14 @@ const mockTaskValidation = {
 
 const mockTaskCacheProvider = new MockCacheProvider();
 const mockTaskRepository = new MockTaskRepository();
+const mockUserService = createUserServiceMock();
+
 const mockCreateTaskServiceImplementation = new CreateTaskService(
 	mockTaskRepository,
 	mockProjectRepository,
 	mockTaskCacheProvider,
+	mockCheckProjectOwnershipService,
+	mockUserService,
 );
 const mockGetTasksByProjectServiceImplementation = new GetTasksByProjectService(
 	mockTaskRepository,
@@ -50,11 +56,15 @@ const mockGetAllTasksServiceImplementation = new GetAllTasksService(
 const mockUpdateTaskServiceImplementation = new UpdateTaskService(
 	mockTaskRepository,
 	mockTaskCacheProvider,
+	mockCheckProjectOwnershipService,
+	mockUserService,
 );
 const mockDeleteTaskServiceImplementation = new DeleteTaskService(
 	mockTaskRepository,
 	mockProjectRepository,
 	mockTaskCacheProvider,
+	mockCheckProjectOwnershipService,
+	mockUserService,
 );
 const mockDeleteTaskByProjectIdServiceImplementation =
 	new DeleteByProjectIdService(mockTaskRepository, mockTaskCacheProvider);

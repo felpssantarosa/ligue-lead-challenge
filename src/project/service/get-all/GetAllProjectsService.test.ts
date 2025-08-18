@@ -23,11 +23,13 @@ describe("GetAllProjectsService", () => {
 			title: "Project 1",
 			description: "First project",
 			tags: ["tag1"],
+			ownerId: "test-owner-id",
 		});
 		const project2 = Project.create({
 			title: "Project 2",
 			description: "Second project",
 			tags: ["tag2"],
+			ownerId: "test-owner-id",
 		});
 
 		await mockProjectRepository.save(project1);
@@ -59,6 +61,7 @@ describe("GetAllProjectsService", () => {
 				title: `Project ${i}`,
 				description: `Description ${i}`,
 				tags: [`tag${i}`],
+				ownerId: "test-owner-id",
 			});
 			projects.push(project);
 			await mockProjectRepository.save(project);
@@ -80,11 +83,13 @@ describe("GetAllProjectsService", () => {
 			title: "TypeScript Project",
 			description: "A project using TypeScript",
 			tags: ["typescript", "web"],
+			ownerId: "test-owner-id",
 		});
 		const project2 = Project.create({
 			title: "Python Project",
 			description: "A project using Python",
 			tags: ["python", "data"],
+			ownerId: "test-owner-id",
 		});
 
 		await mockProjectRepository.save(project1);
@@ -106,18 +111,21 @@ describe("GetAllProjectsService", () => {
 			title: "Web Project",
 			description: "A web development project",
 			tags: ["web", "frontend"],
+			ownerId: "test-owner-id",
 		});
 
 		const project2 = Project.create({
 			title: "Backend Project",
 			description: "A backend development project",
 			tags: ["backend", "api"],
+			ownerId: "test-owner-id",
 		});
 
 		const project3 = Project.create({
 			title: "Full Stack Project",
 			description: "A full stack project",
 			tags: ["web", "backend"],
+			ownerId: "test-owner-id",
 		});
 
 		await mockProjectRepository.save(project1);
@@ -142,6 +150,7 @@ describe("GetAllProjectsService", () => {
 			title: "Test Project",
 			description: "A test project",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		});
 
 		await mockProjectRepository.save(project);
@@ -177,6 +186,7 @@ describe("GetAllProjectsService", () => {
 			title: "Test Project",
 			description: "A test project",
 			tags: ["test"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 

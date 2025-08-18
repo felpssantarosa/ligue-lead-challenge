@@ -4,17 +4,28 @@ import { ApplicationError } from "@/shared/Errors";
 import {
 	mockProjectRepository,
 	mockUpdateProjectServiceImplementation as updateProjectService,
+	mockUserService,
+	mockCheckProjectOwnershipService,
 } from "@/test/mocks";
+import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("UpdateProjectService", () => {
 	beforeEach(() => {
 		mockProjectRepository.clear();
 		jest.useFakeTimers();
+
+		const testUser = createUser({ id: "test-owner-id" });
+		(mockUserService.findById as jest.Mock).mockResolvedValue(testUser);
+
+		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(
+			true,
+		);
 	});
 
 	afterEach(() => {
 		mockProjectRepository.clear();
 		jest.useRealTimers();
+		jest.clearAllMocks();
 	});
 
 	it("should update a project successfully", async () => {
@@ -22,11 +33,13 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 
 		const updateRequest: UpdateProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: project.ownerId,
 			title: "Updated Project",
 			description: "Updated description",
 			tags: ["updated", "test"],
@@ -44,7 +57,8 @@ describe("UpdateProjectService", () => {
 
 	it("should throw ApplicationError when project does not exist", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
-			id: "non-existent-id",
+			projectId: "non-existent-id",
+			ownerId: "test-owner-id",
 			title: "Updated Project",
 			description: "Updated description",
 			tags: ["test"],
@@ -60,11 +74,13 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 
 		const updateRequest: UpdateProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: project.ownerId,
 			title: "",
 			description: "Updated description",
 			tags: ["test"],
@@ -80,11 +96,13 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 
 		const updateRequest: UpdateProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: project.ownerId,
 			title: "Updated Title Only",
 		};
 
@@ -97,7 +115,8 @@ describe("UpdateProjectService", () => {
 
 	it("should throw ApplicationError when id is empty", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
-			id: "",
+			projectId: "",
+			ownerId: "test-owner-id",
 			title: "Updated Project",
 		};
 
@@ -111,11 +130,13 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
 
 		const updateRequest: UpdateProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: project.ownerId,
 			description: undefined,
 		};
 
@@ -129,16 +150,17 @@ describe("UpdateProjectService", () => {
 	it("should update all fields when provided", async () => {
 		const project = Project.create({
 			title: "Original Project",
-			description: "Original description",
+			description: "Original Description",
 			tags: ["original"],
+			ownerId: "test-owner-id",
 		});
-
 		await mockProjectRepository.save(project);
 
 		jest.advanceTimersByTime(1);
 
 		const updateRequest: UpdateProjectServiceParams = {
-			id: project.id,
+			projectId: project.id,
+			ownerId: project.ownerId,
 			title: "New Title",
 			description: "New Description",
 			tags: ["new", "tags"],
@@ -156,7 +178,8 @@ describe("UpdateProjectService", () => {
 
 	it("should handle repository errors and wrap in ApplicationError", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
-			id: "test-id",
+			projectId: "test-id",
+			ownerId: "test-owner-id",
 			title: "Updated Project",
 		};
 

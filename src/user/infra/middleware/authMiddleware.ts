@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
 import { UnauthorizedError } from "@/shared/Errors";
-import type { AuthService } from "@/user/service";
+import type { AuthUserService } from "@/user/service";
 
 export interface AuthenticatedRequest extends Request {
 	user: {
@@ -37,7 +37,7 @@ export const authMiddleware = async (
 
 		const tokenWithoutPrefix = authHeader.substring(7);
 
-		const authService = container.resolve<AuthService>("AuthService");
+		const authService = container.resolve<AuthUserService>("AuthUserService");
 		const user = await authService.validateToken(tokenWithoutPrefix);
 
 		(request as AuthenticatedRequest).user = {

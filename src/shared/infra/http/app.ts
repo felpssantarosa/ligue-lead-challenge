@@ -15,6 +15,7 @@ import {
 	taskRoutes,
 	taskRoutesBoundByProject,
 } from "@/task/infra/routes/taskRoutes";
+import { authRoutes } from "@/user/infra/routes/AuthRoutes";
 
 export const createApp = (): express.Application => {
 	const app = express();
@@ -27,6 +28,9 @@ export const createApp = (): express.Application => {
 	app.get("/health", (_, res) => {
 		res.json({ status: "OK", timestamp: new Date().toISOString() });
 	});
+
+	// Auth
+	app.use("/auth", authRoutes);
 
 	// Project
 	app.use("/api/projects", projectRoutes);

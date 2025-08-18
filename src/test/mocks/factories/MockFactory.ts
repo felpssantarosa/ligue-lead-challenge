@@ -1,6 +1,7 @@
 import type { ProjectRepository } from "@/project/infra";
 import type { ProjectService } from "@/project/service";
 import type { TaskRepository } from "@/task/infra";
+import type { UserService } from "@/user";
 
 export const createProjectRepositoryMock = () =>
 	({
@@ -32,3 +33,11 @@ export const createProjectServiceMock = () =>
 		update: jest.fn(),
 		delete: jest.fn(),
 	}) as unknown as jest.Mocked<ProjectService>;
+
+export const createUserServiceMock = () =>
+	({
+		authenticate: jest.fn(),
+		login: jest.fn(),
+		register: jest.fn(),
+		findById: jest.fn(),
+	}) as unknown as jest.Mocked<UserService>;

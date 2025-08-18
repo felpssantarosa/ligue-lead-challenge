@@ -10,8 +10,10 @@ import { generateUUID } from "@/test/factories";
 import {
 	createTask,
 	MockCacheProvider,
+	mockCheckProjectOwnershipService,
 	mockProjectRepository,
 	mockTaskRepository,
+	mockUserService,
 } from "@/test/mocks";
 
 describe("Task Services - Cache Invalidation", () => {
@@ -29,22 +31,34 @@ describe("Task Services - Cache Invalidation", () => {
 
 	beforeEach(() => {
 		mockCacheProvider = new MockCacheProvider();
-
+		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(true);
+		(mockUserService.findById as jest.Mock).mockResolvedValue({
+			id: "test-user-id",
+			name: "Test User",
+			email: "test@example.com",
+		});
+		
 		updateTaskService = new UpdateTaskService(
 			mockTaskRepository,
 			mockCacheProvider,
+			mockCheckProjectOwnershipService,
+			mockUserService,
 		);
 
 		createTaskService = new CreateTaskService(
 			mockTaskRepository,
 			mockProjectRepository,
 			mockCacheProvider,
+			mockCheckProjectOwnershipService,
+			mockUserService,
 		);
 
 		deleteTaskService = new DeleteTaskService(
 			mockTaskRepository,
 			mockProjectRepository,
 			mockCacheProvider,
+			mockCheckProjectOwnershipService,
+			mockUserService,
 		);
 
 		mockTaskRepository.clear();
@@ -55,7 +69,7 @@ describe("Task Services - Cache Invalidation", () => {
 	describe("UpdateTaskService Cache Invalidation", () => {
 		it("should invalidate all related caches when updating a task", async () => {
 			const taskId = generateUUID();
-			const projectId = generateUUID();
+			const projectId = "725f34a7-1237-4467-8ac7-e8d2eabad75e";
 
 			const existingTask = createTask({
 				id: taskId,
@@ -73,8 +87,20 @@ describe("Task Services - Cache Invalidation", () => {
 				projectId,
 			});
 
+			const project = Project.fromJSON({
+				id: projectId,
+				title: "Test Project",
+				description: "Project for testing",
+				tags: ["test"],
+				ownerId: "test-user-id",
+				taskIds: [],
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
 			taskFindByIdSpy.mockResolvedValue(existingTask);
 			taskUpdateSpy.mockResolvedValue(updatedTask);
+			projectFindByIdSpy.mockResolvedValue(project);
 
 			const cacheEntries = [
 				{ key: CacheKeys.task(taskId), value: existingTask.toJSON() },
@@ -102,11 +128,12 @@ describe("Task Services - Cache Invalidation", () => {
 			}
 
 			await updateTaskService.execute({
-				id: taskId,
+				taskId,
+				ownerId: "test-user-id",
 				title: "Updated Task",
+				description: "Updated description",
 				status: TaskStatus.IN_PROGRESS,
 			});
-
 			expect(await mockCacheProvider.get(CacheKeys.task(taskId))).toBeNull();
 			expect(
 				await mockCacheProvider.get("ligue-lead:tasks:list:p1_l10_abc"),
@@ -138,7 +165,8 @@ describe("Task Services - Cache Invalidation", () => {
 
 			await expect(
 				updateTaskService.execute({
-					id: taskId,
+					taskId,
+					ownerId: "test-user-id",
 					title: "New Title",
 				}),
 			).rejects.toThrow(NotFoundError);
@@ -149,13 +177,18 @@ describe("Task Services - Cache Invalidation", () => {
 
 	describe("CreateTaskService Cache Invalidation", () => {
 		it("should invalidate related caches when creating a task", async () => {
-			const projectId = generateUUID();
+			const projectId = "c72930fa-4782-4942-a2cc-3a53edc77986";
 			const taskId = generateUUID();
 
-			const project = Project.create({
+			const project = Project.fromJSON({
+				id: projectId,
 				title: "Test Project",
 				description: "Test description",
 				tags: ["test"],
+				ownerId: "test-user-id",
+				taskIds: [],
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			});
 
 			const newTask = createTask({
@@ -188,6 +221,7 @@ describe("Task Services - Cache Invalidation", () => {
 				description: "New task description",
 				status: TaskStatus.TODO,
 				projectId,
+				ownerId: "test-user-id",
 			});
 
 			expect(
@@ -217,6 +251,7 @@ describe("Task Services - Cache Invalidation", () => {
 					description: "Description",
 					status: TaskStatus.TODO,
 					projectId,
+					ownerId: "test-user-id",
 				}),
 			).rejects.toThrow(NotFoundError);
 
@@ -227,7 +262,7 @@ describe("Task Services - Cache Invalidation", () => {
 	describe("DeleteTaskService Cache Invalidation", () => {
 		it("should invalidate all related caches when deleting a task", async () => {
 			const taskId = generateUUID();
-			const projectId = generateUUID();
+			const projectId = "21d1054c-ca45-4355-9059-b618fe5abf48";
 
 			const task = createTask({
 				id: taskId,
@@ -237,12 +272,16 @@ describe("Task Services - Cache Invalidation", () => {
 				projectId,
 			});
 
-			const project = Project.create({
+			const project = Project.fromJSON({
+				id: projectId,
 				title: "Project with Task",
 				description: "Has tasks",
 				tags: ["project"],
+				ownerId: "test-user-id",
+				taskIds: [taskId, "other-task-id"],
+				createdAt: new Date(),
+				updatedAt: new Date(),
 			});
-			project.updateTaskIds([taskId, "other-task-id"]);
 
 			taskFindByIdSpy.mockResolvedValue(task);
 			projectFindByIdSpy.mockResolvedValue(project);
@@ -264,7 +303,7 @@ describe("Task Services - Cache Invalidation", () => {
 				await mockCacheProvider.set(entry.key, entry.value);
 			}
 
-			await deleteTaskService.execute({ id: taskId });
+			await deleteTaskService.execute({ taskId, ownerId: "test-user-id" });
 
 			expect(await mockCacheProvider.get(CacheKeys.task(taskId))).toBeNull();
 			expect(
@@ -288,9 +327,9 @@ describe("Task Services - Cache Invalidation", () => {
 			const taskCacheKey = CacheKeys.task(taskId);
 			await mockCacheProvider.set(taskCacheKey, { task: "data" });
 
-			await expect(deleteTaskService.execute({ id: taskId })).rejects.toThrow(
-				NotFoundError,
-			);
+			await expect(
+				deleteTaskService.execute({ taskId, ownerId: "test-user-id" }),
+			).rejects.toThrow(NotFoundError);
 
 			expect(await mockCacheProvider.get(taskCacheKey)).toBeTruthy();
 		});
@@ -310,9 +349,9 @@ describe("Task Services - Cache Invalidation", () => {
 			const taskCacheKey = CacheKeys.task(taskId);
 			await mockCacheProvider.set(taskCacheKey, { task: "data" });
 
-			await expect(deleteTaskService.execute({ id: taskId })).rejects.toThrow(
-				NotFoundError,
-			);
+			await expect(
+				deleteTaskService.execute({ taskId, ownerId: "test-user-id" }),
+			).rejects.toThrow(NotFoundError);
 
 			expect(await mockCacheProvider.get(taskCacheKey)).toBeTruthy();
 		});
@@ -321,11 +360,23 @@ describe("Task Services - Cache Invalidation", () => {
 	describe("Cache Pattern Validation", () => {
 		it("should use correct cache key patterns for task operations", async () => {
 			const taskId = generateUUID();
-			const projectId = generateUUID();
+			const projectId = "ecdb6b43-8045-43fe-aca9-4d4814c593ce";
 
 			const task = createTask({ id: taskId, projectId });
+			const project = Project.fromJSON({
+				id: projectId,
+				title: "Test Project",
+				description: "Test description",
+				tags: ["test"],
+				ownerId: "test-user-id",
+				taskIds: [taskId],
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
 			taskFindByIdSpy.mockResolvedValue(task);
 			taskUpdateSpy.mockResolvedValue(task);
+			projectFindByIdSpy.mockResolvedValue(project);
 
 			const deleteSpy = jest.spyOn(mockCacheProvider, "delete");
 			const deleteByPatternSpy = jest.spyOn(
@@ -334,7 +385,8 @@ describe("Task Services - Cache Invalidation", () => {
 			);
 
 			await updateTaskService.execute({
-				id: taskId,
+				taskId,
+				ownerId: "test-user-id",
 				title: "Updated",
 			});
 
@@ -353,20 +405,34 @@ describe("Task Services - Cache Invalidation", () => {
 	describe("Cross-Service Cache Consistency", () => {
 		it("should maintain cache consistency across task and project operations", async () => {
 			const taskId = generateUUID();
-			const projectId = generateUUID();
+			const projectId = "e0d51300-bb51-480f-b824-9e8a723e849c";
 
 			const task = createTask({ id: taskId, projectId });
+			const project = Project.fromJSON({
+				id: projectId,
+				title: "Test Project",
+				description: "Test description",
+				tags: ["test"],
+				ownerId: "test-user-id",
+				taskIds: [taskId],
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			});
+
 			taskFindByIdSpy.mockResolvedValue(task);
 			taskUpdateSpy.mockResolvedValue(task);
+			projectFindByIdSpy.mockResolvedValue(project);
 
 			const projectCacheKey = CacheKeys.project(projectId);
 			await mockCacheProvider.set(projectCacheKey, {
 				id: projectId,
+				ownerId: "test-user-id",
 				tasks: [task],
 			});
 
 			await updateTaskService.execute({
-				id: taskId,
+				taskId,
+				ownerId: "test-user-id",
 				title: "Updated Task",
 			});
 

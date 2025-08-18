@@ -86,6 +86,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Database Project",
 				description: "From database",
 				tags: ["db"],
+				ownerId: "test-owner-id",
 			});
 			project.updateTaskIds([generateUUID(), generateUUID()]);
 
@@ -119,6 +120,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Empty Project",
 				description: "No tasks",
 				tags: ["empty"],
+				ownerId: "test-owner-id",
 			});
 
 			findByIdSpy.mockResolvedValue(project);
@@ -154,6 +156,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Project with Failed Tasks",
 				description: "Task loading will fail",
 				tags: ["error"],
+				ownerId: "test-owner-id",
 			});
 			project.updateTaskIds([generateUUID()]);
 
@@ -177,6 +180,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Expiring Project",
 				description: "Will expire",
 				tags: ["expire"],
+				ownerId: "test-owner-id",
 			});
 
 			const cacheKey = CacheKeys.project(projectId);

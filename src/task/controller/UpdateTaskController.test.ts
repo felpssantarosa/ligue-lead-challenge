@@ -1,7 +1,8 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { NotFoundError, ValidationError } from "@/shared/Errors";
 import type { UpdateTaskController } from "@/task/controller";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 import {
 	createTask,
 	mockRequest,
@@ -16,6 +17,14 @@ describe("UpdateTaskController", () => {
 
 	beforeEach(() => {
 		updateTaskController = mockUpdateTaskController;
+
+		Object.assign(mockRequest, {
+			user: {
+				id: "test-user-id",
+				email: "test@example.com",
+				name: "Test User",
+			},
+		});
 
 		jest.clearAllMocks();
 	});
@@ -39,7 +48,7 @@ describe("UpdateTaskController", () => {
 			mockUpdateTaskService.execute.mockResolvedValue(updatedTask);
 
 			await updateTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -57,7 +66,8 @@ describe("UpdateTaskController", () => {
 				"UpdateTaskController.handle",
 			);
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 				...updateData,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -82,12 +92,13 @@ describe("UpdateTaskController", () => {
 			mockUpdateTaskService.execute.mockResolvedValue(updatedTask);
 
 			await updateTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 				...updateData,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -108,7 +119,7 @@ describe("UpdateTaskController", () => {
 			});
 
 			await updateTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -148,7 +159,7 @@ describe("UpdateTaskController", () => {
 				});
 
 			await updateTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -172,12 +183,13 @@ describe("UpdateTaskController", () => {
 			mockUpdateTaskService.execute.mockRejectedValue(notFoundError);
 
 			await updateTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 				...updateData,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(404);
@@ -206,12 +218,13 @@ describe("UpdateTaskController", () => {
 			mockUpdateTaskService.execute.mockResolvedValue(task);
 
 			await updateTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
 		});
@@ -231,12 +244,13 @@ describe("UpdateTaskController", () => {
 			);
 
 			await updateTaskController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(mockUpdateTaskService.execute).toHaveBeenCalledWith({
-				id: taskId,
+				taskId: taskId,
+				ownerId: "test-user-id",
 				...updateData,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(500);

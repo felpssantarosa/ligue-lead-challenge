@@ -65,6 +65,7 @@ describe("TaskService Orchestrator", () => {
 				description: "Test description",
 				status: TaskStatus.TODO,
 				projectId: "project-id",
+				ownerId: "test-user-id",
 			};
 			const task = createTask({});
 			mockCreateTaskService.execute.mockResolvedValue(task);
@@ -108,7 +109,11 @@ describe("TaskService Orchestrator", () => {
 	describe("update", () => {
 		it("should delegate to UpdateTaskService", async () => {
 			const task = createTask({});
-			const params = { id: task.id, title: "Updated Task" };
+			const params = {
+				taskId: task.id,
+				ownerId: "test-user-id",
+				title: "Updated Task",
+			};
 			const updatedTask = { ...task, title: "Updated Task" };
 
 			mockUpdateTaskService.execute.mockResolvedValue(updatedTask);
@@ -122,7 +127,10 @@ describe("TaskService Orchestrator", () => {
 
 	describe("delete", () => {
 		it("should delegate to DeleteTaskService", async () => {
-			const params = { id: "test-task-id" };
+			const params = {
+				taskId: "test-task-id",
+				ownerId: "test-user-id",
+			};
 
 			mockDeleteTaskService.execute.mockResolvedValue(undefined);
 

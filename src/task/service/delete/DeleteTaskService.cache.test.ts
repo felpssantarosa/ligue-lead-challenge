@@ -7,8 +7,10 @@ import {
 	createProject,
 	createTask,
 	MockCacheProvider,
+	mockCheckProjectOwnershipService,
 	mockProjectRepository,
 	mockTaskRepository,
+	mockUserService,
 } from "@/test/mocks";
 
 describe("DeleteTaskService - Cache Invalidation", () => {
@@ -22,11 +24,19 @@ describe("DeleteTaskService - Cache Invalidation", () => {
 
 	beforeEach(() => {
 		mockCacheProvider = new MockCacheProvider();
-
+		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(true);
+		(mockUserService.findById as jest.Mock).mockResolvedValue({
+			id: "test-user-id",
+			name: "Test User",
+			email: "test@example.com",
+		});
+		
 		deleteTaskService = new DeleteTaskService(
 			mockTaskRepository,
 			mockProjectRepository,
 			mockCacheProvider,
+			mockCheckProjectOwnershipService,
+			mockUserService,
 		);
 
 		mockTaskRepository.clear();
@@ -70,7 +80,7 @@ describe("DeleteTaskService - Cache Invalidation", () => {
 				total: 1,
 			});
 
-			await deleteTaskService.execute({ id: taskId });
+			await deleteTaskService.execute({ taskId, ownerId: "test-user-id" });
 
 			expect(findByIdSpy).toHaveBeenCalledWith(taskId);
 			expect(projectFindByIdSpy).toHaveBeenCalledWith(projectId);
@@ -94,9 +104,9 @@ describe("DeleteTaskService - Cache Invalidation", () => {
 
 			findByIdSpy.mockResolvedValue(null);
 
-			await expect(deleteTaskService.execute({ id: taskId })).rejects.toThrow(
-				NotFoundError,
-			);
+			await expect(
+				deleteTaskService.execute({ taskId, ownerId: "test-user-id" }),
+			).rejects.toThrow(NotFoundError);
 
 			expect(await mockCacheProvider.get(cacheKey)).toBeTruthy();
 			expect(deleteSpy).not.toHaveBeenCalled();
@@ -119,9 +129,9 @@ describe("DeleteTaskService - Cache Invalidation", () => {
 			findByIdSpy.mockResolvedValue(mockTask);
 			projectFindByIdSpy.mockResolvedValue(null);
 
-			await expect(deleteTaskService.execute({ id: taskId })).rejects.toThrow(
-				NotFoundError,
-			);
+			await expect(
+				deleteTaskService.execute({ taskId, ownerId: "test-user-id" }),
+			).rejects.toThrow(NotFoundError);
 
 			expect(await mockCacheProvider.get(taskCacheKey)).toBeTruthy();
 			expect(deleteSpy).not.toHaveBeenCalled();
@@ -166,7 +176,7 @@ describe("DeleteTaskService - Cache Invalidation", () => {
 				total: 0,
 			});
 
-			await deleteTaskService.execute({ id: taskId });
+			await deleteTaskService.execute({ taskId, ownerId: "test-user-id" });
 
 			expect(await mockCacheProvider.get(expectedTaskKey)).toBeNull();
 			expect(await mockCacheProvider.get(expectedProjectKey)).toBeNull();
@@ -203,7 +213,10 @@ describe("DeleteTaskService - Cache Invalidation", () => {
 			projectUpdateSpy.mockResolvedValue(mockProject);
 			deleteSpy.mockResolvedValue();
 
-			await deleteTaskService.execute({ id: taskToDeleteId });
+			await deleteTaskService.execute({
+				taskId: taskToDeleteId,
+				ownerId: "test-user-id",
+			});
 
 			expect(projectUpdateSpy).toHaveBeenCalled();
 			const updatedProject = projectUpdateSpy.mock.calls[0][0];
@@ -228,9 +241,9 @@ describe("DeleteTaskService - Cache Invalidation", () => {
 			const cacheKey = CacheKeys.task(taskId);
 			await mockCacheProvider.set(cacheKey, mockTask);
 
-			await expect(deleteTaskService.execute({ id: taskId })).rejects.toThrow(
-				"Database error",
-			);
+			await expect(
+				deleteTaskService.execute({ taskId, ownerId: "test-user-id" }),
+			).rejects.toThrow("Database error");
 
 			expect(await mockCacheProvider.get(cacheKey)).toBeTruthy();
 		});

@@ -1,5 +1,6 @@
 import type { ProjectValidationId } from "@/project/validation/schemas/ZodSchema";
 import type { TaskValidationId } from "@/task/validation/schemas/ZodSchema";
+import type { UserValidationId } from "@/user/validation/schemas/ZodSchema";
 
 export interface ValidationResult<T> {
 	success: boolean;
@@ -11,7 +12,10 @@ export interface ValidationResult<T> {
 	};
 }
 
-export type ValidationId = ProjectValidationId | TaskValidationId;
+export type ValidationId =
+	| ProjectValidationId
+	| TaskValidationId
+	| UserValidationId;
 
 export interface ValidationProvider {
 	validate<T>(

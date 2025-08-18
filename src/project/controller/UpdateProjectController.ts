@@ -1,8 +1,9 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { inject, injectable } from "tsyringe";
 import type { UpdateProjectService } from "@/project/service";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 type ProjectIdInput = {
 	id: string;
@@ -28,7 +29,7 @@ export class UpdateProjectController extends BaseController {
 	/**
 	 * PUT /api/projects/:id
 	 */
-	async handle(req: Request, res: Response): Promise<void> {
+	async handle(req: AuthenticatedRequest, res: Response): Promise<void> {
 		try {
 			const validatedParams = this.validation.execute<ProjectIdInput>(
 				"project-id",
@@ -43,7 +44,8 @@ export class UpdateProjectController extends BaseController {
 			);
 
 			const updateRequest = {
-				id: validatedParams.id,
+				projectId: validatedParams.id,
+				ownerId: req.user.id,
 				...(validatedBody.title !== undefined && {
 					title: validatedBody.title,
 				}),

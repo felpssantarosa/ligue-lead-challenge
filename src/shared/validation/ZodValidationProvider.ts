@@ -8,6 +8,10 @@ import {
 	type TaskValidationId,
 	taskSchemas,
 } from "@/task/validation/schemas/ZodSchema";
+import {
+	type UserValidationId,
+	userSchemas,
+} from "@/user/validation/schemas/ZodSchema";
 import type {
 	ValidationId,
 	ValidationProvider,
@@ -32,6 +36,10 @@ export class ZodValidationProvider implements ValidationProvider {
 
 			if (schemaId in taskSchemas) {
 				zodSchema = taskSchemas[schemaId as TaskValidationId] as z.ZodSchema<T>;
+			}
+
+			if (schemaId in userSchemas) {
+				zodSchema = userSchemas[schemaId as UserValidationId] as z.ZodSchema<T>;
 			}
 
 			if (!zodSchema) {

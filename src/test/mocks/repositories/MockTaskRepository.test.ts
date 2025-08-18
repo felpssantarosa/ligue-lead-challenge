@@ -104,7 +104,6 @@ describe("MockTaskRepository", () => {
 
 		it("should handle empty project gracefully", async () => {
 			await repository.deleteByProjectId("non-existent-project");
-			// Should not throw an error
 		});
 	});
 

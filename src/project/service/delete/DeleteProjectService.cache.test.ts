@@ -7,7 +7,10 @@ import {
 	MockCacheProvider,
 	mockProjectRepository,
 	mockTaskService,
+	mockUserService,
+	mockCheckProjectOwnershipService,
 } from "@/test/mocks";
+import { createUser } from "@/test/mocks/factories/UserMock";
 
 describe("DeleteProjectService - Cache Invalidation", () => {
 	let deleteProjectService: DeleteProjectService;
@@ -24,10 +27,19 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 			mockProjectRepository,
 			mockCacheProvider,
 			mockTaskService,
+			mockCheckProjectOwnershipService,
+			mockUserService,
 		);
 
 		mockProjectRepository.clear();
 		jest.clearAllMocks();
+
+		const testUser = createUser({ id: "test-owner-id" });
+		(mockUserService.findById as jest.Mock).mockResolvedValue(testUser);
+
+		(mockCheckProjectOwnershipService.execute as jest.Mock).mockResolvedValue(
+			true,
+		);
 	});
 
 	describe("Complete Project Deletion Cache Invalidation", () => {
@@ -36,6 +48,7 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 
 			const mockProject = createProject({
 				id: projectId,
+				ownerId: "test-user-id",
 				title: "Project to Delete",
 				description: "This project will be deleted",
 				tags: ["delete", "test"],
@@ -76,14 +89,17 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 				projectId: projectId,
 			});
 
-			const result = await deleteProjectService.execute({ id: projectId });
+			const result = await deleteProjectService.execute({
+				projectId: projectId,
+				ownerId: "test-owner-id",
+			});
 
 			expect(findByIdSpy).toHaveBeenCalledWith(projectId);
 			expect(deleteByProjectIdSpy).toHaveBeenCalledWith(projectId);
 			expect(deleteSpy).toHaveBeenCalledWith(projectId);
 
 			expect(result).toEqual({
-				id: projectId,
+				projectId,
 				message: "Project deleted successfully",
 				deletedAt: expect.any(Date),
 			});
@@ -103,6 +119,7 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 
 			const mockProject = createProject({
 				id: projectId,
+				ownerId: "test-user-id",
 				title: "Force Delete Project",
 			});
 
@@ -118,7 +135,8 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 			await mockCacheProvider.set(projectCacheKey, mockProject);
 
 			const result = await deleteProjectService.execute({
-				id: projectId,
+				projectId,
+				ownerId: "test-user-id",
 				force: true,
 			});
 
@@ -139,7 +157,7 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 			await mockCacheProvider.set(projectsListKey, { projects: [], total: 0 });
 
 			await expect(
-				deleteProjectService.execute({ id: projectId }),
+				deleteProjectService.execute({ projectId, ownerId: "test-user-id" }),
 			).rejects.toThrow(ApplicationError);
 
 			expect(await mockCacheProvider.get(someCacheKey)).toBeTruthy();
@@ -152,7 +170,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 		it("should wrap errors in ApplicationError", async () => {
 			const projectId = "error-project";
 
-			const mockProject = createProject({ id: projectId });
+			const mockProject = createProject({
+				id: projectId,
+				ownerId: "test-user-id",
+			});
 
 			findByIdSpy.mockResolvedValue(mockProject);
 			deleteByProjectIdSpy.mockRejectedValue(new Error("Task deletion failed"));
@@ -161,7 +182,7 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 			await mockCacheProvider.set(projectCacheKey, mockProject);
 
 			await expect(
-				deleteProjectService.execute({ id: projectId }),
+				deleteProjectService.execute({ projectId, ownerId: "test-user-id" }),
 			).rejects.toThrow(ApplicationError);
 
 			expect(await mockCacheProvider.get(projectCacheKey)).toBeTruthy();
@@ -170,13 +191,16 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 		it("should handle task service deletion errors", async () => {
 			const projectId = "task-deletion-error-project";
 
-			const mockProject = createProject({ id: projectId });
+			const mockProject = createProject({
+				id: projectId,
+				ownerId: "test-user-id",
+			});
 
 			findByIdSpy.mockResolvedValue(mockProject);
 			deleteByProjectIdSpy.mockRejectedValue(new Error("Cannot delete tasks"));
 
 			await expect(
-				deleteProjectService.execute({ id: projectId }),
+				deleteProjectService.execute({ projectId, ownerId: "test-user-id" }),
 			).rejects.toThrow(ApplicationError);
 
 			expect(deleteSpy).not.toHaveBeenCalled();
@@ -185,7 +209,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 		it("should handle repository deletion errors", async () => {
 			const projectId = "repo-deletion-error-project";
 
-			const mockProject = createProject({ id: projectId });
+			const mockProject = createProject({
+				id: projectId,
+				ownerId: "test-user-id",
+			});
 
 			findByIdSpy.mockResolvedValue(mockProject);
 			deleteByProjectIdSpy.mockResolvedValue({
@@ -196,7 +223,7 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 			deleteSpy.mockRejectedValue(new Error("Database error"));
 
 			await expect(
-				deleteProjectService.execute({ id: projectId }),
+				deleteProjectService.execute({ projectId, ownerId: "test-user-id" }),
 			).rejects.toThrow(ApplicationError);
 		});
 	});
@@ -205,7 +232,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 		it("should use correct cache key patterns for comprehensive invalidation", async () => {
 			const projectId = "pattern-validation-project";
 
-			const mockProject = createProject({ id: projectId });
+			const mockProject = createProject({
+				id: projectId,
+				ownerId: "test-user-id",
+			});
 
 			findByIdSpy.mockResolvedValue(mockProject);
 			deleteByProjectIdSpy.mockResolvedValue({
@@ -245,7 +275,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 				data: "preserved",
 			});
 
-			await deleteProjectService.execute({ id: projectId });
+			await deleteProjectService.execute({
+				projectId,
+				ownerId: "test-user-id",
+			});
 
 			expect(await mockCacheProvider.get(expectedProjectKey)).toBeNull();
 			expect(await mockCacheProvider.get(expectedTasksByProjectKey)).toBeNull();
@@ -275,7 +308,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 		it("should properly delegate task deletion to TaskService", async () => {
 			const projectId = "task-integration-project";
 
-			const mockProject = createProject({ id: projectId });
+			const mockProject = createProject({
+				id: projectId,
+				ownerId: "test-user-id",
+			});
 			const expectedTaskDeletionResult = {
 				projectId: projectId,
 				deletedTasksCount: 7,
@@ -286,7 +322,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 			deleteByProjectIdSpy.mockResolvedValue(expectedTaskDeletionResult);
 			deleteSpy.mockResolvedValue();
 
-			await deleteProjectService.execute({ id: projectId });
+			await deleteProjectService.execute({
+				projectId,
+				ownerId: "test-user-id",
+			});
 
 			expect(deleteByProjectIdSpy).toHaveBeenCalledWith(projectId);
 			expect(deleteByProjectIdSpy).toHaveBeenCalledTimes(1);
@@ -297,7 +336,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 		it("should follow correct deletion order: tasks first, then project", async () => {
 			const projectId = "deletion-order-project";
 
-			const mockProject = createProject({ id: projectId });
+			const mockProject = createProject({
+				id: projectId,
+				ownerId: "test-user-id",
+			});
 
 			findByIdSpy.mockResolvedValue(mockProject);
 
@@ -316,7 +358,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 				callOrder.push("deleteProject");
 			});
 
-			await deleteProjectService.execute({ id: projectId });
+			await deleteProjectService.execute({
+				projectId,
+				ownerId: "test-user-id",
+			});
 
 			expect(callOrder).toEqual(["deleteByProjectId", "deleteProject"]);
 		});
@@ -326,7 +371,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 		it("should efficiently handle cache invalidation for projects with many associated caches", async () => {
 			const projectId = "performance-test-project";
 
-			const mockProject = createProject({ id: projectId });
+			const mockProject = createProject({
+				id: projectId,
+				ownerId: "test-user-id",
+			});
 
 			findByIdSpy.mockResolvedValue(mockProject);
 			deleteByProjectIdSpy.mockResolvedValue({
@@ -352,7 +400,10 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 			}
 
 			const startTime = Date.now();
-			await deleteProjectService.execute({ id: projectId });
+			await deleteProjectService.execute({
+				projectId,
+				ownerId: "test-user-id",
+			});
 			const endTime = Date.now();
 
 			expect(endTime - startTime).toBeLessThan(2000);

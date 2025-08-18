@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { generateUUID } from "@/test/factories/UUIDFactory";
 import {
 	mockDeleteProjectController,
@@ -11,6 +11,7 @@ import {
 	cleanupTestValidation,
 	setupTestValidation,
 } from "@/test/setup/validation";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 describe("DeleteProjectController", () => {
 	let deleteController: typeof mockDeleteProjectController;
@@ -22,6 +23,14 @@ describe("DeleteProjectController", () => {
 		deleteService = mockDeleteProjectService;
 
 		mockValidation.execute.mockReset();
+
+		Object.assign(mockRequest, {
+			user: {
+				id: "test-user-id",
+				email: "test@example.com",
+				name: "Test User",
+			},
+		});
 	});
 
 	afterEach(() => {
@@ -32,7 +41,8 @@ describe("DeleteProjectController", () => {
 		it("should delete a project successfully", async () => {
 			const projectId = generateUUID();
 			const deleteResult = {
-				id: projectId,
+				projectId: projectId,
+			ownerId: "test-user-id",
 				message: "Project deleted successfully",
 				deletedAt: new Date(),
 			};
@@ -46,12 +56,13 @@ describe("DeleteProjectController", () => {
 			deleteService.execute.mockResolvedValue(deleteResult);
 
 			await deleteController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(deleteService.execute).toHaveBeenCalledWith({
-				id: projectId,
+				projectId: projectId,
+			ownerId: "test-user-id",
 				force: false,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(204);
@@ -72,12 +83,13 @@ describe("DeleteProjectController", () => {
 			});
 
 			await deleteController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(deleteService.execute).toHaveBeenCalledWith({
-				id: projectId,
+				projectId: projectId,
+			ownerId: "test-user-id",
 				force: true,
 			});
 		});

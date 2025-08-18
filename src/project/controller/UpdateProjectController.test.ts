@@ -1,4 +1,4 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import type { UpdateProjectController } from "@/project/controller";
 import type { UpdateProjectService } from "@/project/service";
 import { ValidationError } from "@/shared/Errors/ValidationError";
@@ -14,6 +14,7 @@ import {
 	cleanupTestValidation,
 	setupTestValidation,
 } from "@/test/setup/validation";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 describe("UpdateProjectController", () => {
 	let updateController: UpdateProjectController;
@@ -25,6 +26,14 @@ describe("UpdateProjectController", () => {
 		updateService = mockUpdateProjectService;
 
 		mockValidation.execute.mockReset();
+
+		Object.assign(mockRequest, {
+			user: {
+				id: "test-user-id",
+				email: "test@example.com",
+				name: "Test User",
+			},
+		});
 	});
 
 	afterEach(() => {
@@ -40,7 +49,7 @@ describe("UpdateProjectController", () => {
 				tags: ["updated-tag"],
 			};
 			const updatedProject = {
-				id: projectId,
+				projectId: projectId,
 				...updateData,
 				createdAt: new Date(),
 				updatedAt: new Date(),
@@ -55,12 +64,13 @@ describe("UpdateProjectController", () => {
 			updateService.execute.mockResolvedValue(updatedProject);
 
 			await updateController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(updateService.execute).toHaveBeenCalledWith({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-user-id",
 				...updateData,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -77,7 +87,7 @@ describe("UpdateProjectController", () => {
 				title: "Updated Title Only",
 			};
 			const updatedProject = {
-				id: projectId,
+				projectId: projectId,
 				title: updateData.title,
 				description: "Original Description",
 				tags: ["original-tag"],
@@ -94,12 +104,13 @@ describe("UpdateProjectController", () => {
 			updateService.execute.mockResolvedValue(updatedProject);
 
 			await updateController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(updateService.execute).toHaveBeenCalledWith({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-user-id",
 				title: updateData.title,
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
@@ -120,7 +131,7 @@ describe("UpdateProjectController", () => {
 			});
 
 			await updateController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
@@ -140,7 +151,7 @@ describe("UpdateProjectController", () => {
 		it("should handle empty update data", async () => {
 			const projectId = generateUUID();
 			const updatedProject = {
-				id: projectId,
+				projectId: projectId,
 				title: "Existing Title",
 				description: "Existing Description",
 				tags: ["existing-tag"],
@@ -158,12 +169,13 @@ describe("UpdateProjectController", () => {
 			updateService.execute.mockResolvedValue(updatedProject);
 
 			await updateController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(updateService.execute).toHaveBeenCalledWith({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-user-id",
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
 		});
@@ -176,7 +188,7 @@ describe("UpdateProjectController", () => {
 				tags: ["new-tag"],
 			};
 			const updatedProject = {
-				id: projectId,
+				projectId: projectId,
 				title: updateData.title,
 				description: "Original Description",
 				tags: updateData.tags,
@@ -196,12 +208,13 @@ describe("UpdateProjectController", () => {
 			updateService.execute.mockResolvedValue(updatedProject);
 
 			await updateController.handle(
-				mockRequest as Request,
+				mockRequest as AuthenticatedRequest,
 				mockResponse as Response,
 			);
 
 			expect(updateService.execute).toHaveBeenCalledWith({
-				id: projectId,
+				projectId: projectId,
+				ownerId: "test-user-id",
 				title: updateData.title,
 				tags: updateData.tags,
 			});

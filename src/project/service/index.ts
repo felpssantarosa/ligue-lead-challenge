@@ -1,3 +1,4 @@
+export * from "./check-ownership/CheckProjectOwnershipService";
 export * from "./create/CreateProjectService";
 export * from "./delete/DeleteProjectService";
 export * from "./get/GetProjectService";
