@@ -5,8 +5,8 @@ import { Email } from "@/user/domain/object-values/email";
 import { Name } from "@/user/domain/object-values/name";
 import type {
 	CreateUserParams,
-	UserJSON,
 	PublicUserData,
+	UserJSON,
 	UserProps,
 } from "@/user/domain/UserDTO";
 

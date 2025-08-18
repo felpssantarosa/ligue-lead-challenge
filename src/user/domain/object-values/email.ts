@@ -9,7 +9,7 @@ export class Email {
 
 	public static validate(email: string): boolean {
 		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        
+
 		if (!emailRegex.test(email)) {
 			throw new ValidationError({
 				message: "Invalid email format",
