@@ -5,7 +5,11 @@ import type { CheckProjectOwnershipService } from "@/project/service/check-owner
 import type { CacheProvider } from "@/shared/cache";
 import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
-import { ApplicationError, NotFoundError, UnauthorizedError } from "@/shared/Errors";
+import {
+	ApplicationError,
+	NotFoundError,
+	UnauthorizedError,
+} from "@/shared/Errors";
 import type { UserService } from "@/user/service/UserService";
 
 export interface UpdateProjectServiceParams extends UpdateProjectParams {
@@ -74,12 +78,13 @@ export class UpdateProjectService {
 					existingUser.id,
 					"UpdateProjectService.execute",
 				);
-		}
+			}
 
-		existingProject.update(params);
+			existingProject.update(params);
 
-		const updatedProject =
-			await this.projectRepository.update(existingProject);			const projectCacheKey = CacheKeys.project(params.projectId);
+			const updatedProject =
+				await this.projectRepository.update(existingProject);
+			const projectCacheKey = CacheKeys.project(params.projectId);
 			await this.cacheProvider.delete(projectCacheKey);
 			await this.cacheProvider.deleteByPattern(CacheKeys.allProjectsLists());
 			await this.cacheProvider.deleteByPattern(CacheKeys.allTasksByProject());
@@ -96,8 +101,7 @@ export class UpdateProjectService {
 		} catch (error) {
 			if (error instanceof UnauthorizedError || error instanceof NotFoundError)
 				throw error;
-			
-			
+
 			throw new ApplicationError({
 				message: `Failed to update project with id ${params.projectId}: ${error}`,
 				trace: "UpdateProjectService.execute",
