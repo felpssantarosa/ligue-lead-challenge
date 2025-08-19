@@ -1,5 +1,31 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.1.4/schema.json",
+  "files": {
+    "ignoreUnknown": true
+  },
+  "linter": {
+    "enabled": true
+  },
+  "formatter": {
+    "enabled": true
+  },
+  "overrides": [
+    {
+      "includes": [
+        "database/**/*.js",
+        "migrations/**/*.js",
+        ".sequelizerc",
+        "coverage/**",
+        "dist/**"
+      ],
+      "linter": {
+        "enabled": false
+      },
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ],
   "javascript": {
     "parser": {
       "unsafeParameterDecoratorsEnabled": true
