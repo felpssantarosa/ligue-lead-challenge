@@ -1,0 +1,250 @@
+###
+# Ligue Lead Challenge - API Tests
+# Arquivo para testar todos os endpoints da API
+# Use a extensão REST Client do VS Code para executar essas requisições
+
+@baseUrl = http://localhost:3000
+@authToken = {{login.response.body.token}}
+
+###
+# 1. HEALTH CHECK
+GET {{baseUrl}}/health
+
+###
+# 2. REGISTRO DE USUÁRIO
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "name": "John Final Fantasy",
+  "email": "john@example.com",
+  "password": "123456789",
+  "confirmPassword": "123456789"
+}
+
+###
+# 3. LOGIN DO USUÁRIO
+# @name login
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "john@example.com",
+  "password": "123456789"
+}
+
+###
+# 4. OBTER PERFIL DO USUÁRIO (requer autenticação)
+GET {{baseUrl}}/users/profile
+Authorization: Bearer {{authToken}}
+
+###
+# 5. ATUALIZAR PERFIL DO USUÁRIO (requer autenticação)
+PUT {{baseUrl}}/users/profile
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "John Final Fantasy",
+  "email": "john.novo@example.com"
+}
+
+###
+# 6. CRIAR PROJETO (requer autenticação)
+# @name createProject
+POST {{baseUrl}}/projects
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Projeto de Teste",
+  "description": "Este é um projeto de teste para demonstrar a API",
+  "tags": ["nodejs", "typescript", "api"]
+}
+
+###
+# 7. LISTAR TODOS OS PROJETOS
+GET {{baseUrl}}/projects
+
+###
+# 8. LISTAR PROJETOS COM PAGINAÇÃO E BUSCA
+GET {{baseUrl}}/projects?page=1&limit=10&search=teste
+
+###
+# 9. OBTER PROJETO POR ID
+@projectId = {{createProject.response.body.data.id}}
+GET {{baseUrl}}/projects/{{projectId}}
+
+###
+# 10. ATUALIZAR PROJETO (requer autenticação)
+PUT {{baseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Projeto Atualizado",
+  "description": "Descrição atualizada do projeto",
+  "tags": ["nodejs", "typescript", "api", "updated"]
+}
+
+###
+# 11. CRIAR TAREFA EM UM PROJETO (requer autenticação)
+# @name createTask
+POST {{baseUrl}}/projects/{{projectId}}/tasks
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Implementar autenticação",
+  "description": "Implementar sistema de autenticação JWT",
+  "status": "todo",
+  "priority": "high"
+}
+
+###
+# 12. LISTAR TODAS AS TAREFAS
+GET {{baseUrl}}/tasks
+
+###
+# 13. OBTER TAREFA POR ID (requer autenticação)
+@taskId = {{createTask.response.body.data.id}}
+GET {{baseUrl}}/tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+###
+# 14. ATUALIZAR TAREFA (requer autenticação)
+PUT {{baseUrl}}/tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Implementar autenticação JWT",
+  "description": "Implementar sistema completo de autenticação JWT com refresh tokens",
+  "status": "in_progress",
+  "priority": "high"
+}
+
+###
+# 15. INTEGRAÇÃO COM GITHUB - Buscar repositórios (requer autenticação)
+GET {{baseUrl}}/projects/{{projectId}}/github/felpssantarosa
+Authorization: Bearer {{authToken}}
+
+###
+# 16. DELETAR TAREFA (requer autenticação)
+DELETE {{baseUrl}}/tasks/{{taskId}}
+Authorization: Bearer {{authToken}}
+
+###
+# 17. DELETAR PROJETO (requer autenticação)
+DELETE {{baseUrl}}/projects/{{projectId}}
+Authorization: Bearer {{authToken}}
+
+###
+# TESTES DE ERRO
+
+# 18. Tentar acessar endpoint protegido sem token
+GET {{baseUrl}}/users/profile
+
+###
+# 19. Login com credenciais inválidas
+POST {{baseUrl}}/users/login
+Content-Type: application/json
+
+{
+  "email": "invalido@example.com",
+  "password": "senhaerrada"
+}
+
+###
+# 20. Criar projeto com dados inválidos
+POST {{baseUrl}}/projects
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "",
+  "description": "a"
+}
+
+###
+# 21. Buscar projeto que não existe
+GET {{baseUrl}}/projects/99999
+
+###
+# 22. Registrar usuário com email já existente
+POST {{baseUrl}}/users/register
+Content-Type: application/json
+
+{
+  "name": "Outro Usuario",
+  "email": "john@example.com",
+  "password": "123456789",
+  "confirmPassword": "123456789"
+}
+
+###
+# 23. Criar tarefa com status inválido
+POST {{baseUrl}}/projects/{{projectId}}/tasks
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "title": "Tarefa com status inválido",
+  "description": "Esta tarefa tem um status que não existe",
+  "status": "status_inexistente",
+  "priority": "medium"
+}
+
+###
+# TESTES DE PERFORMANCE
+
+# 24. Criar múltiplos projetos para teste de paginação
+POST {{baseUrl}}/projects
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Projeto Performance 1",
+  "description": "Projeto para teste de performance",
+  "tags": ["performance", "test"]
+}
+
+###
+POST {{baseUrl}}/projects
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Projeto Performance 2",
+  "description": "Projeto para teste de performance",
+  "tags": ["performance", "test"]
+}
+
+###
+POST {{baseUrl}}/projects
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+  "name": "Projeto Performance 3",
+  "description": "Projeto para teste de performance",
+  "tags": ["performance", "test"]
+}
+
+###
+# 25. Testar busca com diferentes termos
+GET {{baseUrl}}/projects?search=performance
+
+###
+GET {{baseUrl}}/projects?search=test
+
+###
+GET {{baseUrl}}/projects?search=nodejs
+
+###
+# NOTES:
+# - Substitua {{authToken}} pelo token JWT real obtido no login
+# - Substitua {{projectId}} e {{taskId}} pelos IDs reais retornados nas criações
+# - Certifique-se de que o servidor esteja rodando em http://localhost:3000
+# - Use a extensão REST Client do VS Code para executar essas requisições
+# - Alguns endpoints requerem autenticação - faça login primeiro e use o token
