@@ -1,7 +1,7 @@
 import axios from "axios";
 import { GitHubServiceImpl } from "@/project/integrations/github/GitHubService";
 import type { CacheProvider } from "@/shared/cache";
-import { ExternalServiceError } from "@/shared/Errors";
+import { ExternalServiceError, NotFoundError } from "@/shared/Errors";
 
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
@@ -63,7 +63,7 @@ describe("GitHubServiceImpl", () => {
 				{
 					headers: {
 						"User-Agent": "ligue-lead-challenge/1.0.0",
-						"Accept": "application/vnd.github.v3+json",
+						Accept: "application/vnd.github.v3+json",
 					},
 					params: {
 						sort: "updated",
@@ -123,6 +123,28 @@ describe("GitHubServiceImpl", () => {
 					status: 404,
 				},
 				message: "User not found",
+			};
+
+			mockCacheProvider.get.mockResolvedValue(null);
+			mockedAxios.get.mockRejectedValue(axiosError);
+			mockedAxios.isAxiosError.mockReturnValue(true);
+
+			await expect(gitHubService.getUserRepositories(username)).rejects.toThrow(
+				NotFoundError,
+			);
+			expect(mockCacheProvider.get).toHaveBeenCalledWith(
+				"ligue-lead:github:repos:testuser",
+			);
+			expect(mockCacheProvider.set).not.toHaveBeenCalled();
+		});
+
+		it("should handle GitHub API server errors", async () => {
+			const axiosError = {
+				isAxiosError: true,
+				response: {
+					status: 500,
+				},
+				message: "Internal server error",
 			};
 
 			mockCacheProvider.get.mockResolvedValue(null);

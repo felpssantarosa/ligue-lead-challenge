@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { config } from "@/config/environment";
 import type { CacheProvider } from "@/shared/cache";
 import { CacheKeys } from "@/shared/cache";
-import { ExternalServiceError } from "@/shared/Errors";
+import { ExternalServiceError, NotFoundError } from "@/shared/Errors";
 
 export interface GitHubService {
 	getUserRepositories(username: string): Promise<GitHubRepository[]>;
@@ -62,8 +62,8 @@ export class GitHubServiceImpl implements GitHubService {
 					},
 					timeout: 10000,
 					headers: {
-						'User-Agent': 'ligue-lead-challenge/1.0.0',
-						'Accept': 'application/vnd.github.v3+json',
+						"User-Agent": "ligue-lead-challenge/1.0.0",
+						Accept: "application/vnd.github.v3+json",
 					},
 				},
 			);
@@ -86,6 +86,14 @@ export class GitHubServiceImpl implements GitHubService {
 			return repositories;
 		} catch (error) {
 			if (axios.isAxiosError(error)) {
+				if (error.response?.status === 404) {
+					throw NotFoundError.resource(
+						"GitHub User",
+						username,
+						"GitHubService.getUserRepositories",
+					);
+				}
+
 				throw ExternalServiceError.githubApiError(
 					"fetching user repositories",
 					error.response?.status || 500,
