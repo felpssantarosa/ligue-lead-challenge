@@ -74,7 +74,9 @@ export const registerDependencies = (sequelize: Sequelize): void => {
 
 	// Validate that models are available
 	if (!ProjectModel || !TaskModel || !UserModel) {
-		throw new Error("Database models are not properly initialized. Make sure Sequelize connection is established before registering dependencies.");
+		throw new Error(
+			"Database models are not properly initialized. Make sure Sequelize connection is established before registering dependencies.",
+		);
 	}
 
 	// Clear existing instances to avoid conflicts

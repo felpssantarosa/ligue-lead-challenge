@@ -1,6 +1,7 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import { config } from "@/config/environment";
 import { projectRoutes } from "@/project/infra/routes/ProjectRoutes";
 import {
 	getErrorInfo,
@@ -21,7 +22,16 @@ export const createApp = (): express.Application => {
 	const app = express();
 
 	app.use(helmet());
-	app.use(cors());
+	app.use(
+		cors({
+			origin: config.cors.origin === "*" ? true : config.cors.origin.split(","),
+			credentials: config.cors.credentials,
+			methods: config.cors.methods.split(","),
+			allowedHeaders: config.cors.allowedHeaders.split(","),
+			preflightContinue: config.cors.preflightContinue,
+			optionsSuccessStatus: config.cors.optionsSuccessStatus,
+		}),
+	);
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 

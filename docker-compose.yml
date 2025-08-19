@@ -76,6 +76,10 @@ services:
       REDIS_PORT: 6379
       JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
       JWT_EXPIRES_IN: 7d
+      CORS_ORIGIN: "*"
+      CORS_CREDENTIALS: false
+      CORS_METHODS: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS"
+      CORS_ALLOWED_HEADERS: "Content-Type,Authorization,X-Requested-With"
       PORT: 3000
     ports:
       - "3000:3000"

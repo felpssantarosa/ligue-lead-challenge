@@ -57,6 +57,12 @@ JWT_EXPIRES_IN=7d
 # Configuração do Redis (opcional)
 REDIS_HOST=localhost
 REDIS_PORT=6379
+
+# Configuração do CORS
+CORS_ORIGIN=*                                           # Domínios permitidos (* para permitir todos)
+CORS_CREDENTIALS=false                                  # Permitir cookies e credenciais
+CORS_METHODS=GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS    # Métodos HTTP permitidos
+CORS_ALLOWED_HEADERS=Content-Type,Authorization,X-Requested-With  # Headers permitidos
 ```
 
 ### 4. Configure o banco de dados
@@ -200,11 +206,43 @@ Cada módulo segue a estrutura:
 - `infra/` - Repositórios e adaptadores
 - `validation/` - Validações específicas
 
+## 🌐 Configuração CORS
+
+A API possui configuração flexível de CORS via variáveis de ambiente:
+
+### Desenvolvimento (Permissivo)
+```bash
+CORS_ORIGIN=*
+CORS_CREDENTIALS=false
+CORS_METHODS=GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS
+CORS_ALLOWED_HEADERS=Content-Type,Authorization,X-Requested-With
+```
+
+### Produção (Restritivo)
+```bash
+CORS_ORIGIN=https://meuapp.com,https://app.meudominio.com
+CORS_CREDENTIALS=true
+CORS_METHODS=GET,POST,PUT,DELETE
+CORS_ALLOWED_HEADERS=Content-Type,Authorization
+```
+
+### Configurações Disponíveis
+
+- **CORS_ORIGIN**: Domínios permitidos
+  - `*` = todos os domínios (apenas desenvolvimento)
+  - `https://app.com` = domínio específico
+  - `https://app1.com,https://app2.com` = múltiplos domínios
+- **CORS_CREDENTIALS**: Permitir cookies/credenciais (`true`/`false`)
+- **CORS_METHODS**: Métodos HTTP permitidos (separados por vírgula)
+- **CORS_ALLOWED_HEADERS**: Headers permitidos (separados por vírgula)
+
 ## 🛡️ Segurança
 
 - Autenticação JWT
 - Validação de entrada com Zod
 - Sanitização de dados
+- CORS configurável por ambiente
+- Headers de segurança com Helmet
 
 ## 🚀 Deploy
 

@@ -7,6 +7,11 @@
 @authToken = {{login.response.body.token}}
 
 ###
+# 0. CORS PREFLIGHT TEST (OPTIONS request)
+OPTIONS {{baseUrl}}/health
+Origin: http://localhost:3001
+
+###
 # 1. HEALTH CHECK
 GET {{baseUrl}}/health
 

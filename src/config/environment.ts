@@ -23,4 +23,15 @@ export const config = {
 		secret: process.env.JWT_SECRET,
 		expiresIn: process.env.JWT_EXPIRES_IN || "7d",
 	},
+	cors: {
+		origin: process.env.CORS_ORIGIN || "*",
+		credentials: process.env.CORS_CREDENTIALS === "true" || false,
+		methods:
+			process.env.CORS_METHODS || "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+		allowedHeaders:
+			process.env.CORS_ALLOWED_HEADERS ||
+			"Content-Type,Authorization,X-Requested-With",
+		preflightContinue: false,
+		optionsSuccessStatus: 204,
+	},
 } as const;
