@@ -5,6 +5,9 @@ import { registerDependencies as registerCommonDependencies } from "./config";
 export const registerDependencies = (): void => {
 	const sequelize = createSequelizeConnection();
 
+	// Ensure models are loaded by accessing them
+	sequelize.models;
+
 	registerCommonDependencies(sequelize);
 };
 

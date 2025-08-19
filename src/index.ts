@@ -8,11 +8,12 @@ import { createApp } from "@/shared/infra/http/app";
 
 async function bootstrap(): Promise<void> {
 	try {
-		registerDependencies();
-
 		const sequelize = createSequelizeConnection();
 		await sequelize.authenticate();
 		console.log("Database connection established successfully.");
+
+		// Register dependencies after Sequelize is connected and models are ready
+		registerDependencies();
 
 		if (config.nodeEnv === "development") {
 			await sequelize.sync({ force: false });

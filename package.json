@@ -15,6 +15,8 @@
     "migration:run": "npm run build && npx sequelize-cli db:migrate",
     "migration:create": "npx sequelize-cli migration:generate --name",
     "seed:run": "npm run build && npx sequelize-cli db:seed:all",
+    "seed:run:safe": "npm run build && npx sequelize-cli db:seed:all || true",
+    "migrate:init": "npm run migration:run && npm run seed:run:safe",
     "seed": "npm run build && npx sequelize-cli db:seed:all"
   },
   "keywords": [
