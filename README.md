@@ -169,7 +169,6 @@ Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realiz
 ### 📖 Documentação Adicional
 
 - [Documentação Completa da API](./docs/API_DOCUMENTATION.md)
-- [Exemplos de Uso](./docs/API_EXAMPLES.md)
 
 ### 🔐 Autenticação
 
