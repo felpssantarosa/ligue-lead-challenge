@@ -15,9 +15,13 @@ API REST desenvolvida como parte do desafio técnico da Ligue Lead. Esta aplica�
 ## 📋 Pré-requisitos
 
 - Node.js >= 22.0.0
-- PostgreSQL >= 13
-- Redis
 - Git
+- Docker
+
+Caso não deseje utilizar docker:
+
+- Redis
+- MySQL
 
 ## 🛠️ Instalação e Configuração
 
@@ -59,9 +63,9 @@ REDIS_HOST=localhost
 REDIS_PORT=6379
 
 # Configuração do CORS
-CORS_ORIGIN=*                                           # Domínios permitidos (* para permitir todos)
-CORS_CREDENTIALS=false                                  # Permitir cookies e credenciais
-CORS_METHODS=GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS    # Métodos HTTP permitidos
+CORS_ORIGIN=*                                                     # Domínios permitidos (* para permitir todos)
+CORS_CREDENTIALS=false                                            # Permitir cookies e credenciais
+CORS_METHODS=GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS               # Métodos HTTP permitidos
 CORS_ALLOWED_HEADERS=Content-Type,Authorization,X-Requested-With  # Headers permitidos
 ```
 
