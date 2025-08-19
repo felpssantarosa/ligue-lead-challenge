@@ -1,9 +1,10 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { inject, injectable } from "tsyringe";
 import type { GitHubIntegrationService } from "@/project/service/github-integration/GitHubIntegrationService";
 import type { GitHubIntegrationInput } from "@/project/validation/schemas/ZodSchema";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 @injectable()
 export class GitHubIntegrationController extends BaseController {
@@ -19,7 +20,7 @@ export class GitHubIntegrationController extends BaseController {
 	/**
 	 * GET /api/projects/:id/github/:username
 	 */
-	async handle(req: Request, res: Response): Promise<void> {
+	async handle(req: AuthenticatedRequest, res: Response): Promise<void> {
 		try {
 			const validatedParams = this.validation.execute<GitHubIntegrationInput>(
 				"github-integration",
@@ -30,6 +31,7 @@ export class GitHubIntegrationController extends BaseController {
 			const result = await this.githubIntegrationService.execute({
 				projectId: validatedParams.id,
 				username: validatedParams.username,
+				userId: req.user.id,
 			});
 
 			res.status(200).json({
