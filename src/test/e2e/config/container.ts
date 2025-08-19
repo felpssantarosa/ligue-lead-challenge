@@ -4,9 +4,11 @@ import {
 	DeleteProjectController,
 	GetAllProjectsController,
 	GetProjectController,
+	GitHubIntegrationController,
 	UpdateProjectController,
 } from "@/project/controller";
 import { SequelizeProjectRepository } from "@/project/infra";
+import { GitHubServiceImpl } from "@/project/integrations/github/GitHubService";
 import {
 	CheckProjectOwnershipService,
 	CreateProjectService,
@@ -16,6 +18,7 @@ import {
 	ProjectService,
 	UpdateProjectService,
 } from "@/project/service";
+import { GitHubIntegrationService } from "@/project/service/github-integration/GitHubIntegrationService";
 import type { CacheProvider } from "@/shared/cache";
 import { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { ValidationProvider } from "@/shared/validation/ValidationProvider";
@@ -105,6 +108,13 @@ export const setupE2EContainer = async (): Promise<void> => {
 	);
 	container.registerSingleton("ProjectService", ProjectService);
 
+	// GitHub Integration
+	container.registerSingleton("GitHubService", GitHubServiceImpl);
+	container.registerSingleton(
+		"GitHubIntegrationService",
+		GitHubIntegrationService,
+	);
+
 	container.registerSingleton("CreateTaskService", CreateTaskService);
 	container.registerSingleton("GetTaskService", GetTaskService);
 	container.registerSingleton("UpdateTaskService", UpdateTaskService);
@@ -125,6 +135,7 @@ export const setupE2EContainer = async (): Promise<void> => {
 	container.registerSingleton(GetAllProjectsController);
 	container.registerSingleton(UpdateProjectController);
 	container.registerSingleton(DeleteProjectController);
+	container.registerSingleton(GitHubIntegrationController);
 	container.registerSingleton(CreateTaskController);
 	container.registerSingleton(GetTaskController);
 	container.registerSingleton(UpdateTaskController);

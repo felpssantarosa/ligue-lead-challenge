@@ -4,6 +4,11 @@ export const mockRequest = {
 	body: {},
 	params: {},
 	query: {},
+	user: {
+		id: "test-user-id",
+		email: "test@example.com",
+		name: "Test User",
+	},
 };
 
 export const mockResponse: Partial<Response> = {
