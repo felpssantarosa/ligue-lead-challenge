@@ -49,10 +49,10 @@ NODE_ENV=development
 
 # Configuração do Banco de Dados
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 DB_NAME=ligue_lead_challenge
-DB_USER=postgres
-DB_PASSWORD=sua_senha_postgres
+DB_USER=root
+DB_PASS=password
 
 # Configuração do JWT
 JWT_SECRET=seu_jwt_secret_muito_seguro_aqui
@@ -122,7 +122,7 @@ Os relatórios de cobertura estarão disponíveis em `coverage/lcov-report/index
 ### Usando Docker Compose (Recomendado)
 
 ```bash
-# Suba todos os serviços (API, PostgreSQL, Redis)
+# Suba todos os serviços (API, MySQL, Redis)
 docker-compose up -d
 ```
 
