@@ -17,14 +17,6 @@ export type GetProjectServiceResponse = {
 	description: string;
 	tags: string[];
 	tasks: Task[];
-	githubRepositories?: Array<{
-		name: string;
-		url: string;
-		description: string | null;
-		language: string | null;
-		starCount: number;
-		forkCount: number;
-	}>;
 	createdAt: Date;
 	updatedAt: Date;
 } | null;

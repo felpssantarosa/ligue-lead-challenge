@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { Project } from "@/project/domain/Project";
 import { CacheKeys } from "@/shared/cache";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
@@ -76,8 +77,8 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 		it("should handle empty cached task list", async () => {
 			const projectId = generateUUID();
 			const emptyCachedResult = {
-				tasks: [],
 				projectId,
+				tasks: [],
 			};
 
 			const cacheKey = CacheKeys.tasksByProject(projectId);
@@ -94,15 +95,17 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 	describe("Cache Miss Scenarios", () => {
 		it("should fetch from database and cache result when cache miss", async () => {
 			const projectId = generateUUID();
-			const projectData = {
+			const projectData = Project.fromJSON({
 				id: projectId,
 				title: "Test Project",
 				description: "Test description",
 				tags: ["test"],
-				tasks: [],
+				taskIds: [],
+				ownerId: "test-owner-id",
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			};
+			});
 
 			const tasks = [
 				createTask({
@@ -145,15 +148,17 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 
 		it("should handle project with no tasks", async () => {
 			const projectId = generateUUID();
-			const projectData = {
+			const projectData = Project.fromJSON({
 				id: projectId,
 				title: "Empty Project",
 				description: "No tasks",
 				tags: [],
-				tasks: [],
+				taskIds: [],
+				ownerId: "test-owner-id",
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			};
+			});
 
 			mockProjectService.get.mockResolvedValue(projectData);
 			taskFindByProjectIdSpy.mockResolvedValue([]);
@@ -189,15 +194,17 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 			const requestedProjectId = generateUUID();
 			const returnedProjectId = generateUUID();
 
-			const projectData = {
+			const projectData = Project.fromJSON({
 				id: returnedProjectId,
 				title: "Wrong Project",
 				description: "ID mismatch",
 				tags: [],
-				tasks: [],
+				taskIds: [],
+				ownerId: "test-owner-id",
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			};
+			});
 
 			mockProjectService.get.mockResolvedValue(projectData);
 
@@ -212,15 +219,17 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 
 		it("should handle task repository errors gracefully", async () => {
 			const projectId = generateUUID();
-			const projectData = {
+			const projectData = Project.fromJSON({
 				id: projectId,
 				title: "Test Project",
 				description: "Test description",
 				tags: ["test"],
-				tasks: [],
+				taskIds: [],
+				ownerId: "test-owner-id",
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			};
+			});
 
 			mockProjectService.get.mockResolvedValue(projectData);
 			taskFindByProjectIdSpy.mockRejectedValue(
@@ -262,15 +271,17 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 
 			expect(await mockCacheProvider.get(cacheKey)).toBeNull();
 
-			const projectData = {
+			const projectData = Project.fromJSON({
 				id: projectId,
 				title: "Fresh Project",
 				description: "After expiration",
 				tags: ["fresh"],
-				tasks: [],
+				taskIds: [],
+				ownerId: "test-owner-id",
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			};
+			});
 
 			const freshTasks = [
 				createTask({
@@ -356,15 +367,17 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 	describe("Data Consistency", () => {
 		it("should maintain consistent data structure between cache and database", async () => {
 			const projectId = generateUUID();
-			const projectData = {
+			const projectData = Project.fromJSON({
 				id: projectId,
 				title: "Consistency Test",
 				description: "Testing data consistency",
 				tags: ["consistency"],
-				tasks: [],
+				taskIds: [],
+				ownerId: "test-owner-id",
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
-			};
+			});
 
 			const dbTasks = [
 				createTask({

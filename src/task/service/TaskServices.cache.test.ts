@@ -96,6 +96,7 @@ describe("Task Services - Cache Invalidation", () => {
 				tags: ["test"],
 				ownerId: "test-user-id",
 				taskIds: [],
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			});
@@ -189,6 +190,7 @@ describe("Task Services - Cache Invalidation", () => {
 				tags: ["test"],
 				ownerId: "test-user-id",
 				taskIds: [],
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			});
@@ -281,6 +283,7 @@ describe("Task Services - Cache Invalidation", () => {
 				tags: ["project"],
 				ownerId: "test-user-id",
 				taskIds: [taskId, "other-task-id"],
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			});
@@ -372,6 +375,7 @@ describe("Task Services - Cache Invalidation", () => {
 				tags: ["test"],
 				ownerId: "test-user-id",
 				taskIds: [taskId],
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			});
@@ -417,6 +421,7 @@ describe("Task Services - Cache Invalidation", () => {
 				tags: ["test"],
 				ownerId: "test-user-id",
 				taskIds: [taskId],
+				githubRepositories: [],
 				createdAt: new Date(),
 				updatedAt: new Date(),
 			});

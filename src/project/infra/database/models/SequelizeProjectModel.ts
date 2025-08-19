@@ -18,7 +18,16 @@ export interface ProjectModelAttributes {
 	title: string;
 	description: string;
 	tags: string[];
+	taskIds: string[];
 	ownerId: string;
+	githubRepositories: Array<{
+		name: string;
+		url: string;
+		description: string | null;
+		language: string | null;
+		starCount: number;
+		forkCount: number;
+	}>;
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -53,6 +62,27 @@ export class ProjectModel extends Model<ProjectModelAttributes> {
 		defaultValue: [],
 	})
 	tags!: string[];
+
+	@Column({
+		type: DataType.JSON,
+		allowNull: true,
+		defaultValue: [],
+	})
+	taskIds!: string[];
+
+	@Column({
+		type: DataType.JSON,
+		allowNull: true,
+		defaultValue: [],
+	})
+	githubRepositories!: Array<{
+		name: string;
+		url: string;
+		description: string | null;
+		language: string | null;
+		starCount: number;
+		forkCount: number;
+	}>;
 
 	@ForeignKey(() => UserModel)
 	@Column({

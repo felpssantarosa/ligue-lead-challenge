@@ -5,6 +5,7 @@ import {
 	DeleteProjectController,
 	GetAllProjectsController,
 	GetProjectController,
+	GitHubIntegrationController,
 	UpdateProjectController,
 } from "@/project/controller";
 import {
@@ -36,6 +37,12 @@ projectRoutes.put("/:id", (req, res) => {
 projectRoutes.delete("/:id", (req, res) => {
 	const deleteController = container.resolve(DeleteProjectController);
 	return deleteController.handle(req as unknown as AuthenticatedRequest, res);
+});
+
+// GitHub integration route
+projectRoutes.get("/:id/github/:username", (req, res) => {
+	const githubController = container.resolve(GitHubIntegrationController);
+	return githubController.handle(req, res);
 });
 
 export { projectRoutes };

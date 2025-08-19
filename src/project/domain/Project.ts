@@ -1,5 +1,6 @@
 import type {
 	CreateProjectParams,
+	GitHubRepository,
 	ProjectProps,
 	UpdateProjectParams,
 } from "@/project/domain/ProjectDTO";
@@ -20,6 +21,7 @@ export class Project extends Entity {
 	private _tags: string[];
 	private _taskIds: string[];
 	private _ownerId: string;
+	private _githubRepositories: GitHubRepository[];
 
 	private constructor({
 		description,
@@ -30,6 +32,7 @@ export class Project extends Entity {
 		id,
 		taskIds,
 		ownerId,
+		githubRepositories,
 	}: ProjectProps) {
 		super({ id, createdAt, updatedAt });
 
@@ -38,6 +41,7 @@ export class Project extends Entity {
 		this._tags = tags;
 		this._taskIds = taskIds;
 		this._ownerId = ownerId;
+		this._githubRepositories = githubRepositories || [];
 	}
 
 	public static create(params: CreateProjectParams): Project {
@@ -57,6 +61,7 @@ export class Project extends Entity {
 			title: params.title,
 			tags: params.tags,
 			id: params.id,
+			githubRepositories: params.githubRepositories,
 			taskIds: params.taskIds,
 			ownerId: params.ownerId,
 		});
@@ -80,6 +85,15 @@ export class Project extends Entity {
 
 	public get ownerId(): string {
 		return this._ownerId;
+	}
+
+	public get githubRepositories(): GitHubRepository[] {
+		return [...this._githubRepositories];
+	}
+
+	public updateGitHubRepositories(repositories: GitHubRepository[]): void {
+		this._githubRepositories = [...repositories];
+		this.updatedAt = new Date();
 	}
 
 	public update(params: UpdateProjectParams): void {
@@ -152,6 +166,7 @@ export class Project extends Entity {
 			tags: this._tags,
 			taskIds: this._taskIds,
 			ownerId: this._ownerId,
+			githubRepositories: this._githubRepositories,
 			createdAt: this.createdAt,
 			updatedAt: this.updatedAt,
 		};

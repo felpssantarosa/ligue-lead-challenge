@@ -14,6 +14,7 @@ const validParams = (): CreateProjectParams => ({
 	description: "A test project description",
 	tags: ["test", "typescript"],
 	ownerId: "test-owner-id",
+	githubRepositories: [],
 });
 
 const validProps = (): ProjectProps => ({
@@ -23,6 +24,7 @@ const validProps = (): ProjectProps => ({
 	tags: ["test", "typescript"],
 	taskIds: [],
 	ownerId: "test-owner-id",
+	githubRepositories: [],
 	createdAt: new Date("2023-01-01T00:00:00.000Z"),
 	updatedAt: new Date("2023-01-01T00:00:00.000Z"),
 });
@@ -325,6 +327,7 @@ describe("Project", () => {
 				description: project.description,
 				tags: project.tags,
 				taskIds: project.taskIds,
+				githubRepositories: project.githubRepositories,
 				ownerId: project.ownerId,
 				createdAt: project.createdAt,
 				updatedAt: project.updatedAt,

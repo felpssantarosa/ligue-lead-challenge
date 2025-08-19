@@ -20,6 +20,7 @@ describe("GetProjectService", () => {
 			description: "A test project description",
 			tags: ["test", "typescript"],
 			ownerId: "test-owner-id",
+			githubRepositories: [],
 		});
 		await mockProjectRepository.save(project);
 

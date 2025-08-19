@@ -86,6 +86,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Database Project",
 				description: "From database",
 				tags: ["db"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 			project.updateTaskIds([generateUUID(), generateUUID()]);
@@ -105,9 +106,32 @@ describe("GetProjectService - Cache Behavior", () => {
 
 			expect(findByIdSpy).toHaveBeenCalledWith(projectId);
 			expect(taskServiceGetSpy).toHaveBeenCalledTimes(2);
+			expect(result).toBeDefined();
+			expect(result?.title).toBe("Database Project");
 
 			const cachedResult = await mockCacheProvider.get(cacheKey);
-			expect(cachedResult).toEqual(result);
+			expect(cachedResult).toEqual({
+				id: expect.any(String),
+				title: "Database Project",
+				description: "From database",
+				tags: ["db"],
+				tasks: [
+					expect.objectContaining({
+						title: "DB Task 1",
+						description: "Test task description",
+						status: "todo",
+						projectId: expect.any(String),
+					}),
+					expect.objectContaining({
+						title: "DB Task 2",
+						description: "Test task description",
+						status: "todo",
+						projectId: expect.any(String),
+					}),
+				],
+				createdAt: expect.any(Date),
+				updatedAt: expect.any(Date),
+			});
 
 			const ttl = await mockCacheProvider.getTtl(cacheKey);
 			expect(ttl).toBeGreaterThan(590);
@@ -120,6 +144,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Empty Project",
 				description: "No tasks",
 				tags: ["empty"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 
@@ -156,6 +181,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Project with Failed Tasks",
 				description: "Task loading will fail",
 				tags: ["error"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 			project.updateTaskIds([generateUUID()]);
@@ -180,6 +206,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				title: "Expiring Project",
 				description: "Will expire",
 				tags: ["expire"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 

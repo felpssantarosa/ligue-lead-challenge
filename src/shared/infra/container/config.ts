@@ -6,6 +6,7 @@ import {
 	DeleteProjectController,
 	GetAllProjectsController,
 	GetProjectController,
+	GitHubIntegrationController,
 	UpdateProjectController,
 } from "@/project/controller";
 import {
@@ -13,11 +14,16 @@ import {
 	SequelizeProjectRepository,
 } from "@/project/infra";
 import {
+	type GitHubService,
+	GitHubServiceImpl,
+} from "@/project/integrations/github/GitHubService";
+import {
 	CheckProjectOwnershipService,
 	CreateProjectService,
 	DeleteProjectService,
 	GetAllProjectsService,
 	GetProjectService,
+	GitHubIntegrationService,
 	ProjectService,
 	UpdateProjectService,
 } from "@/project/service";
@@ -98,6 +104,12 @@ export const registerDependencies = (sequelize: Sequelize): void => {
 		new SequelizeUserRepository(UserModel),
 	);
 
+	// External Services
+	container.registerSingleton<GitHubService>(
+		"GitHubService",
+		GitHubServiceImpl,
+	);
+
 	// JWT Service
 	container.registerSingleton<JwtService>("JwtService", JsonWebTokenService);
 
@@ -111,6 +123,10 @@ export const registerDependencies = (sequelize: Sequelize): void => {
 	container.registerSingleton(
 		"CheckProjectOwnershipService",
 		CheckProjectOwnershipService,
+	);
+	container.registerSingleton(
+		"GitHubIntegrationService",
+		GitHubIntegrationService,
 	);
 
 	// Task Services
@@ -142,6 +158,7 @@ export const registerDependencies = (sequelize: Sequelize): void => {
 	container.registerSingleton(GetAllProjectsController);
 	container.registerSingleton(UpdateProjectController);
 	container.registerSingleton(DeleteProjectController);
+	container.registerSingleton(GitHubIntegrationController);
 
 	// Task Controllers
 	container.registerSingleton(CreateTaskController);

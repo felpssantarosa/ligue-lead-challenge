@@ -46,6 +46,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Original Project",
 				description: "Original description",
 				tags: ["original"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 
@@ -55,6 +56,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Updated Project",
 				description: "Updated description",
 				tags: ["updated"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 			updateSpy.mockResolvedValue(updatedProject);
@@ -84,6 +86,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			const result = await updateProjectService.execute({
 				projectId: projectId,
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 				title: "Updated Project",
 				description: "Updated description",
@@ -108,6 +111,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Test Project",
 				description: "Test description",
 				tags: ["test"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 
@@ -143,6 +147,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			await updateProjectService.execute({
 				projectId: projectId,
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 				title: "Updated Title",
 			});
@@ -186,6 +191,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 			await expect(
 				updateProjectService.execute({
 					projectId: projectId,
+					githubRepositories: [],
 					ownerId: "test-owner-id",
 					title: "New Title",
 				}),
@@ -201,6 +207,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Existing Project",
 				description: "Existing description",
 				tags: ["existing"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 
@@ -218,6 +225,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 			await expect(
 				updateProjectService.execute({
 					projectId: projectId,
+					githubRepositories: [],
 					ownerId: "test-owner-id",
 					title: "New Title",
 				}),
@@ -234,6 +242,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Pattern Test Project",
 				description: "Testing cache patterns",
 				tags: ["pattern"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 
@@ -248,6 +257,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			await updateProjectService.execute({
 				projectId: projectId,
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 				title: "Updated",
 			});
@@ -272,6 +282,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Original Title",
 				description: "Original description",
 				tags: ["original", "tags"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 
@@ -286,6 +297,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			await updateProjectService.execute({
 				projectId: projectId,
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 				title: "New Title Only",
 			});
@@ -299,6 +311,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 				title: "Project Title",
 				description: "Project description",
 				tags: ["old", "tags"],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 
@@ -313,6 +326,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 
 			await updateProjectService.execute({
 				projectId: projectId,
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 				tags: ["new", "tags"],
 			});

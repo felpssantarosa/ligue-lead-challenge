@@ -45,10 +45,7 @@ describe("GetTasksByProjectService", () => {
 			const task2 = createTask({ projectId, title: "Task 2" });
 			const tasks = [task1, task2];
 
-			projectService.get.mockResolvedValue({
-				...project.toJSON(),
-				tasks: tasks,
-			});
+			projectService.get.mockResolvedValue(project);
 			taskRepository.findByProjectId.mockResolvedValue(tasks);
 
 			const result = await getTasksByProjectService.execute({ projectId });
@@ -87,18 +84,15 @@ describe("GetTasksByProjectService", () => {
 			const projectId = "project-id-123";
 			const project = createProject({ id: projectId });
 
-			projectService.get.mockResolvedValue({
-				...project.toJSON(),
-				tasks: [],
-			});
+			projectService.get.mockResolvedValue(project);
 
 			taskRepository.findByProjectId.mockResolvedValue([]);
 
 			const result = await getTasksByProjectService.execute({ projectId });
 
 			expect(result).toEqual({
-				tasks: [],
 				projectId,
+				tasks: [],
 			});
 		});
 
@@ -122,10 +116,7 @@ describe("GetTasksByProjectService", () => {
 			const returnedProjectId = "different-project-id";
 			const project = createProject({ id: returnedProjectId });
 
-			projectService.get.mockResolvedValue({
-				...project.toJSON(),
-				tasks: [],
-			});
+			projectService.get.mockResolvedValue(project);
 
 			await expect(
 				getTasksByProjectService.execute({ projectId: requestedProjectId }),
@@ -141,10 +132,7 @@ describe("GetTasksByProjectService", () => {
 			const projectId = "project-id-123";
 			const project = createProject({ id: projectId });
 
-			projectService.get.mockResolvedValue({
-				...project.toJSON(),
-				tasks: [],
-			});
+			projectService.get.mockResolvedValue(project);
 			taskRepository.findByProjectId.mockRejectedValue(
 				new Error("Database connection failed"),
 			);

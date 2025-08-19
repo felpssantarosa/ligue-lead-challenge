@@ -119,6 +119,7 @@ export const createProject = (params: Partial<ProjectProps>) => {
 		description: "Test project description",
 		tags: ["test"],
 		taskIds: [],
+		githubRepositories: [],
 		ownerId: "test-owner-id",
 		createdAt: new Date(),
 		updatedAt: new Date(),

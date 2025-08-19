@@ -63,4 +63,10 @@ export const CacheKeys = {
 	taskPattern: (): string => {
 		return `${PREFIX}${SEPARATOR}task${SEPARATOR}*`;
 	},
+	githubRepositories: (username: string): string => {
+		return `${PREFIX}${SEPARATOR}github${SEPARATOR}repos${SEPARATOR}${username.toLowerCase()}`;
+	},
+	allGithubRepositories: (): string => {
+		return `${PREFIX}${SEPARATOR}github${SEPARATOR}repos${SEPARATOR}*`;
+	},
 } as const;

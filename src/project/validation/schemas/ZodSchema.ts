@@ -5,7 +5,8 @@ export type ProjectValidationId =
 	| "update-project"
 	| "project-id"
 	| "pagination"
-	| "delete-query";
+	| "delete-query"
+	| "github-integration";
 
 const createProjectSchema = z.object({
 	title: z
@@ -72,11 +73,24 @@ const deleteQuerySchema = z.object({
 		.default(false),
 });
 
+const githubIntegrationSchema = z.object({
+	id: z.uuid("Project ID must be a valid UUID"),
+	username: z
+		.string()
+		.min(1, "GitHub username is required")
+		.max(39, "GitHub username must be at most 39 characters")
+		.regex(
+			/^[a-zA-Z0-9-]+$/,
+			"GitHub username can only contain alphanumeric characters and hyphens",
+		),
+});
+
 export type CreateProjectInput = z.infer<typeof createProjectSchema>;
 export type UpdateProjectInput = z.infer<typeof updateProjectSchema>;
 export type ProjectIdInput = z.infer<typeof projectIdSchema>;
 export type PaginationInput = z.infer<typeof paginationSchema>;
 export type DeleteQueryInput = z.infer<typeof deleteQuerySchema>;
+export type GitHubIntegrationInput = z.infer<typeof githubIntegrationSchema>;
 
 export const projectSchemas: Record<ProjectValidationId, z.ZodSchema> = {
 	"create-project": createProjectSchema,
@@ -84,4 +98,5 @@ export const projectSchemas: Record<ProjectValidationId, z.ZodSchema> = {
 	"project-id": projectIdSchema,
 	pagination: paginationSchema,
 	"delete-query": deleteQuerySchema,
+	"github-integration": githubIntegrationSchema,
 };

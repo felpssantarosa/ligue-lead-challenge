@@ -1,12 +1,23 @@
-import type { Entity } from "@/shared/domain/Entity";
+export type GitHubRepository = {
+	name: string;
+	url: string;
+	description: string | null;
+	language: string | null;
+	starCount: number;
+	forkCount: number;
+};
 
-export type ProjectProps = Entity & {
+export interface ProjectProps {
+	id: string;
 	title: string;
 	description: string;
 	tags: string[];
 	taskIds: string[];
 	ownerId: string;
-};
+	githubRepositories: GitHubRepository[];
+	createdAt: Date;
+	updatedAt: Date;
+}
 
 export type CreateProjectParams = Omit<
 	ProjectProps,

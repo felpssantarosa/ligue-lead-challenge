@@ -53,6 +53,7 @@ export class CreateProjectService {
 			title: params.title,
 			description: params.description,
 			tags: params.tags || [],
+			githubRepositories: [],
 			ownerId: params.ownerId,
 		});
 

@@ -33,6 +33,7 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
@@ -58,6 +59,7 @@ describe("UpdateProjectService", () => {
 	it("should throw ApplicationError when project does not exist", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
 			projectId: "non-existent-id",
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 			title: "Updated Project",
 			description: "Updated description",
@@ -74,6 +76,7 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
@@ -96,6 +99,7 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
@@ -116,6 +120,7 @@ describe("UpdateProjectService", () => {
 	it("should throw ApplicationError when id is empty", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
 			projectId: "",
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 			title: "Updated Project",
 		};
@@ -130,6 +135,7 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original description",
 			tags: ["original"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
@@ -152,6 +158,7 @@ describe("UpdateProjectService", () => {
 			title: "Original Project",
 			description: "Original Description",
 			tags: ["original"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
@@ -179,6 +186,7 @@ describe("UpdateProjectService", () => {
 	it("should handle repository errors and wrap in ApplicationError", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
 			projectId: "test-id",
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 			title: "Updated Project",
 		};

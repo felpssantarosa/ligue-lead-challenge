@@ -10,13 +10,16 @@ import {
 	cleanupIntegrationContainer,
 	setupIntegrationContainer,
 } from "@/test/integration/setup/container";
+import { RegisterUserService } from "@/user/service/register/RegisterUserService";
 
 describe("Project Service Cache Integration", () => {
 	let getProjectService: GetProjectService;
 	let createProjectService: CreateProjectService;
 	let updateProjectService: UpdateProjectService;
 	let deleteProjectService: DeleteProjectService;
+	let registerUserService: RegisterUserService;
 	let cacheProvider: CacheProvider;
+	let testUserId: string;
 
 	beforeEach(async () => {
 		await setupIntegrationContainer();
@@ -25,7 +28,16 @@ describe("Project Service Cache Integration", () => {
 		createProjectService = container.resolve(CreateProjectService);
 		updateProjectService = container.resolve(UpdateProjectService);
 		deleteProjectService = container.resolve(DeleteProjectService);
+		registerUserService = container.resolve(RegisterUserService);
 		cacheProvider = container.resolve<CacheProvider>("CacheProvider");
+
+		// Create a test user for all tests
+		const testUser = await registerUserService.execute({
+			email: "test@cache.com",
+			password: "password123",
+			name: "Cache Test User",
+		});
+		testUserId = testUser.id;
 	});
 
 	afterEach(() => {
@@ -38,25 +50,21 @@ describe("Project Service Cache Integration", () => {
 				title: "Cache Test Project",
 				description: "Testing cache functionality",
 				tags: ["test", "cache"],
-				ownerId: "test-owner-id",
+				ownerId: testUserId,
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
 			const projectId = createdProject.id;
 
-			// Clear cache to ensure fresh start
 			await cacheProvider.clear();
 
-			// First request - should hit database and cache the result
-			const firstResult = await getProjectService.execute({ projectId, ownerId: "test-user-id" });
+			const firstResult = await getProjectService.execute({ id: projectId });
 
-			// Verify the cache key exists
 			const cacheKey = CacheKeys.project(projectId);
 			const cachedData = await cacheProvider.get(cacheKey);
 			expect(cachedData).toBeDefined();
 
-			// Second request - should serve from cache
-			const secondResult = await getProjectService.execute({ projectId, ownerId: "test-user-id" });
+			const secondResult = await getProjectService.execute({ id: projectId });
 
 			expect(firstResult).toEqual(secondResult);
 			expect(firstResult).toBeDefined();
@@ -70,16 +78,14 @@ describe("Project Service Cache Integration", () => {
 				title: "Update Cache Test",
 				description: "Testing cache invalidation on update",
 				tags: ["test"],
-				ownerId: "test-owner-id",
+				ownerId: testUserId,
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
 			const projectId = createdProject.id;
 
-			// Get a project to cache
-			await getProjectService.execute({ projectId, ownerId: "test-user-id" });
+			await getProjectService.execute({ id: projectId });
 
-			// Verify if cache exists
 			const cacheKey = CacheKeys.project(projectId);
 			let cachedData = await cacheProvider.get(cacheKey);
 			expect(cachedData).toBeDefined();
@@ -87,11 +93,9 @@ describe("Project Service Cache Integration", () => {
 			// Update the project
 			await updateProjectService.execute({
 				projectId,
-		ownerId: "test-user-id",
+				ownerId: testUserId,
 				title: "Updated Title",
 			});
-
-			// Verify if cache was invalidated
 			cachedData = await cacheProvider.get(cacheKey);
 			expect(cachedData).toBeNull();
 		});
@@ -101,24 +105,20 @@ describe("Project Service Cache Integration", () => {
 				title: "Delete Cache Test",
 				description: "Testing cache invalidation on delete",
 				tags: ["test"],
-				ownerId: "test-owner-id",
+				ownerId: testUserId,
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
 			const projectId = createdProject.id;
 
-			// Get a project to cache
-			await getProjectService.execute({ projectId, ownerId: "test-user-id" });
+			await getProjectService.execute({ id: projectId });
 
-			// Verify if cache exists
 			const cacheKey = CacheKeys.project(projectId);
 			let cachedData = await cacheProvider.get(cacheKey);
 			expect(cachedData).toBeDefined();
 
-			// Delete the project
-			await deleteProjectService.execute({ projectId, ownerId: "test-user-id" });
+			await deleteProjectService.execute({ projectId, ownerId: testUserId });
 
-			// Verify if cache was invalidated
 			cachedData = await cacheProvider.get(cacheKey);
 			expect(cachedData).toBeNull();
 		});
@@ -130,16 +130,14 @@ describe("Project Service Cache Integration", () => {
 				title: "TTL Test Project",
 				description: "Testing TTL functionality",
 				tags: ["ttl"],
-				ownerId: "test-owner-id",
+				ownerId: testUserId,
 			};
 
 			const createdProject = await createProjectService.execute(createParams);
 			const projectId = createdProject.id;
 
-			// Get a project to cache
-			await getProjectService.execute({ projectId, ownerId: "test-user-id" });
+			await getProjectService.execute({ id: projectId });
 
-			// Check TTL
 			const cacheKey = CacheKeys.project(projectId);
 			const ttl = await cacheProvider.getTtl(cacheKey);
 

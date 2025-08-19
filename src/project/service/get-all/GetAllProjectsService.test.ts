@@ -23,12 +23,14 @@ describe("GetAllProjectsService", () => {
 			title: "Project 1",
 			description: "First project",
 			tags: ["tag1"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		const project2 = Project.create({
 			title: "Project 2",
 			description: "Second project",
 			tags: ["tag2"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 
@@ -61,6 +63,7 @@ describe("GetAllProjectsService", () => {
 				title: `Project ${i}`,
 				description: `Description ${i}`,
 				tags: [`tag${i}`],
+				githubRepositories: [],
 				ownerId: "test-owner-id",
 			});
 			projects.push(project);
@@ -83,12 +86,14 @@ describe("GetAllProjectsService", () => {
 			title: "TypeScript Project",
 			description: "A project using TypeScript",
 			tags: ["typescript", "web"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		const project2 = Project.create({
 			title: "Python Project",
 			description: "A project using Python",
 			tags: ["python", "data"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 
@@ -111,6 +116,7 @@ describe("GetAllProjectsService", () => {
 			title: "Web Project",
 			description: "A web development project",
 			tags: ["web", "frontend"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 
@@ -118,6 +124,7 @@ describe("GetAllProjectsService", () => {
 			title: "Backend Project",
 			description: "A backend development project",
 			tags: ["backend", "api"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 
@@ -125,6 +132,7 @@ describe("GetAllProjectsService", () => {
 			title: "Full Stack Project",
 			description: "A full stack project",
 			tags: ["web", "backend"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 
@@ -150,6 +158,7 @@ describe("GetAllProjectsService", () => {
 			title: "Test Project",
 			description: "A test project",
 			tags: ["test"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 
@@ -186,6 +195,7 @@ describe("GetAllProjectsService", () => {
 			title: "Test Project",
 			description: "A test project",
 			tags: ["test"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);

@@ -31,6 +31,7 @@ describe("DeleteProjectService", () => {
 			title: "Test Project",
 			description: "A test project to be deleted",
 			tags: ["test"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
@@ -78,6 +79,7 @@ describe("DeleteProjectService", () => {
 			title: "Test Project",
 			description: "A test project to be force deleted",
 			tags: ["test"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 		await mockProjectRepository.save(project);
@@ -117,6 +119,7 @@ describe("DeleteProjectService", () => {
 			title: "Test Project",
 			description: "A test project to be deleted",
 			tags: ["test"],
+			githubRepositories: [],
 			ownerId: "test-owner-id",
 		});
 

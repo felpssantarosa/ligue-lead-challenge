@@ -34,7 +34,6 @@ async function bootstrap(): Promise<void> {
 				console.log("HTTP server closed.");
 
 				try {
-					// Close Redis connection
 					const cacheProvider =
 						container.resolve<CacheProvider>("CacheProvider");
 					if (
