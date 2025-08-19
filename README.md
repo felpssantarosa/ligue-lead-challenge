@@ -155,6 +155,8 @@ Esta API utiliza **Scalar** para documentação interativa e moderna. A document
 
 ### 🚀 Acessar Documentação
 
+Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realizar requisições não está 100% testado e pode conter erros. Você encontra um arquivo `api-tests.http` com a extensão `Rest API` caso queira fazer suas requisições com o mínimo de problemas possível, já que este foi testado extensivamente.
+
 - **Scalar UI (Recomendado)**: http://localhost:3000/api/docs
   - Interface moderna e intuitiva
   - Testes de API integrados
@@ -171,11 +173,11 @@ Esta API utiliza **Scalar** para documentação interativa e moderna. A document
 - [Documentação Completa da API](./docs/API_DOCUMENTATION.md)
 - [Exemplos de Uso](./docs/API_EXAMPLES.md)
 
-### 🔐 Autenticação Rápida
+### 🔐 Autenticação
 
 1. **Registre um usuário**: `POST /auth/register`
 2. **Faça login**: `POST /auth/login`
-3. **Use o token**: Inclua o header `Authorization: Bearer <token>`
+3. **Use o token**: Inclua o header `Authorization: <token>`
 
 ### 📋 Endpoints Principais
 
@@ -189,6 +191,7 @@ Esta API utiliza **Scalar** para documentação interativa e moderna. A document
 - `POST /api/projects` - Criar novo projeto (autenticado)
 - `PUT /api/projects/:id` - Atualizar projeto (autenticado)
 - `DELETE /api/projects/:id` - Deletar projeto (autenticado)
+- `GET /api/projects/:id/github/:username` - Recebe os 5 repositórios públicos mais recentes de um usuário no GitHub e os acopla à um projeto. Deve ser o dono do projeto para fazer esta ação. (autenticado)
 
 #### Tarefas
 - `GET /api/tasks` - Listar tarefas
@@ -197,13 +200,10 @@ Esta API utiliza **Scalar** para documentação interativa e moderna. A document
 - `PUT /api/tasks/:id` - Atualizar tarefa (autenticado)
 - `DELETE /api/tasks/:id` - Deletar tarefa (autenticado)
 
-### 🔍 Recursos Avançados
+### 🔍 Recursos de Busca
 
 - **Busca e Filtros**: `/api/projects?search=termo&tags=react,nodejs`
 - **Paginação**: `/api/projects?page=1&limit=10`
-- **Integração GitHub**: `/api/projects/:id/github/:username`
-
-> **💡 Dica**: Use a documentação interativa do Scalar para explorar todos os endpoints, testar requisições e ver exemplos de response!
 
 ## 🏗️ Arquitetura
 
