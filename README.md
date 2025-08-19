@@ -160,10 +160,8 @@ Authorization: Bearer seu_jwt_token_aqui
 
 #### Usuários
 
-- `POST /users/register` - Registrar novo usuário
-- `POST /users/login` - Login do usuário
-- `GET /users/profile` - Obter perfil do usuário logado
-- `PUT /users/profile` - Atualizar perfil do usuário
+- `POST /auth/register` - Registrar novo usuário
+- `POST /auth/login` - Obter token de acesso para endpoints restritos
 
 #### Projetos
 
@@ -211,6 +209,7 @@ Cada módulo segue a estrutura:
 A API possui configuração flexível de CORS via variáveis de ambiente:
 
 ### Desenvolvimento (Permissivo)
+
 ```bash
 CORS_ORIGIN=*
 CORS_CREDENTIALS=false
@@ -219,6 +218,7 @@ CORS_ALLOWED_HEADERS=Content-Type,Authorization,X-Requested-With
 ```
 
 ### Produção (Restritivo)
+
 ```bash
 CORS_ORIGIN=https://meuapp.com,https://app.meudominio.com
 CORS_CREDENTIALS=true

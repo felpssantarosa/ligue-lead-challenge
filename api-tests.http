@@ -4,7 +4,8 @@
 # Use a extensão REST Client do VS Code para executar essas requisições
 
 @baseUrl = http://localhost:3000
-@authToken = {{login.response.body.token}}
+@baseAPIUrl = http://localhost:3000/api
+@authToken = {{login.response.body.data.token}}
 
 ###
 # 0. CORS PREFLIGHT TEST (OPTIONS request)
@@ -17,7 +18,7 @@ GET {{baseUrl}}/health
 
 ###
 # 2. REGISTRO DE USUÁRIO
-POST {{baseUrl}}/users/register
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
@@ -30,7 +31,7 @@ Content-Type: application/json
 ###
 # 3. LOGIN DO USUÁRIO
 # @name login
-POST {{baseUrl}}/users/login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
@@ -39,25 +40,9 @@ Content-Type: application/json
 }
 
 ###
-# 4. OBTER PERFIL DO USUÁRIO (requer autenticação)
-GET {{baseUrl}}/users/profile
-Authorization: Bearer {{authToken}}
-
-###
-# 5. ATUALIZAR PERFIL DO USUÁRIO (requer autenticação)
-PUT {{baseUrl}}/users/profile
-Authorization: Bearer {{authToken}}
-Content-Type: application/json
-
-{
-  "name": "John Final Fantasy",
-  "email": "john.novo@example.com"
-}
-
-###
-# 6. CRIAR PROJETO (requer autenticação)
+# 4. CRIAR PROJETO (requer autenticação)
 # @name createProject
-POST {{baseUrl}}/projects
+POST {{baseAPIUrl}}/projects
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -68,21 +53,21 @@ Content-Type: application/json
 }
 
 ###
-# 7. LISTAR TODOS OS PROJETOS
-GET {{baseUrl}}/projects
+# 5. LISTAR TODOS OS PROJETOS
+GET {{baseAPIUrl}}/projects
 
 ###
-# 8. LISTAR PROJETOS COM PAGINAÇÃO E BUSCA
-GET {{baseUrl}}/projects?page=1&limit=10&search=teste
+# 6. LISTAR PROJETOS COM PAGINAÇÃO E BUSCA
+GET {{baseAPIUrl}}/projects?page=1&limit=10&search=teste
 
 ###
-# 9. OBTER PROJETO POR ID
+# 7. OBTER PROJETO POR ID
 @projectId = {{createProject.response.body.data.id}}
-GET {{baseUrl}}/projects/{{projectId}}
+GET {{baseAPIUrl}}/projects/{{projectId}}
 
 ###
-# 10. ATUALIZAR PROJETO (requer autenticação)
-PUT {{baseUrl}}/projects/{{projectId}}
+# 8. ATUALIZAR PROJETO (requer autenticação)
+PUT {{baseAPIUrl}}/projects/{{projectId}}
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -93,9 +78,9 @@ Content-Type: application/json
 }
 
 ###
-# 11. CRIAR TAREFA EM UM PROJETO (requer autenticação)
+# 9. CRIAR TAREFA EM UM PROJETO (requer autenticação)
 # @name createTask
-POST {{baseUrl}}/projects/{{projectId}}/tasks
+POST {{baseAPIUrl}}/projects/{{projectId}}/tasks
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -107,18 +92,18 @@ Content-Type: application/json
 }
 
 ###
-# 12. LISTAR TODAS AS TAREFAS
-GET {{baseUrl}}/tasks
+# 10. LISTAR TODAS AS TAREFAS
+GET {{baseAPIUrl}}/tasks
 
 ###
-# 13. OBTER TAREFA POR ID (requer autenticação)
+# 11. OBTER TAREFA POR ID (requer autenticação)
 @taskId = {{createTask.response.body.data.id}}
-GET {{baseUrl}}/tasks/{{taskId}}
+GET {{baseAPIUrl}}/tasks/{{taskId}}
 Authorization: Bearer {{authToken}}
 
 ###
-# 14. ATUALIZAR TAREFA (requer autenticação)
-PUT {{baseUrl}}/tasks/{{taskId}}
+# 12. ATUALIZAR TAREFA (requer autenticação)
+PUT {{baseAPIUrl}}/tasks/{{taskId}}
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -130,29 +115,29 @@ Content-Type: application/json
 }
 
 ###
-# 15. INTEGRAÇÃO COM GITHUB - Buscar repositórios (requer autenticação)
-GET {{baseUrl}}/projects/{{projectId}}/github/felpssantarosa
+# 13. INTEGRAÇÃO COM GITHUB - Buscar repositórios (requer autenticação)
+GET {{baseAPIUrl}}/projects/{{projectId}}/github/felpssantarosa
 Authorization: Bearer {{authToken}}
 
 ###
-# 16. DELETAR TAREFA (requer autenticação)
-DELETE {{baseUrl}}/tasks/{{taskId}}
+# 14. DELETAR TAREFA (requer autenticação)
+DELETE {{baseAPIUrl}}/tasks/{{taskId}}
 Authorization: Bearer {{authToken}}
 
 ###
-# 17. DELETAR PROJETO (requer autenticação)
-DELETE {{baseUrl}}/projects/{{projectId}}
+# 15. DELETAR PROJETO (requer autenticação)
+DELETE {{baseAPIUrl}}/projects/{{projectId}}
 Authorization: Bearer {{authToken}}
 
 ###
 # TESTES DE ERRO
 
-# 18. Tentar acessar endpoint protegido sem token
-GET {{baseUrl}}/users/profile
+# 16. Tentar acessar endpoint protegido sem token
+GET {{baseAPIUrl}}/users/profile
 
 ###
-# 19. Login com credenciais inválidas
-POST {{baseUrl}}/users/login
+# 17. Login com credenciais inválidas
+POST {{baseAPIUrl}}/users/login
 Content-Type: application/json
 
 {
@@ -161,8 +146,8 @@ Content-Type: application/json
 }
 
 ###
-# 20. Criar projeto com dados inválidos
-POST {{baseUrl}}/projects
+# 18. Criar projeto com dados inválidos
+POST {{baseAPIUrl}}/projects
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -172,12 +157,12 @@ Content-Type: application/json
 }
 
 ###
-# 21. Buscar projeto que não existe
-GET {{baseUrl}}/projects/99999
+# 19. Buscar projeto que não existe
+GET {{baseAPIUrl}}/projects/99999
 
 ###
-# 22. Registrar usuário com email já existente
-POST {{baseUrl}}/users/register
+# 20. Registrar usuário com email já existente
+POST {{baseAPIUrl}}/users/register
 Content-Type: application/json
 
 {
@@ -188,8 +173,8 @@ Content-Type: application/json
 }
 
 ###
-# 23. Criar tarefa com status inválido
-POST {{baseUrl}}/projects/{{projectId}}/tasks
+# 21. Criar tarefa com status inválido
+POST {{baseAPIUrl}}/projects/{{projectId}}/tasks
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -203,8 +188,8 @@ Content-Type: application/json
 ###
 # TESTES DE PERFORMANCE
 
-# 24. Criar múltiplos projetos para teste de paginação
-POST {{baseUrl}}/projects
+# 22. Criar múltiplos projetos para teste de paginação
+POST {{baseAPIUrl}}/projects
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -215,7 +200,7 @@ Content-Type: application/json
 }
 
 ###
-POST {{baseUrl}}/projects
+POST {{baseAPIUrl}}/projects
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -226,7 +211,7 @@ Content-Type: application/json
 }
 
 ###
-POST {{baseUrl}}/projects
+POST {{baseAPIUrl}}/projects
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -237,17 +222,17 @@ Content-Type: application/json
 }
 
 ###
-# 25. Testar busca com diferentes termos
-GET {{baseUrl}}/projects?search=performance
+# 23. Testar busca com diferentes termos
+GET {{baseAPIUrl}}/projects?search=performance
 
 ###
-GET {{baseUrl}}/projects?search=test
+GET {{baseAPIUrl}}/projects?search=test
 
 ###
-GET {{baseUrl}}/projects?search=nodejs
+GET {{baseAPIUrl}}/projects?search=nodejs
 
 ###
-# NOTES:
+# NOTAS:
 # - Substitua {{authToken}} pelo token JWT real obtido no login
 # - Substitua {{projectId}} e {{taskId}} pelos IDs reais retornados nas criações
 # - Certifique-se de que o servidor esteja rodando em http://localhost:3000
