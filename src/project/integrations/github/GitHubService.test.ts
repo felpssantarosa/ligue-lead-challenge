@@ -61,6 +61,10 @@ describe("GitHubServiceImpl", () => {
 			expect(mockedAxios.get).toHaveBeenCalledWith(
 				"https://api.github.com/users/testuser/repos",
 				{
+					headers: {
+						"User-Agent": "ligue-lead-challenge/1.0.0",
+						"Accept": "application/vnd.github.v3+json",
+					},
 					params: {
 						sort: "updated",
 						per_page: 5,

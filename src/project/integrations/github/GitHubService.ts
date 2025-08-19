@@ -61,6 +61,10 @@ export class GitHubServiceImpl implements GitHubService {
 						type: "public",
 					},
 					timeout: 10000,
+					headers: {
+						'User-Agent': 'ligue-lead-challenge/1.0.0',
+						'Accept': 'application/vnd.github.v3+json',
+					},
 				},
 			);
 
@@ -92,7 +96,7 @@ export class GitHubServiceImpl implements GitHubService {
 			throw ExternalServiceError.githubApiError(
 				"fetching user repositories",
 				500,
-				"Unknown error occurred",
+				error instanceof Error ? error.message : "Unknown error occurred",
 			);
 		}
 	}
