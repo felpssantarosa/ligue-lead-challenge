@@ -19,4 +19,8 @@ export const config = {
 	github: {
 		apiUrl: process.env.GITHUB_API_URL || "https://api.github.com",
 	},
+	jwt: {
+		secret: process.env.JWT_SECRET,
+		expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+	},
 } as const;
