@@ -2,8 +2,8 @@ import { inject, injectable } from "tsyringe";
 import type { GitHubRepository } from "@/project/domain/ProjectDTO";
 import type { ProjectRepository } from "@/project/infra";
 import type { GitHubService } from "@/project/integrations/github/GitHubService";
-import type { UpdateProjectService } from "@/project/service/update/UpdateProjectService";
 import type { CheckProjectOwnershipService } from "@/project/service/check-ownership/CheckProjectOwnershipService";
+import type { UpdateProjectService } from "@/project/service/update/UpdateProjectService";
 import { NotFoundError, UnauthorizedError } from "@/shared/Errors";
 
 export type GitHubIntegrationServiceParams = {

@@ -108,7 +108,10 @@ export class Project extends Entity {
 		if (params.taskIds !== undefined && params.taskIds !== null) {
 			this.updateTaskIds(params.taskIds);
 		}
-		if (params.githubRepositories !== undefined && params.githubRepositories !== null) {
+		if (
+			params.githubRepositories !== undefined &&
+			params.githubRepositories !== null
+		) {
 			this.updateGitHubRepositories(params.githubRepositories);
 		}
 
