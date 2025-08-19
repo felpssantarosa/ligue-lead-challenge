@@ -14,7 +14,8 @@
     "lint:fix": "biome check src --write",
     "migration:run": "npm run build && npx sequelize-cli db:migrate",
     "migration:create": "npx sequelize-cli migration:generate --name",
-    "seed:run": "npm run build && npx sequelize-cli db:seed:all"
+    "seed:run": "npm run build && npx sequelize-cli db:seed:all",
+    "seed": "npm run build && npx sequelize-cli db:seed:all"
   },
   "keywords": [
     "nodejs",

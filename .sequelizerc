@@ -1,6 +1,6 @@
-import { resolve } from "node:path";
+const { resolve } = require("node:path");
 
-export default {
+module.exports = {
   config: resolve("./database/config.js"),
   "models-path": resolve("./src/shared/infra/database/models"),
   "seeders-path": resolve("./database/seeders"),
