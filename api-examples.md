@@ -132,6 +132,12 @@ curl -X POST http://localhost:3000/api/projects \
 curl http://localhost:3000/api/projects/PROJECT_ID_HERE
 ```
 
+### Link GitHub Repositories
+
+```bash
+curl http://localhost:3000/api/projects/PROJECT_ID_HERE/github/USERNAME_HERE
+```
+
 ### Create Task
 
 ```bash
