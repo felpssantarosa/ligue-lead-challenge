@@ -169,7 +169,6 @@ describe("List Services - Cache Behavior", () => {
 					title: p.title,
 					description: p.description,
 					githubRepositories: p.githubRepositories,
-					ownerId: p.ownerId,
 					tags: p.tags,
 					createdAt: p.createdAt,
 					updatedAt: p.updatedAt,

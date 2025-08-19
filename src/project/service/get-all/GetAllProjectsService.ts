@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import type { GitHubRepository } from "@/project/domain";
 import type { ProjectRepository } from "@/project/infra";
 import type { CacheProvider } from "@/shared/cache";
 import { CacheKeys } from "@/shared/cache";
@@ -16,6 +17,7 @@ export interface GetAllProjectsServiceResponse {
 		id: string;
 		title: string;
 		description: string;
+		githubRepositories: GitHubRepository[];
 		tags: string[];
 		createdAt: Date;
 		updatedAt: Date;
@@ -67,6 +69,7 @@ export class GetAllProjectsService {
 					title: project.title,
 					description: project.description,
 					tags: project.tags,
+					githubRepositories: project.githubRepositories,
 					createdAt: project.createdAt,
 					updatedAt: project.updatedAt,
 				})),
