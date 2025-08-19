@@ -58,6 +58,7 @@ export class GetProjectService {
 			description: project.description,
 			tags: project.tags,
 			tasks,
+			githubRepositories: project.githubRepositories,
 			createdAt: project.createdAt,
 			updatedAt: project.updatedAt,
 		};
