@@ -1,0 +1,20 @@
+# Sequelize files (CommonJS syntax)
+
+migrations
+database
+.sequelizerc
+database/config.js
+database/seeders/**
+
+# Build output
+
+dist/**
+coverage/**
+
+# Dependencies
+
+node_modules/\*\*
+
+# Environment files
+
+.env\*
