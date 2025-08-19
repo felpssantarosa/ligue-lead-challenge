@@ -155,7 +155,7 @@ Esta API utiliza **Scalar** para documentação interativa e moderna. A document
 
 ### 🚀 Acessar Documentação
 
-Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realizar requisições não está 100% testado e pode conter erros. Você encontra um arquivo `api-tests.http` com a extensão `Rest API` caso queira fazer suas requisições com o mínimo de problemas possível, já que este foi testado extensivamente.
+Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realizar requisições não está 100% testado e pode conter erros. Você encontra um arquivo `api-tests.http` e pode utilizar a extensão `Rest API` caso queira fazer suas requisições com o mínimo de problemas possível, já que este foi testado extensivamente.
 
 - **Scalar UI (Recomendado)**: http://localhost:3000/api/docs
   - Interface moderna e intuitiva
