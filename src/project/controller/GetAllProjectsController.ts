@@ -26,7 +26,65 @@ export class GetAllProjectsController extends BaseController {
 	}
 
 	/**
-	 * GET /api/projects?page=1&limit=10&search=term&tags=tag1,tag2
+	 * @swagger
+	 * /api/projects:
+	 *   get:
+	 *     summary: Get all projects with optional filtering and pagination
+	 *     description: Retrieve a paginated list of projects with optional search and tag filtering
+	 *     tags: [Projects]
+	 *     parameters:
+	 *       - in: query
+	 *         name: page
+	 *         schema:
+	 *           type: integer
+	 *           minimum: 1
+	 *           default: 1
+	 *         description: Page number for pagination
+	 *       - in: query
+	 *         name: limit
+	 *         schema:
+	 *           type: integer
+	 *           minimum: 1
+	 *           maximum: 100
+	 *           default: 10
+	 *         description: Number of items per page
+	 *       - in: query
+	 *         name: search
+	 *         schema:
+	 *           type: string
+	 *         description: Search term to filter projects by title or description
+	 *       - in: query
+	 *         name: tags
+	 *         schema:
+	 *           type: string
+	 *         description: Comma-separated list of tags to filter projects
+	 *         example: "react,nodejs,typescript"
+	 *     responses:
+	 *       200:
+	 *         description: Successfully retrieved projects
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               allOf:
+	 *                 - $ref: '#/components/schemas/ApiResponse'
+	 *                 - type: object
+	 *                   properties:
+	 *                     data:
+	 *                       type: array
+	 *                       items:
+	 *                         $ref: '#/components/schemas/Project'
+	 *       400:
+	 *         description: Bad request - Invalid parameters
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
+	 *       500:
+	 *         description: Internal server error
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
 	 */
 	async handle(req: Request, res: Response): Promise<void> {
 		try {

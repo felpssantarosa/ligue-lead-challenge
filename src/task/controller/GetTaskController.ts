@@ -14,6 +14,52 @@ export class GetTaskController extends BaseController {
 		super();
 	}
 
+	/**
+	 * @swagger
+	 * /api/tasks/{id}:
+	 *   get:
+	 *     summary: Get a task by ID
+	 *     description: Retrieve a specific task by its ID
+	 *     tags: [Tasks]
+	 *     parameters:
+	 *       - in: path
+	 *         name: id
+	 *         required: true
+	 *         schema:
+	 *           type: string
+	 *           format: uuid
+	 *         description: The ID of the task to retrieve
+	 *     responses:
+	 *       200:
+	 *         description: Task retrieved successfully
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               allOf:
+	 *                 - $ref: '#/components/schemas/ApiResponse'
+	 *                 - type: object
+	 *                   properties:
+	 *                     data:
+	 *                       $ref: '#/components/schemas/Task'
+	 *       400:
+	 *         description: Bad request - Invalid ID format
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
+	 *       404:
+	 *         description: Task not found
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
+	 *       500:
+	 *         description: Internal server error
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
+	 */
 	public async handle(req: Request, res: Response): Promise<void> {
 		try {
 			const validatedParams = this.validation.execute<GetTaskInput>(

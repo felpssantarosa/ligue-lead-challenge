@@ -12,6 +12,7 @@ import {
 	isUnauthorizedError,
 	isValidationError,
 } from "@/shared/Errors";
+import { setupApiDocumentation } from "@/shared/infra/docs/setup";
 import {
 	taskRoutes,
 	taskRoutesBoundByProject,
@@ -21,7 +22,44 @@ import { authRoutes } from "@/user/infra/routes/AuthRoutes";
 export const createApp = (): express.Application => {
 	const app = express();
 
-	app.use(helmet());
+	app.use(
+		"/api/docs",
+		helmet({
+			contentSecurityPolicy: false,
+		}),
+	);
+
+	app.use(
+		helmet({
+			contentSecurityPolicy: {
+				directives: {
+					defaultSrc: ["'self'"],
+					scriptSrc: [
+						"'self'",
+						"'unsafe-inline'",
+						"'unsafe-eval'",
+						"https://cdn.jsdelivr.net",
+						"https://unpkg.com",
+					],
+					styleSrc: [
+						"'self'",
+						"'unsafe-inline'",
+						"https://cdn.jsdelivr.net",
+						"https://fonts.googleapis.com",
+					],
+					fontSrc: [
+						"'self'",
+						"https://fonts.gstatic.com",
+						"https://cdn.jsdelivr.net",
+						"https://fonts.scalar.com",
+					],
+					imgSrc: ["'self'", "data:", "https:", "blob:"],
+					connectSrc: ["'self'", "https://api.github.com"],
+				},
+			},
+		}),
+	);
+
 	app.use(
 		cors({
 			origin: config.cors.origin === "*" ? true : config.cors.origin.split(","),
@@ -48,6 +86,9 @@ export const createApp = (): express.Application => {
 	// Task
 	app.use("/api/projects", taskRoutesBoundByProject);
 	app.use("/api/tasks", taskRoutes);
+
+	// API Documentation
+	setupApiDocumentation(app);
 
 	app.use(
 		(

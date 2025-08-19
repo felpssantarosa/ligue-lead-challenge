@@ -88,7 +88,6 @@ Content-Type: application/json
   "title": "Implementar autenticação",
   "description": "Implementar sistema de autenticação JWT",
   "status": "todo",
-  "priority": "high"
 }
 
 ###
@@ -101,7 +100,6 @@ Content-Type: application/json
   "title": "Implementar autenticação JWT",
   "description": "Implementar sistema completo de autenticação JWT com refresh tokens",
   "status": "in_progress",
-  "priority": "high"
 }
 
 ###
@@ -172,7 +170,6 @@ Content-Type: application/json
   "title": "Tarefa com status inválido",
   "description": "Esta tarefa tem um status que não existe",
   "status": "status_inexistente",
-  "priority": "medium"
 }
 
 ###

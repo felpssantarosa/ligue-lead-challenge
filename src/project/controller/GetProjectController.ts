@@ -21,7 +21,50 @@ export class GetProjectController extends BaseController {
 	}
 
 	/**
-	 * GET /api/projects/:id
+	 * @swagger
+	 * /api/projects/{id}:
+	 *   get:
+	 *     summary: Get a specific project by ID
+	 *     description: Retrieve detailed information about a specific project
+	 *     tags: [Projects]
+	 *     parameters:
+	 *       - in: path
+	 *         name: id
+	 *         required: true
+	 *         schema:
+	 *           type: string
+	 *           format: uuid
+	 *         description: Project ID
+	 *     responses:
+	 *       200:
+	 *         description: Successfully retrieved project
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               allOf:
+	 *                 - $ref: '#/components/schemas/ApiResponse'
+	 *                 - type: object
+	 *                   properties:
+	 *                     data:
+	 *                       $ref: '#/components/schemas/Project'
+	 *       400:
+	 *         description: Bad request - Invalid project ID
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
+	 *       404:
+	 *         description: Project not found
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
+	 *       500:
+	 *         description: Internal server error
+	 *         content:
+	 *           application/json:
+	 *             schema:
+	 *               $ref: '#/components/schemas/ErrorResponse'
 	 */
 	async handle(req: Request, res: Response): Promise<void> {
 		try {

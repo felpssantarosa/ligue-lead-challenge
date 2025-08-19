@@ -151,37 +151,59 @@ docker run -p 3000:3000 --env-file .env ligue-lead-api
 
 ## 📚 Documentação da API
 
-### Autenticação
+Esta API utiliza **Scalar** para documentação interativa e moderna. A documentação completa está disponível quando o servidor está em execução.
 
-Todos os endpoints (exceto login e registro) requerem autenticação via JWT.
-Inclua o token no header da requisição:
+### 🚀 Acessar Documentação
 
-```
-Authorization: Bearer seu_jwt_token_aqui
-```
+- **Scalar UI (Recomendado)**: http://localhost:3000/api/docs
+  - Interface moderna e intuitiva
+  - Testes de API integrados
+  - Busca por hotkey (pressione 'k')
+  
+- **Swagger UI (Alternativo)**: http://localhost:3000/api/docs-swagger
+  - Interface tradicional do Swagger
+  
+- **OpenAPI JSON**: http://localhost:3000/api/docs/openapi.json
+  - Especificação para importar em outras ferramentas
 
-### Endpoints Principais
+### 📖 Documentação Adicional
 
-#### Usuários
+- [Documentação Completa da API](./docs/API_DOCUMENTATION.md)
+- [Exemplos de Uso](./docs/API_EXAMPLES.md)
 
+### 🔐 Autenticação Rápida
+
+1. **Registre um usuário**: `POST /auth/register`
+2. **Faça login**: `POST /auth/login`
+3. **Use o token**: Inclua o header `Authorization: Bearer <token>`
+
+### 📋 Endpoints Principais
+
+#### Autenticação
 - `POST /auth/register` - Registrar novo usuário
-- `POST /auth/login` - Obter token de acesso para endpoints restritos
+- `POST /auth/login` - Obter token de acesso
 
-#### Projetos
-
-- `GET /projects` - Listar todos os projetos
-- `GET /projects/:id` - Obter projeto específico
-- `POST /projects` - Criar novo projeto
-- `PUT /projects/:id` - Atualizar projeto
-- `DELETE /projects/:id` - Deletar projeto
+#### Projetos  
+- `GET /api/projects` - Listar projetos (com filtros e busca)
+- `GET /api/projects/:id` - Obter projeto específico
+- `POST /api/projects` - Criar novo projeto (autenticado)
+- `PUT /api/projects/:id` - Atualizar projeto (autenticado)
+- `DELETE /api/projects/:id` - Deletar projeto (autenticado)
 
 #### Tarefas
+- `GET /api/tasks` - Listar tarefas
+- `GET /api/projects/:id/tasks` - Tarefas de um projeto
+- `POST /api/tasks` - Criar tarefa (autenticado)
+- `PUT /api/tasks/:id` - Atualizar tarefa (autenticado)
+- `DELETE /api/tasks/:id` - Deletar tarefa (autenticado)
 
-- `GET /tasks` - Listar todas as tarefas
-- `GET /tasks/:id` - Obter tarefa específica
-- `POST /tasks` - Criar nova tarefa
-- `PUT /tasks/:id` - Atualizar tarefa
-- `DELETE /tasks/:id` - Deletar tarefa
+### 🔍 Recursos Avançados
+
+- **Busca e Filtros**: `/api/projects?search=termo&tags=react,nodejs`
+- **Paginação**: `/api/projects?page=1&limit=10`
+- **Integração GitHub**: `/api/projects/:id/github/:username`
+
+> **💡 Dica**: Use a documentação interativa do Scalar para explorar todos os endpoints, testar requisições e ver exemplos de response!
 
 ## 🏗️ Arquitetura
 
