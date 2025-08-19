@@ -1,4 +1,4 @@
-import { Op } from "sequelize";
+import { Op, Sequelize, type WhereOptions } from "sequelize";
 import { injectable } from "tsyringe";
 import { Project } from "@/project/domain";
 import type { ProjectProps } from "@/project/domain/ProjectDTO";
@@ -41,13 +41,31 @@ export class SequelizeProjectRepository implements ProjectRepository {
 		const { page = 1, limit = 10, tags, search } = params;
 		const offset = (page - 1) * limit;
 
+		let whereConditions: WhereOptions = {};
+
+		if (tags && tags.length > 0) {
+			const tagConditions = tags.map((tag) =>
+				Sequelize.where(Sequelize.cast(Sequelize.col("tags"), "TEXT"), {
+					[Op.like]: `%"${tag}"%`,
+				}),
+			);
+			whereConditions = {
+				...whereConditions,
+				[Op.or]: tagConditions,
+			};
+		}
+
+		if (search) {
+			whereConditions = {
+				...whereConditions,
+				title: { [Op.like]: `%${search}%` },
+			};
+		}
+
 		const projects = await this.sequelizeModel.findAll({
 			limit,
 			offset,
-			where: {
-				...(tags && tags.length > 0 ? { tags: { [Op.overlap]: tags } } : {}),
-				...(search ? { title: { [Op.iLike]: `%${search}%` } } : {}),
-			},
+			where: whereConditions,
 			include: ["tasks"],
 		});
 

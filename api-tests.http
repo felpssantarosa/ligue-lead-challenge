@@ -47,7 +47,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Projeto de Teste",
+  "title": "Projeto de Teste",
   "description": "Este é um projeto de teste para demonstrar a API",
   "tags": ["nodejs", "typescript", "api"]
 }
@@ -58,7 +58,7 @@ GET {{baseAPIUrl}}/projects
 
 ###
 # 6. LISTAR PROJETOS COM PAGINAÇÃO E BUSCA
-GET {{baseAPIUrl}}/projects?page=1&limit=10&search=teste
+GET {{baseAPIUrl}}/projects?page=1&limit=3&search=teste
 
 ###
 # 7. OBTER PROJETO POR ID
