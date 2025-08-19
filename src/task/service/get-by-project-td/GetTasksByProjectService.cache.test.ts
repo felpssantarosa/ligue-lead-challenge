@@ -11,6 +11,18 @@ import {
 	MockCacheProvider,
 	mockTaskRepository,
 } from "@/test/mocks";
+import type { GetProjectServiceResponse } from "@/project/service/get/GetProjectService";
+
+// Helper function to convert Project to GetProjectServiceResponse
+const projectToResponse = (project: Project): GetProjectServiceResponse => ({
+	id: project.id,
+	title: project.title,
+	description: project.description,
+	tags: project.tags,
+	tasks: [],
+	createdAt: project.createdAt,
+	updatedAt: project.updatedAt,
+});
 
 describe("GetTasksByProjectService - Cache Behavior", () => {
 	let getTasksByProjectService: GetTasksByProjectService;
@@ -122,7 +134,17 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 				}),
 			];
 
-			mockProjectService.get.mockResolvedValue(projectData);
+			const projectResponse = {
+				id: projectData.id,
+				title: projectData.title,
+				description: projectData.description,
+				tags: projectData.tags,
+				tasks: [],
+				createdAt: projectData.createdAt,
+				updatedAt: projectData.updatedAt,
+			};
+
+			mockProjectService.get.mockResolvedValue(projectResponse);
 			taskFindByProjectIdSpy.mockResolvedValue(tasks);
 
 			const cacheKey = CacheKeys.tasksByProject(projectId);
@@ -160,7 +182,7 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 				updatedAt: new Date(),
 			});
 
-			mockProjectService.get.mockResolvedValue(projectData);
+			mockProjectService.get.mockResolvedValue(projectToResponse(projectData));
 			taskFindByProjectIdSpy.mockResolvedValue([]);
 
 			const result = await getTasksByProjectService.execute({ projectId });
@@ -206,7 +228,7 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 				updatedAt: new Date(),
 			});
 
-			mockProjectService.get.mockResolvedValue(projectData);
+			mockProjectService.get.mockResolvedValue(projectToResponse(projectData));
 
 			await expect(
 				getTasksByProjectService.execute({ projectId: requestedProjectId }),
@@ -231,7 +253,7 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 				updatedAt: new Date(),
 			});
 
-			mockProjectService.get.mockResolvedValue(projectData);
+			mockProjectService.get.mockResolvedValue(projectToResponse(projectData));
 			taskFindByProjectIdSpy.mockRejectedValue(
 				new Error("Task repository error"),
 			);
@@ -292,7 +314,7 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 				}),
 			];
 
-			mockProjectService.get.mockResolvedValue(projectData);
+			mockProjectService.get.mockResolvedValue(projectToResponse(projectData));
 			taskFindByProjectIdSpy.mockResolvedValue(freshTasks);
 
 			const result = await getTasksByProjectService.execute({ projectId });
@@ -388,7 +410,7 @@ describe("GetTasksByProjectService - Cache Behavior", () => {
 				}),
 			];
 
-			mockProjectService.get.mockResolvedValue(projectData);
+			mockProjectService.get.mockResolvedValue(projectToResponse(projectData));
 			taskFindByProjectIdSpy.mockResolvedValue(dbTasks);
 
 			const resultFromDb = await getTasksByProjectService.execute({
