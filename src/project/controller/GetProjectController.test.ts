@@ -49,7 +49,7 @@ describe("GetProjectController", () => {
 			getService.execute.mockResolvedValue(project);
 
 			await getController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -69,7 +69,7 @@ describe("GetProjectController", () => {
 			getService.execute.mockResolvedValue(null);
 
 			await getController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -99,7 +99,7 @@ describe("GetProjectController", () => {
 			});
 
 			await getController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 

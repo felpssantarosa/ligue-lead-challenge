@@ -64,7 +64,7 @@ describe("GetAllProjectsController", () => {
 			getAllService.execute.mockResolvedValue(mockResult);
 
 			await getAllController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -99,7 +99,7 @@ describe("GetAllProjectsController", () => {
 			});
 
 			await getAllController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -148,7 +148,7 @@ describe("GetAllProjectsController", () => {
 			getAllService.execute.mockResolvedValue(mockResult);
 
 			await getAllController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -178,7 +178,7 @@ describe("GetAllProjectsController", () => {
 			getAllService.execute.mockResolvedValue(mockResult);
 
 			await getAllController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -212,7 +212,7 @@ describe("GetAllProjectsController", () => {
 			});
 
 			await getAllController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 

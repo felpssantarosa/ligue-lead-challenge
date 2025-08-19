@@ -114,6 +114,7 @@ describe("GetProjectService - Cache Behavior", () => {
 				id: expect.any(String),
 				title: "Database Project",
 				description: "From database",
+				githubRepositories: [],
 				tags: ["db"],
 				tasks: [
 					expect.objectContaining({

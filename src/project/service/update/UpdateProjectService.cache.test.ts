@@ -2,7 +2,7 @@ import "reflect-metadata";
 import { Project } from "@/project/domain";
 import { UpdateProjectService } from "@/project/service/update/UpdateProjectService";
 import { CacheKeys } from "@/shared/cache";
-import { ApplicationError } from "@/shared/Errors";
+import { NotFoundError } from "@/shared/Errors";
 import { generateUUID } from "@/test/factories";
 import {
 	MockCacheProvider,
@@ -195,7 +195,7 @@ describe("UpdateProjectService - Cache Invalidation", () => {
 					ownerId: "test-owner-id",
 					title: "New Title",
 				}),
-			).rejects.toThrow(ApplicationError);
+			).rejects.toThrow(NotFoundError);
 
 			expect(await mockCacheProvider.get(projectCacheKey)).toBeTruthy();
 			expect(updateSpy).not.toHaveBeenCalled();

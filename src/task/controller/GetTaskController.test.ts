@@ -42,7 +42,7 @@ describe("GetTaskController", () => {
 			mockGetTaskService.execute.mockResolvedValue(task);
 
 			await getTaskController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -72,7 +72,7 @@ describe("GetTaskController", () => {
 			});
 
 			await getTaskController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -103,7 +103,7 @@ describe("GetTaskController", () => {
 			mockGetTaskService.execute.mockRejectedValue(notFoundError);
 
 			await getTaskController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -139,7 +139,7 @@ describe("GetTaskController", () => {
 			});
 
 			await getTaskController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -170,7 +170,7 @@ describe("GetTaskController", () => {
 			mockGetTaskService.execute.mockRejectedValue(serviceError);
 
 			await getTaskController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -204,7 +204,7 @@ describe("GetTaskController", () => {
 			});
 
 			await getTaskController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 
@@ -243,7 +243,7 @@ describe("GetTaskController", () => {
 			mockGetTaskService.execute.mockResolvedValue(complexTask);
 
 			await getTaskController.handle(
-				mockRequest as Request,
+				mockRequest as unknown as Request,
 				mockResponse as Response,
 			);
 

@@ -1,6 +1,6 @@
 import { Project } from "@/project/domain";
 import type { UpdateProjectServiceParams } from "@/project/service";
-import { ApplicationError } from "@/shared/Errors";
+import { ApplicationError, NotFoundError } from "@/shared/Errors";
 import {
 	mockCheckProjectOwnershipService,
 	mockProjectRepository,
@@ -56,7 +56,7 @@ describe("UpdateProjectService", () => {
 		expect(result.updatedAt).toBeInstanceOf(Date);
 	});
 
-	it("should throw ApplicationError when project does not exist", async () => {
+	it("should throw NotFoundError when project does not exist", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
 			projectId: "non-existent-id",
 			githubRepositories: [],
@@ -67,7 +67,7 @@ describe("UpdateProjectService", () => {
 		};
 
 		await expect(updateProjectService.execute(updateRequest)).rejects.toThrow(
-			ApplicationError,
+			NotFoundError,
 		);
 	});
 
@@ -117,7 +117,7 @@ describe("UpdateProjectService", () => {
 		expect(result.tags).toEqual(project.tags);
 	});
 
-	it("should throw ApplicationError when id is empty", async () => {
+	it("should throw NotFoundError when id is empty", async () => {
 		const updateRequest: UpdateProjectServiceParams = {
 			projectId: "",
 			githubRepositories: [],
@@ -126,7 +126,7 @@ describe("UpdateProjectService", () => {
 		};
 
 		await expect(updateProjectService.execute(updateRequest)).rejects.toThrow(
-			ApplicationError,
+			NotFoundError,
 		);
 	});
 

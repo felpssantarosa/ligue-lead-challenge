@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { DeleteProjectService } from "@/project/service/delete/DeleteProjectService";
 import { CacheKeys } from "@/shared/cache";
-import { ApplicationError } from "@/shared/Errors";
+import { ApplicationError, NotFoundError } from "@/shared/Errors";
 import {
 	createProject,
 	MockCacheProvider,
@@ -158,7 +158,7 @@ describe("DeleteProjectService - Cache Invalidation", () => {
 
 			await expect(
 				deleteProjectService.execute({ projectId, ownerId: "test-user-id" }),
-			).rejects.toThrow(ApplicationError);
+			).rejects.toThrow(NotFoundError);
 
 			expect(await mockCacheProvider.get(someCacheKey)).toBeTruthy();
 			expect(await mockCacheProvider.get(projectsListKey)).toBeTruthy();

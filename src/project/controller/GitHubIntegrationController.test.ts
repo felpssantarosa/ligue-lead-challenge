@@ -1,8 +1,9 @@
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { GitHubIntegrationController } from "@/project/controller/GitHubIntegrationController";
 import type { GitHubIntegrationService } from "@/project/service/github-integration/GitHubIntegrationService";
 import { NotFoundError } from "@/shared/Errors";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
+import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
 
 const mockGitHubIntegrationService = {
 	execute: jest.fn(),
@@ -34,7 +35,12 @@ describe("GitHubIntegrationController", () => {
 				id: "123e4567-e89b-12d3-a456-426614174000",
 				username: "testuser",
 			},
-		} as unknown as Request;
+			user: {
+				id: "user-123",
+				email: "test@example.com",
+				name: "Test User",
+			},
+		} as unknown as AuthenticatedRequest;
 
 		it("should successfully link GitHub repositories to project", async () => {
 			const validatedParams = {
@@ -69,6 +75,7 @@ describe("GitHubIntegrationController", () => {
 			expect(mockGitHubIntegrationService.execute).toHaveBeenCalledWith({
 				projectId: validatedParams.id,
 				username: validatedParams.username,
+				userId: "user-123",
 			});
 			expect(mockResponse.status).toHaveBeenCalledWith(200);
 			expect(mockResponse.json).toHaveBeenCalledWith({

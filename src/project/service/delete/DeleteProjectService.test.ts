@@ -1,6 +1,6 @@
 import { Project } from "@/project/domain";
 import type { DeleteProjectServiceParams } from "@/project/service";
-import { ApplicationError } from "@/shared/Errors";
+import { ApplicationError, NotFoundError } from "@/shared/Errors";
 import {
 	mockDeleteProjectServiceImplementation as deleteProjectService,
 	mockCheckProjectOwnershipService,
@@ -52,25 +52,25 @@ describe("DeleteProjectService", () => {
 		expect(deletedProject).toBeNull();
 	});
 
-	it("should throw ApplicationError when project does not exist", async () => {
+	it("should throw NotFoundError when project does not exist", async () => {
 		const deleteRequest: DeleteProjectServiceParams = {
 			projectId: "non-existent-id",
 			ownerId: "test-owner-id",
 		};
 
 		await expect(deleteProjectService.execute(deleteRequest)).rejects.toThrow(
-			ApplicationError,
+			NotFoundError,
 		);
 	});
 
-	it("should throw ApplicationError when id is empty", async () => {
+	it("should throw NotFoundError when id is empty", async () => {
 		const deleteRequest: DeleteProjectServiceParams = {
 			projectId: "",
 			ownerId: "test-owner-id",
 		};
 
 		await expect(deleteProjectService.execute(deleteRequest)).rejects.toThrow(
-			ApplicationError,
+			NotFoundError,
 		);
 	});
 
