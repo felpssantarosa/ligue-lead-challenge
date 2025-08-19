@@ -155,16 +155,14 @@ Esta API utiliza **Scalar** para documentação interativa e moderna. A document
 
 ### 🚀 Acessar Documentação
 
-Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realizar requisições não está 100% testado e pode conter erros. Você encontra um arquivo `api-tests.http` e pode utilizar a extensão `Rest API` caso queira fazer suas requisições com o mínimo de problemas possível, já que este foi testado extensivamente.
+Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realizar requisições não está 100% testado e pode conter erros. Você encontra um arquivo `api-tests.http` e pode utilizar a extensão `Rest Client` caso queira fazer suas requisições com o mínimo de problemas possível, já que este foi testado extensivamente.
 
 - **Scalar UI (Recomendado)**: http://localhost:3000/api/docs
   - Interface moderna e intuitiva
   - Testes de API integrados
   - Busca por hotkey (pressione 'k')
-  
 - **Swagger UI (Alternativo)**: http://localhost:3000/api/docs-swagger
   - Interface tradicional do Swagger
-  
 - **OpenAPI JSON**: http://localhost:3000/api/docs/openapi.json
   - Especificação para importar em outras ferramentas
 
@@ -182,10 +180,12 @@ Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realiz
 ### 📋 Endpoints Principais
 
 #### Autenticação
+
 - `POST /auth/register` - Registrar novo usuário
 - `POST /auth/login` - Obter token de acesso
 
-#### Projetos  
+#### Projetos
+
 - `GET /api/projects` - Listar projetos (com filtros e busca)
 - `GET /api/projects/:id` - Obter projeto específico
 - `POST /api/projects` - Criar novo projeto (autenticado)
@@ -194,6 +194,7 @@ Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realiz
 - `GET /api/projects/:id/github/:username` - Recebe os 5 repositórios públicos mais recentes de um usuário no GitHub e os acopla à um projeto. Deve ser o dono do projeto para fazer esta ação. (autenticado)
 
 #### Tarefas
+
 - `GET /api/tasks` - Listar tarefas
 - `GET /api/projects/:id/tasks` - Tarefas de um projeto
 - `POST /api/tasks` - Criar tarefa (autenticado)
