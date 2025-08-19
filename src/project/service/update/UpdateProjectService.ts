@@ -1,11 +1,11 @@
 import { inject, injectable } from "tsyringe";
-import type { UpdateProjectParams } from "@/project/domain";
+import type { GitHubRepository, UpdateProjectParams } from "@/project/domain";
 import type { ProjectRepository } from "@/project/infra";
 import type { CheckProjectOwnershipService } from "@/project/service/check-ownership/CheckProjectOwnershipService";
 import type { CacheProvider } from "@/shared/cache";
 import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
-import { ApplicationError, NotFoundError } from "@/shared/Errors";
+import { ApplicationError, NotFoundError, UnauthorizedError } from "@/shared/Errors";
 import type { UserService } from "@/user/service/UserService";
 
 export interface UpdateProjectServiceParams extends UpdateProjectParams {
@@ -18,6 +18,7 @@ export interface UpdateProjectServiceResponse {
 	title: string;
 	description: string;
 	tags: string[];
+	githubRepositories: GitHubRepository[];
 	createdAt: Date;
 	updatedAt: Date;
 }
@@ -61,17 +62,24 @@ export class UpdateProjectService {
 				);
 			}
 
-			await this.checkProjectOwnershipService.execute({
+			const hasOwnership = await this.checkProjectOwnershipService.execute({
 				projectId: existingProject.id,
 				ownerId: existingUser.id,
 			});
 
-			existingProject.update(params);
+			if (!hasOwnership) {
+				throw UnauthorizedError.insufficientPermissions(
+					"update",
+					"Project",
+					existingUser.id,
+					"UpdateProjectService.execute",
+				);
+		}
 
-			const updatedProject =
-				await this.projectRepository.update(existingProject);
+		existingProject.update(params);
 
-			const projectCacheKey = CacheKeys.project(params.projectId);
+		const updatedProject =
+			await this.projectRepository.update(existingProject);			const projectCacheKey = CacheKeys.project(params.projectId);
 			await this.cacheProvider.delete(projectCacheKey);
 			await this.cacheProvider.deleteByPattern(CacheKeys.allProjectsLists());
 			await this.cacheProvider.deleteByPattern(CacheKeys.allTasksByProject());
@@ -81,10 +89,15 @@ export class UpdateProjectService {
 				title: updatedProject.title,
 				description: updatedProject.description,
 				tags: updatedProject.tags,
+				githubRepositories: updatedProject.githubRepositories,
 				createdAt: updatedProject.createdAt,
 				updatedAt: updatedProject.updatedAt,
 			};
 		} catch (error) {
+			if (error instanceof UnauthorizedError || error instanceof NotFoundError)
+				throw error;
+			
+			
 			throw new ApplicationError({
 				message: `Failed to update project with id ${params.projectId}: ${error}`,
 				trace: "UpdateProjectService.execute",

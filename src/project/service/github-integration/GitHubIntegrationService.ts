@@ -3,11 +3,13 @@ import type { GitHubRepository } from "@/project/domain/ProjectDTO";
 import type { ProjectRepository } from "@/project/infra";
 import type { GitHubService } from "@/project/integrations/github/GitHubService";
 import type { UpdateProjectService } from "@/project/service/update/UpdateProjectService";
-import { NotFoundError } from "@/shared/Errors";
+import type { CheckProjectOwnershipService } from "@/project/service/check-ownership/CheckProjectOwnershipService";
+import { NotFoundError, UnauthorizedError } from "@/shared/Errors";
 
 export type GitHubIntegrationServiceParams = {
 	projectId: string;
 	username: string;
+	userId: string;
 };
 
 export type GitHubIntegrationServiceResponse = {
@@ -24,6 +26,8 @@ export class GitHubIntegrationService {
 		private readonly updateProjectService: UpdateProjectService,
 		@inject("GitHubService")
 		private readonly githubService: GitHubService,
+		@inject("CheckProjectOwnershipService")
+		private readonly checkProjectOwnershipService: CheckProjectOwnershipService,
 	) {}
 
 	async execute(
@@ -34,6 +38,21 @@ export class GitHubIntegrationService {
 		if (!project) {
 			throw NotFoundError.project(
 				params.projectId,
+				"GitHubIntegrationService.execute",
+			);
+		}
+
+		// Check if the user is the owner of the project
+		const hasOwnership = await this.checkProjectOwnershipService.execute({
+			projectId: params.projectId,
+			ownerId: params.userId,
+		});
+
+		if (!hasOwnership) {
+			throw UnauthorizedError.insufficientPermissions(
+				"integrate GitHub repositories with",
+				"Project",
+				params.userId,
 				"GitHubIntegrationService.execute",
 			);
 		}
@@ -54,9 +73,14 @@ export class GitHubIntegrationService {
 
 		project.updateGitHubRepositories(githubRepositories);
 
+		const projectData = project.toJSON();
 		await this.updateProjectService.execute({
 			projectId: project.id,
-			...project.toJSON(),
+			ownerId: params.userId,
+			title: projectData.title,
+			description: projectData.description,
+			tags: projectData.tags,
+			githubRepositories: projectData.githubRepositories,
 		});
 
 		return {

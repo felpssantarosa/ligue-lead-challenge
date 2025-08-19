@@ -4,7 +4,11 @@ import type { CheckProjectOwnershipService } from "@/project/service";
 import type { CacheProvider } from "@/shared/cache";
 import { CacheKeys } from "@/shared/cache";
 import type { EntityId } from "@/shared/domain/Entity";
-import { ApplicationError, NotFoundError } from "@/shared/Errors";
+import {
+	ApplicationError,
+	NotFoundError,
+	UnauthorizedError,
+} from "@/shared/Errors";
 import type { TaskService } from "@/task/service";
 import type { UserService } from "@/user/service";
 
@@ -61,10 +65,19 @@ export class DeleteProjectService {
 				);
 			}
 
-			this.checkProjectOwnershipService.execute({
+			const hasOwnership = await this.checkProjectOwnershipService.execute({
 				ownerId: existingUser.id,
 				projectId: existingProject.id,
 			});
+
+			if (!hasOwnership) {
+				throw UnauthorizedError.insufficientPermissions(
+					"delete",
+					"Project",
+					existingUser.id,
+					"DeleteProjectService.execute",
+				);
+			}
 
 			await this.taskService.deleteByProjectId(params.projectId);
 			await this.projectRepository.delete(params.projectId);
@@ -83,6 +96,9 @@ export class DeleteProjectService {
 				deletedAt: new Date(),
 			};
 		} catch (error) {
+			if (error instanceof UnauthorizedError || error instanceof NotFoundError)
+				throw error;
+
 			throw new ApplicationError({
 				message: `Failed to delete project with id ${params.projectId}: ${error}`,
 				trace: "DeleteProjectService.execute",
