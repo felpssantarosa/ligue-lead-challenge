@@ -93,7 +93,6 @@ export class Project extends Entity {
 
 	public updateGitHubRepositories(repositories: GitHubRepository[]): void {
 		this._githubRepositories = [...repositories];
-		this.updatedAt = new Date();
 	}
 
 	public update(params: UpdateProjectParams): void {
@@ -108,6 +107,9 @@ export class Project extends Entity {
 		}
 		if (params.taskIds !== undefined && params.taskIds !== null) {
 			this.updateTaskIds(params.taskIds);
+		}
+		if (params.githubRepositories !== undefined && params.githubRepositories !== null) {
+			this.updateGitHubRepositories(params.githubRepositories);
 		}
 
 		this.updatedAt = new Date();
