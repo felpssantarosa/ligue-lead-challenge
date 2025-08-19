@@ -1,7 +1,7 @@
 import type { Project } from "@/project/domain";
+import type { GetProjectServiceResponse } from "@/project/service/get/GetProjectService";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
 import { GetTasksByProjectService } from "@/task/service/get-by-project-td/GetTasksByProjectService";
-import type { GetProjectServiceResponse } from "@/project/service/get/GetProjectService";
 import {
 	createProject,
 	createProjectServiceMock,

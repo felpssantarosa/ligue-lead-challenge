@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { Project } from "@/project/domain/Project";
+import type { GetProjectServiceResponse } from "@/project/service/get/GetProjectService";
 import { CacheKeys } from "@/shared/cache";
 import { TaskStatus } from "@/shared/domain/TaskStatus";
 import { ApplicationError, NotFoundError } from "@/shared/Errors";
@@ -11,7 +12,6 @@ import {
 	MockCacheProvider,
 	mockTaskRepository,
 } from "@/test/mocks";
-import type { GetProjectServiceResponse } from "@/project/service/get/GetProjectService";
 
 // Helper function to convert Project to GetProjectServiceResponse
 const projectToResponse = (project: Project): GetProjectServiceResponse => ({
