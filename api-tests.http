@@ -72,7 +72,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Projeto Atualizado",
+  "title": "Projeto Atualizado",
   "description": "Descrição atualizada do projeto",
   "tags": ["nodejs", "typescript", "api", "updated"]
 }
@@ -92,18 +92,8 @@ Content-Type: application/json
 }
 
 ###
-# 10. LISTAR TODAS AS TAREFAS
-GET {{baseAPIUrl}}/tasks
-
-###
-# 11. OBTER TAREFA POR ID (requer autenticação)
-@taskId = {{createTask.response.body.data.id}}
-GET {{baseAPIUrl}}/tasks/{{taskId}}
-Authorization: Bearer {{authToken}}
-
-###
 # 12. ATUALIZAR TAREFA (requer autenticação)
-PUT {{baseAPIUrl}}/tasks/{{taskId}}
+PUT {{baseAPIUrl}}/tasks/040d074d-4949-4c10-83a8-9801645d77ae
 Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
@@ -121,7 +111,7 @@ Authorization: Bearer {{authToken}}
 
 ###
 # 14. DELETAR TAREFA (requer autenticação)
-DELETE {{baseAPIUrl}}/tasks/{{taskId}}
+DELETE {{baseAPIUrl}}/tasks/040d074d-4949-4c10-83a8-9801645d77ae
 Authorization: Bearer {{authToken}}
 
 ###
@@ -133,11 +123,11 @@ Authorization: Bearer {{authToken}}
 # TESTES DE ERRO
 
 # 16. Tentar acessar endpoint protegido sem token
-GET {{baseAPIUrl}}/users/profile
+POST {{baseAPIUrl}}/projects
 
 ###
 # 17. Login com credenciais inválidas
-POST {{baseAPIUrl}}/users/login
+POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
@@ -152,17 +142,17 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "",
+  "title": "",
   "description": "a"
 }
 
 ###
 # 19. Buscar projeto que não existe
-GET {{baseAPIUrl}}/projects/99999
+GET {{baseAPIUrl}}/projects/040d074d-4949-4c10-83a8-9801645d77ae
 
 ###
 # 20. Registrar usuário com email já existente
-POST {{baseAPIUrl}}/users/register
+POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
@@ -194,7 +184,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Projeto Performance 1",
+  "title": "Projeto Performance 1",
   "description": "Projeto para teste de performance",
   "tags": ["performance", "test"]
 }
@@ -205,7 +195,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Projeto Performance 2",
+  "title": "Projeto Performance 2",
   "description": "Projeto para teste de performance",
   "tags": ["performance", "test"]
 }
@@ -216,7 +206,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-  "name": "Projeto Performance 3",
+  "title": "Projeto Performance 3",
   "description": "Projeto para teste de performance",
   "tags": ["performance", "test"]
 }
@@ -226,15 +216,14 @@ Content-Type: application/json
 GET {{baseAPIUrl}}/projects?search=performance
 
 ###
-GET {{baseAPIUrl}}/projects?search=test
+GET {{baseAPIUrl}}/projects?tags=test
 
 ###
-GET {{baseAPIUrl}}/projects?search=nodejs
+GET {{baseAPIUrl}}/projects?tags=nodejs
 
 ###
 # NOTAS:
-# - Substitua {{authToken}} pelo token JWT real obtido no login
-# - Substitua {{projectId}} e {{taskId}} pelos IDs reais retornados nas criações
 # - Certifique-se de que o servidor esteja rodando em http://localhost:3000
 # - Use a extensão REST Client do VS Code para executar essas requisições
 # - Alguns endpoints requerem autenticação - faça login primeiro e use o token
+# - Substitua o UUID 040d074d-4949-4c10-83a8-9801645d77ae por um UUID de task válido
