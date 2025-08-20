@@ -48,8 +48,8 @@ Content-Type: application/json
 
 {
   "title": "Projeto de Teste",
-  "description": "Este é um projeto de teste para demonstrar a API",
-  "tags": ["nodejs", "typescript", "api"]
+  "tags": ["nodejs", "typescript", "api"],
+  "description": "Este é um projeto de teste para demonstrar a API"
 }
 
 ###
@@ -87,7 +87,7 @@ Content-Type: application/json
 {
   "title": "Implementar autenticação",
   "description": "Implementar sistema de autenticação JWT",
-  "status": "todo",
+  "status": "todo"
 }
 
 ###
@@ -99,7 +99,7 @@ Content-Type: application/json
 {
   "title": "Implementar autenticação JWT",
   "description": "Implementar sistema completo de autenticação JWT com refresh tokens",
-  "status": "in_progress",
+  "status": "in_progress"
 }
 
 ###
@@ -169,7 +169,7 @@ Content-Type: application/json
 {
   "title": "Tarefa com status inválido",
   "description": "Esta tarefa tem um status que não existe",
-  "status": "status_inexistente",
+  "status": "status_inexistente"
 }
 
 ###
