@@ -3,6 +3,7 @@ import { injectable } from "tsyringe";
 import { Project } from "@/project/domain";
 import type { ProjectProps } from "@/project/domain/ProjectDTO";
 import type {
+	FindAllResponse,
 	GetAllProjectsParams,
 	ProjectModel,
 	ProjectRepository,
@@ -37,7 +38,7 @@ export class SequelizeProjectRepository implements ProjectRepository {
 		return this.mapToDomain(project);
 	}
 
-	async findAll(params: GetAllProjectsParams): Promise<Project[]> {
+	async findAll(params: GetAllProjectsParams): Promise<FindAllResponse> {
 		const { page = 1, limit = 10, tags, search } = params;
 		const offset = (page - 1) * limit;
 
@@ -69,9 +70,16 @@ export class SequelizeProjectRepository implements ProjectRepository {
 			include: ["tasks"],
 		});
 
-		return projects.map((project) => {
-			return this.mapToDomain(project);
+		const sequelizeTotalEntries = await this.sequelizeModel.count({
+			where: whereConditions,
 		});
+
+		return {
+			projects: projects.map((project) => {
+				return this.mapToDomain(project);
+			}),
+			total: sequelizeTotalEntries,
+		};
 	}
 
 	async update(project: Project): Promise<Project> {

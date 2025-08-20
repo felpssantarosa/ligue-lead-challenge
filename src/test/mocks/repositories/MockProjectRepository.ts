@@ -1,5 +1,6 @@
 import type { Project } from "@/project/domain/Project";
 import type {
+	FindAllResponse,
 	GetAllProjectsParams,
 	ProjectRepository,
 } from "@/project/infra/repository/ProjectRepository";
@@ -17,7 +18,7 @@ export class MockProjectRepository implements ProjectRepository {
 		return this.projects.get(id) || null;
 	}
 
-	async findAll(params: GetAllProjectsParams): Promise<Project[]> {
+	async findAll(params: GetAllProjectsParams): Promise<FindAllResponse> {
 		const { search, limit, page, tags } = params;
 
 		let projects = Array.from(this.projects.values());
@@ -40,7 +41,7 @@ export class MockProjectRepository implements ProjectRepository {
 			projects = projects.slice(start, end);
 		}
 
-		return projects;
+		return { projects, total: projects.length };
 	}
 
 	async update(project: Project): Promise<Project> {

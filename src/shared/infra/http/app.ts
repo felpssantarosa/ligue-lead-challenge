@@ -12,7 +12,6 @@ import {
 	isUnauthorizedError,
 	isValidationError,
 } from "@/shared/Errors";
-import { setupApiDocumentation } from "@/shared/infra/docs/setup";
 import {
 	taskRoutes,
 	taskRoutesBoundByProject,
@@ -88,7 +87,14 @@ export const createApp = (): express.Application => {
 	app.use("/api/tasks", taskRoutes);
 
 	// API Documentation
-	setupApiDocumentation(app);
+	if (process.env.NODE_ENV !== "test") {
+		try {
+			const { setupApiDocumentation } = require("@/shared/infra/docs/setup");
+			setupApiDocumentation(app);
+		} catch (error) {
+			console.warn("Failed to load API documentation:", error instanceof Error ? error.message : String(error));
+		}
+	}
 
 	app.use(
 		(

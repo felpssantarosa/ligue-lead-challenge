@@ -11,12 +11,17 @@ type ProjectFilters = {
 	search?: string;
 };
 
+export type FindAllResponse = {
+	projects: Project[];
+	total: number;
+};
+
 export type GetAllProjectsParams = PaginationParams & ProjectFilters;
 
 export interface ProjectRepository {
 	save(project: Project): Promise<Project>;
 	findById(id: EntityId): Promise<Project | null>;
-	findAll(params: GetAllProjectsParams): Promise<Project[]>;
+	findAll(params: GetAllProjectsParams): Promise<FindAllResponse>;
 	update(project: Project): Promise<Project>;
 	delete(id: EntityId): Promise<void>;
 }

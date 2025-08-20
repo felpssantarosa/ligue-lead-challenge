@@ -56,7 +56,7 @@ export class GetAllProjectsService {
 
 			if (cachedResult) return cachedResult;
 
-			const projects = await this.projectRepository.findAll({
+			const { projects, total } = await this.projectRepository.findAll({
 				limit,
 				page,
 				tags,
@@ -73,7 +73,7 @@ export class GetAllProjectsService {
 					createdAt: project.createdAt,
 					updatedAt: project.updatedAt,
 				})),
-				total: projects.length,
+				total,
 			};
 
 			const TenMinutesInSeconds = 600;

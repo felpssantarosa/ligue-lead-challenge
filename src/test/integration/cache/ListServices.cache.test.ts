@@ -152,7 +152,7 @@ describe("List Services - Cache Behavior", () => {
 				createProject({ title: "Project 2", tags: ["mobile"] }),
 			];
 
-			projectFindAllSpy.mockResolvedValue(projects);
+			projectFindAllSpy.mockResolvedValue({ projects, total: 2 });
 
 			const params = {
 				page: 1,
@@ -184,7 +184,7 @@ describe("List Services - Cache Behavior", () => {
 
 		it("should handle complex filter combinations in cache keys", async () => {
 			const projects = [createProject({ title: "Test Project" })];
-			projectFindAllSpy.mockResolvedValue(projects);
+			projectFindAllSpy.mockResolvedValue({ projects, total: 1 });
 
 			const filterCombinations = [
 				{ search: "test", tags: ["web"] },
