@@ -151,11 +151,9 @@ docker run -p 3000:3000 --env-file .env ligue-lead-api
 
 ## 📚 Documentação da API
 
-Esta API utiliza **Scalar** para documentação interativa e moderna. A documentação completa está disponível quando o servidor está em execução.
+A documentação foi adicionada tarde no desenvolvimento e o ato de realizar requisições não está 100% testado e pode conter erros. Você encontra um arquivo `api-tests.http` e pode utilizar a extensão `Rest Client` caso queira fazer suas requisições com o mínimo de problemas possível, já que este foi testado extensivamente.
 
 ### 🚀 Acessar Documentação
-
-Nota: A documentação foi adicionada tarde no desenvolvimento e o ato de realizar requisições não está 100% testado e pode conter erros. Você encontra um arquivo `api-tests.http` e pode utilizar a extensão `Rest Client` caso queira fazer suas requisições com o mínimo de problemas possível, já que este foi testado extensivamente.
 
 - **Scalar UI (Recomendado)**: http://localhost:3000/api/docs
   - Interface moderna e intuitiva

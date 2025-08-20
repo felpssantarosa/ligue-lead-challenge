@@ -21,7 +21,7 @@ export class RegisterUserController extends BaseController {
 	 * /auth/register:
 	 *   post:
 	 *     summary: Register a new user
-	 *     description: Create a new user account with email and password
+	 *     description: Create a new user account with name, email and password
 	 *     tags: [Authentication]
 	 *     requestBody:
 	 *       required: true
@@ -30,9 +30,14 @@ export class RegisterUserController extends BaseController {
 	 *           schema:
 	 *             type: object
 	 *             required:
+	 *               - name
 	 *               - email
 	 *               - password
 	 *             properties:
+	 *               name:
+	 *                 type: string
+	 *                 description: User full name
+	 *                 example: "John Doe"
 	 *               email:
 	 *                 type: string
 	 *                 format: email

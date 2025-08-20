@@ -127,12 +127,17 @@ const options: swaggerJsdoc.Options = {
 				},
 				User: {
 					type: "object",
-					required: ["email", "password"],
+					required: ["name", "email", "password"],
 					properties: {
 						id: {
 							type: "string",
 							format: "uuid",
 							description: "Unique identifier for the user",
+						},
+						name: {
+							type: "string",
+							description: "User full name",
+							example: "John Doe",
 						},
 						email: {
 							type: "string",
