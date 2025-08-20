@@ -1,15 +1,10 @@
 import type { Response } from "express";
 import { inject, injectable } from "tsyringe";
 import type { CreateProjectService } from "@/project/service";
+import type { CreateProjectInput } from "@/project/validation/schemas/ZodSchema";
 import { BaseController } from "@/shared/BaseController";
 import type { ValidationHandler } from "@/shared/validation/ValidationHandler";
 import type { AuthenticatedRequest } from "@/user/infra/middleware/authMiddleware";
-
-type CreateProjectData = {
-	title: string;
-	description: string;
-	tags: string[];
-};
 
 @injectable()
 export class CreateProjectController extends BaseController {
@@ -39,8 +34,6 @@ export class CreateProjectController extends BaseController {
 	 *             type: object
 	 *             required:
 	 *               - title
-	 *               - description
-	 *               - tags
 	 *             properties:
 	 *               title:
 	 *                 type: string
@@ -54,7 +47,7 @@ export class CreateProjectController extends BaseController {
 	 *                 type: array
 	 *                 items:
 	 *                   type: string
-	 *                 description: Project tags
+	 *                 description: Project tags (optional, defaults to empty array)
 	 *                 example: ["react", "nodejs", "ecommerce"]
 	 *     responses:
 	 *       201:
@@ -89,7 +82,7 @@ export class CreateProjectController extends BaseController {
 	 */
 	async handle(req: AuthenticatedRequest, res: Response): Promise<void> {
 		try {
-			const validatedData = this.validation.execute<CreateProjectData>(
+			const validatedData = this.validation.execute<CreateProjectInput>(
 				"create-project",
 				req.body,
 				"CreateProjectController.handle",
